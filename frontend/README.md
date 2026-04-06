@@ -1,4 +1,4 @@
-# @amulya_maggidi/ai-design-system
+# @divami_artefacts/ai-design-system
 
 A React component library of data visualization widgets — charts, sankey diagrams, highlights, and a universal `VisualizationRenderer` — built with Vite and TypeScript.
 
@@ -7,7 +7,7 @@ A React component library of data visualization widgets — charts, sankey diagr
 ## Installation
 
 ```bash
-npm install @amulya_maggidi/ai-design-system
+npm install @divami_artefacts/ai-design-system
 ```
 
 ### Peer dependencies
@@ -25,7 +25,7 @@ npm install react react-dom
 Import the stylesheet once in your app entry (e.g. `main.tsx`):
 
 ```ts
-import '@amulya_maggidi/ai-design-system/styles';
+import '@divami_artefacts/ai-design-system/styles';
 ```
 
 ---
@@ -37,7 +37,7 @@ import '@amulya_maggidi/ai-design-system/styles';
 The easiest way to render any chart. Pass a typed `config` object and it picks the right component automatically.
 
 ```tsx
-import { VisualizationRenderer } from '@amulya_maggidi/ai-design-system';
+import { VisualizationRenderer } from '@divami_artefacts/ai-design-system';
 
 // Bar / Line / Area / Pie / Donut
 <VisualizationRenderer config={{ type: 'bar', rows: [{ vendor: 'Alpha', pricing: 120 }] }} />
@@ -89,7 +89,7 @@ import { VisualizationRenderer } from '@amulya_maggidi/ai-design-system';
 ### `BarChart`
 
 ```tsx
-import { BarChart } from '@amulya_maggidi/ai-design-system';
+import { BarChart } from '@divami_artefacts/ai-design-system';
 
 <BarChart
   rows={[
@@ -112,7 +112,7 @@ import { BarChart } from '@amulya_maggidi/ai-design-system';
 ### `LineChart` / `AreaChart`
 
 ```tsx
-import { LineChart, AreaChart } from '@amulya_maggidi/ai-design-system';
+import { LineChart, AreaChart } from '@divami_artefacts/ai-design-system';
 
 <LineChart rows={[{ vendor: 'Jan', pricing: 40 }, { vendor: 'Feb', pricing: 60 }]} />
 <AreaChart rows={[{ vendor: 'Jan', pricing: 40 }, { vendor: 'Feb', pricing: 60 }]} />
@@ -128,7 +128,7 @@ import { LineChart, AreaChart } from '@amulya_maggidi/ai-design-system';
 ### `PieChart` / `DonutChart`
 
 ```tsx
-import { PieChart, DonutChart } from '@amulya_maggidi/ai-design-system';
+import { PieChart, DonutChart } from '@divami_artefacts/ai-design-system';
 
 <PieChart   variant="pie"   rows={[{ vendor: 'A', pricing: 60 }, { vendor: 'B', pricing: 40 }]} />
 <DonutChart rows={[{ vendor: 'A', pricing: 60 }, { vendor: 'B', pricing: 40 }]} />
@@ -141,7 +141,7 @@ import { PieChart, DonutChart } from '@amulya_maggidi/ai-design-system';
 Sparkline-style trend line.
 
 ```tsx
-import { TrendChart } from '@amulya_maggidi/ai-design-system';
+import { TrendChart } from '@divami_artefacts/ai-design-system';
 
 <TrendChart
   points={[['Week 1', 10], ['Week 2', 18], ['Week 3', 14], ['Week 4', 22]]}
@@ -156,7 +156,7 @@ import { TrendChart } from '@amulya_maggidi/ai-design-system';
 Compact horizontal bar list.
 
 ```tsx
-import { MiniBars } from '@amulya_maggidi/ai-design-system';
+import { MiniBars } from '@divami_artefacts/ai-design-system';
 
 // MiniBarRow = [label, value, color]
 <MiniBars rows={[
@@ -170,7 +170,7 @@ import { MiniBars } from '@amulya_maggidi/ai-design-system';
 ### `ProcessSankey` / `RankingSankey` / `SankeySvg`
 
 ```tsx
-import { ProcessSankey, RankingSankey, SankeySvg } from '@amulya_maggidi/ai-design-system';
+import { ProcessSankey, RankingSankey, SankeySvg } from '@divami_artefacts/ai-design-system';
 
 // Flow sankey driven by an entity selection
 <ProcessSankey selectedEntity="Alpha Corp" />
@@ -195,7 +195,7 @@ import { ProcessSankey, RankingSankey, SankeySvg } from '@amulya_maggidi/ai-desi
 Combined line/area chart with a `variant` prop.
 
 ```tsx
-import { SeriesChart } from '@amulya_maggidi/ai-design-system';
+import { SeriesChart } from '@divami_artefacts/ai-design-system';
 
 <SeriesChart variant="line" rows={[{ vendor: 'Jan', pricing: 50 }]} />
 <SeriesChart variant="area" rows={[{ vendor: 'Jan', pricing: 50 }]} />
@@ -208,8 +208,8 @@ import { SeriesChart } from '@amulya_maggidi/ai-design-system';
 Renders a rich highlight block — supports stat chips, badges, dots, flags, comparison tables, and scorecards.
 
 ```tsx
-import { KeyHighlights } from '@amulya_maggidi/ai-design-system';
-import type { KeyHighlightBlock } from '@amulya_maggidi/ai-design-system';
+import { KeyHighlights } from '@divami_artefacts/ai-design-system';
+import type { KeyHighlightBlock } from '@divami_artefacts/ai-design-system';
 
 const block: KeyHighlightBlock = {
   type: 'stat',
@@ -230,7 +230,7 @@ const block: KeyHighlightBlock = {
 A simple wrapper that provides consistent padding/sizing for any custom chart content.
 
 ```tsx
-import { ChartFrame } from '@amulya_maggidi/ai-design-system';
+import { ChartFrame } from '@divami_artefacts/ai-design-system';
 
 <ChartFrame className="h-64">
   <p>Custom content</p>
@@ -246,7 +246,7 @@ import { ChartFrame } from '@amulya_maggidi/ai-design-system';
 Renders `VisualizationRenderer` into all DOM elements that have a `data-visualization` attribute — useful for server-rendered or CMS pages.
 
 ```ts
-import { hydrateVisualizationMounts } from '@amulya_maggidi/ai-design-system';
+import { hydrateVisualizationMounts } from '@divami_artefacts/ai-design-system';
 
 // Call after the DOM is ready
 hydrateVisualizationMounts();
@@ -263,7 +263,7 @@ Add to your HTML:
 Safely serializes a config object into a `data-visualization` attribute string.
 
 ```ts
-import { serializeVisualizationConfig } from '@amulya_maggidi/ai-design-system';
+import { serializeVisualizationConfig } from '@divami_artefacts/ai-design-system';
 
 const attr = serializeVisualizationConfig({ type: 'bar', rows: [] });
 // → '{"type":"bar","rows":[]}'
@@ -274,7 +274,7 @@ const attr = serializeVisualizationConfig({ type: 'bar', rows: [] });
 Unmounts all hydrated visualization roots. Call before navigating away or on component unmount.
 
 ```ts
-import { cleanupVisualizationMounts } from '@amulya_maggidi/ai-design-system';
+import { cleanupVisualizationMounts } from '@divami_artefacts/ai-design-system';
 
 cleanupVisualizationMounts();
 ```
@@ -294,7 +294,7 @@ import type {
   SankeyNodeData,
   SankeyLinkData,
   KeyHighlightBlock,
-} from '@amulya_maggidi/ai-design-system';
+} from '@divami_artefacts/ai-design-system';
 ```
 
 ---
