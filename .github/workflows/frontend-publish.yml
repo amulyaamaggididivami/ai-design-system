@@ -1,0 +1,104 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Publish enterprise-brain-ui to npm
+#
+# Triggers
+#   • Push a tag matching  v*.*.*   (e.g. git tag v1.0.1 && git push --tags)
+#   • Manual run from the Actions tab (workflow_dispatch)
+#
+# Required repository secret
+#   NPM_TOKEN  — an npm Automation token for the publishing account
+#               Settings → Secrets and variables → Actions → New repository secret
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: Publish Frontend Package to npm
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'          # fires on v1.0.0, v1.2.3-beta.0, etc.
+  workflow_dispatch:       # allows manual trigger from GitHub UI
+    inputs:
+      dry_run:
+        description: 'Dry run (pack only, do not publish)'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['false', 'true']
+
+jobs:
+  publish:
+    name: Build & Publish
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend   # all steps run inside /frontend
+
+    steps:
+      # ── 1. Checkout ────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Node setup with npm cache ───────────────────────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+          registry-url: 'https://registry.npmjs.org'
+
+      # ── 3. Install dependencies ────────────────────────────────────────────
+      - name: Install dependencies
+        run: npm ci
+
+      # ── 4. Type-check (uses project references via tsconfig.json) ──────────
+      - name: Type-check
+        run: npx tsc --noEmit -p tsconfig.app.json
+
+      # ── 5. Lint ────────────────────────────────────────────────────────────
+      - name: Lint
+        run: npm run lint
+
+      # ── 6. Build library (ESM + CJS + types + CSS) ─────────────────────────
+      - name: Build library
+        run: npm run build:lib
+
+      # ── 7. Verify dist artefacts exist ────────────────────────────────────
+      - name: Verify build output
+        run: |
+          echo "── dist contents ──"
+          ls -lh dist/
+          test -f dist/index.js    || (echo "❌ dist/index.js missing"             && exit 1)
+          test -f dist/index.cjs   || (echo "❌ dist/index.cjs missing"            && exit 1)
+          test -f dist/index.d.ts  || (echo "❌ dist/index.d.ts missing"           && exit 1)
+          test -f dist/style.css || (echo "❌ dist/style.css missing" && exit 1)
+          echo "✅ All required dist artefacts present"
+
+      # ── 8a. Dry run — pack only ────────────────────────────────────────────
+      - name: Pack (dry run)
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        run: |
+          npm pack --dry-run
+          echo "ℹ️  Dry run — package was NOT published."
+
+      # ── 8b. Publish to npm ─────────────────────────────────────────────────
+      - name: Publish to npm
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # ── 9. Upload packed tarball as workflow artefact ─────────────────────
+      - name: Pack tarball for download
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: npm pack
+
+      - name: Upload tarball artefact
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: enterprise-brain-ui-npm-package
+          path: frontend/enterprise-brain-ui-*.tgz
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,9 @@
+# Exclude source maps — consumers don't need them, they bloat the package
+dist/*.map
+dist/**/*.map
+
+# Exclude dev/demo artefacts that Vite copies into dist
+dist/vite.svg
+
+# Exclude internal declaration files not part of the public API
+dist/app/
