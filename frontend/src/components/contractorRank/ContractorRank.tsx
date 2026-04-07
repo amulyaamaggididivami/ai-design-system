@@ -25,8 +25,8 @@ export function ContractorRank({ contractors, 'data-testid': testId }: Contracto
 
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
 
-  const sorted = [...contractors].sort((a, b) => b.openCount - a.openCount).slice(0, 5);
-  const total  = sorted.reduce((s, c) => s + c.openCount, 0);
+  const sorted = [...contractors].sort((a, b) => (b.count ?? 0) - (a.count ?? 0)).slice(0, 5);
+  const total  = sorted.reduce((s, c) => s + (c.count ?? 0), 0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -121,13 +121,13 @@ export function ContractorRank({ contractors, 'data-testid': testId }: Contracto
         ctx.textAlign    = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle    = rgb(CC.t1, 0.9);
-        ctx.fillText(contractor.shortName, photoX, photoY);
+        ctx.fillText(contractor.abbreviation ?? contractor.name.slice(0, 6), photoX, photoY);
 
         // Open count — large
         ctx.font         = `bold ${Math.min(18, cardW * 0.18)}px 'JetBrains Mono', monospace`;
         ctx.textBaseline = 'alphabetic';
         ctx.fillStyle    = rgb(color, 0.9 + hp * 0.1);
-        ctx.fillText(String(contractor.openCount), photoX, cardY + cardH * 0.76);
+        ctx.fillText(String(contractor.count ?? 0), photoX, cardY + cardH * 0.76);
 
         // "open EWs" label
         ctx.font      = `8px 'JetBrains Mono', monospace`;
@@ -135,7 +135,7 @@ export function ContractorRank({ contractors, 'data-testid': testId }: Contracto
         ctx.fillText('open EWs', photoX, cardY + cardH * 0.88);
 
         // Tooltip with rank, %, risk level
-        const pct       = Math.round((contractor.openCount / total) * 100);
+        const pct       = Math.round(((contractor.count ?? 0) / (total || 1)) * 100);
         const riskLabel = RISK_LABELS[i] ?? 'Low exposure';
 
         registerHitRect(
@@ -147,7 +147,7 @@ export function ContractorRank({ contractors, 'data-testid': testId }: Contracto
           cardH,
           {
             label   : contractor.name,
-            value   : `${contractor.openCount} open EWs · ${pct}% of total`,
+            value   : `${contractor.count ?? 0} open · ${pct}% of total`,
             sublabel: `Rank #${i + 1} · ${riskLabel}`,
             color,
           },

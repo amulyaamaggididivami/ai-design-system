@@ -30,7 +30,7 @@ export function VariationSplit({ contractors, 'data-testid': testId }: Variation
     const barH = 26;
     const gap = 14;
     const trackW = W - padL - padR;
-    const maxTotal = Math.max(...contractors.map(c => c.implemented + c.unimplemented));
+    const maxTotal = Math.max(...contractors.map(c => (c.implemented ?? 0) + (c.unimplemented ?? 0)));
     const totalH = contractors.length * (barH + gap) - gap;
     const startY = padT + (H - padT - padB - totalH) / 2;
 
@@ -51,9 +51,9 @@ export function VariationSplit({ contractors, 'data-testid': testId }: Variation
         const accentColor = PALETTE[i % PALETTE.length];
         const localP = stagger(progress, i, contractors.length, easeOutQuart);
         const y = startY + i * (barH + gap);
-        const total = c.implemented + c.unimplemented;
-        const implW = (c.implemented / maxTotal) * trackW * localP;
-        const unimplW = (c.unimplemented / maxTotal) * trackW * localP;
+        const total = (c.implemented ?? 0) + (c.unimplemented ?? 0);
+        const implW = ((c.implemented ?? 0) / maxTotal) * trackW * localP;
+        const unimplW = ((c.unimplemented ?? 0) / maxTotal) * trackW * localP;
         const implId = `${c.id}-impl`;
         const unimplId = `${c.id}-un`;
         const hpImpl = hoverMap.current.get(implId) ?? 0;
@@ -61,14 +61,14 @@ export function VariationSplit({ contractors, 'data-testid': testId }: Variation
 
         registerHitRect(hitZonesRef.current, implId, padL, y, implW || 1, barH, {
           label: `${c.name} — Implemented`,
-          value: `${c.implemented} variations`,
-          sublabel: `${Math.round((c.implemented / total) * 100)}% complete`,
+          value: `${c.implemented ?? 0} variations`,
+          sublabel: `${Math.round(((c.implemented ?? 0) / (total || 1)) * 100)}% complete`,
           color: CC.green,
         });
         registerHitRect(hitZonesRef.current, unimplId, padL + implW, y, unimplW || 1, barH, {
           label: `${c.name} — Unimplemented`,
-          value: `${c.unimplemented} variations`,
-          sublabel: `${Math.round((c.unimplemented / total) * 100)}% pending`,
+          value: `${c.unimplemented ?? 0} variations`,
+          sublabel: `${Math.round(((c.unimplemented ?? 0) / (total || 1)) * 100)}% pending`,
           color: CC.amber,
         });
 
@@ -76,7 +76,7 @@ export function VariationSplit({ contractors, 'data-testid': testId }: Variation
         ctx.font = `9px 'JetBrains Mono', monospace`;
         ctx.fillStyle = rgb(accentColor, 0.85);
         ctx.textAlign = 'right';
-        ctx.fillText(c.shortName, padL - 8, y + barH / 2 + 4);
+        ctx.fillText(c.abbreviation ?? c.name.slice(0, 6), padL - 8, y + barH / 2 + 4);
 
         // Track
         ctx.fillStyle = rgb(CC.bd, 0.15);
@@ -97,7 +97,7 @@ export function VariationSplit({ contractors, 'data-testid': testId }: Variation
             ctx.font = `bold 10px 'JetBrains Mono', monospace`;
             ctx.fillStyle = hpImpl > 0 ? CC.green : rgb(CC.t1, 0.8);
             ctx.textAlign = 'center';
-            ctx.fillText(String(c.implemented), padL + implW / 2, y + barH / 2 + 4);
+            ctx.fillText(String(c.implemented ?? 0), padL + implW / 2, y + barH / 2 + 4);
           }
         }
 
@@ -117,7 +117,7 @@ export function VariationSplit({ contractors, 'data-testid': testId }: Variation
             ctx.font = `${hpUn > 0 ? 'bold ' : ''}10px 'JetBrains Mono', monospace`;
             ctx.fillStyle = hpUn > 0 ? CC.amber : rgb(CC.t3, 0.8);
             ctx.textAlign = 'center';
-            ctx.fillText(String(c.unimplemented), padL + implW + unimplW / 2, y + barH / 2 + 4);
+            ctx.fillText(String(c.unimplemented ?? 0), padL + implW + unimplW / 2, y + barH / 2 + 4);
           }
         }
 

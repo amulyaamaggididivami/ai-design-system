@@ -164,32 +164,32 @@ export type VisualizationRendererProps = {
 export type ContractorRow = {
   id: string;
   name: string;
-  shortName: string;
-  base: number;
-  variations: number;
-  totalCommitment: number;
-  commitmentPct: number;
+  abbreviation?: string;
+  base?: number;
+  variation?: number;
+  total?: number;
+  percentage?: number;
 };
 
 export type ContractData = {
   contractors: ContractorRow[];
-  totals: { base: number; variations: number; totalCommitment: number };
+  totals?: { base?: number; variation?: number; total?: number };
 };
 
 export type EWStatusRow = { status: string; count: number };
 export type EWCategoryRow = { category: string; fullName: string; count: number };
 export type EWSeverityRow = { severity: string; count: number };
-export type EWOpenContractorRow = { id: string; name: string; shortName: string; openCount: number };
+export type EWOpenContractorRow = { id: string; name: string; abbreviation?: string; count?: number };
 
-export type NCEContractorRow = { id: string; name: string; shortName: string; count: number };
+export type NCEContractorRow = { id: string; name: string; abbreviation?: string; count?: number };
 export type NCECompensationData = { total: number; confirmed: number; pctConfirmed: number };
 
 export type VariationRow = {
   id: string;
   name: string;
-  shortName: string;
-  implemented: number;
-  unimplemented: number;
+  abbreviation?: string;
+  implemented?: number;
+  unimplemented?: number;
 };
 
 export type QuotationSide = { value: number; count: number; label: string };

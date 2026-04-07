@@ -21,8 +21,8 @@ export function ContractBars({ contractors, 'data-testid': testId }: ContractBar
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
 
   const constellations = useMemo(() => {
-    const maxBase = Math.max(...contractors.map(c => c.base));
-    const maxVar  = Math.max(...contractors.map(c => c.variations));
+    const maxBase = Math.max(...contractors.map(c => c.base ?? 0));
+    const maxVar  = Math.max(...contractors.map(c => c.variation ?? 0));
 
     return contractors.map((con, pi) => {
       // Symmetric horizontal layout — equal margins on both sides
@@ -32,14 +32,14 @@ export function ContractBars({ contractors, 'data-testid': testId }: ContractBar
       const color = COLORS[pi % COLORS.length];
 
       const kpiVals   = [
-        (con.base       / maxBase) * 100,
-        (con.variations / maxVar)  * 100,
-        con.commitmentPct,
+        ((con.base ?? 0) / (maxBase || 1)) * 100,
+        ((con.variation ?? 0) / (maxVar  || 1)) * 100,
+        con.percentage ?? 0,
       ];
       const kpiLabels = [
-        `£${con.base}M`,
-        `£${con.variations}M`,
-        `${con.commitmentPct}%`,
+        `£${con.base ?? 0}M`,
+        `£${con.variation ?? 0}M`,
+        `${con.percentage ?? 0}%`,
       ];
 
       const stars = kpiVals.map((val, ki) => {
@@ -153,7 +153,7 @@ export function ContractBars({ contractors, 'data-testid': testId }: ContractBar
           registerHitCircle(hitZonesRef.current, starId, star.x, star.y, starR * 4 + 2, {
             label   : star.name,
             value   : star.label,
-            sublabel: con.shortName,
+            sublabel: con.abbreviation ?? con.name.slice(0, 6),
             color   : trColor,
           });
         });
@@ -173,12 +173,12 @@ export function ContractBars({ contractors, 'data-testid': testId }: ContractBar
         ctx.textAlign    = 'center';
         ctx.textBaseline = 'alphabetic';
         ctx.fillStyle    = rgb(CC.t2, 0.65 + hp * 0.25);
-        ctx.fillText(con.shortName, con.cx, con.cy + con.baseR + 26);
+        ctx.fillText(con.abbreviation ?? con.name.slice(0, 6), con.cx, con.cy + con.baseR + 26);
 
         registerHitCircle(hitZonesRef.current, conId, con.cx, con.cy, con.baseR + 5, {
           label   : con.name,
-          value   : `£${con.totalCommitment}M total`,
-          sublabel: `${con.commitmentPct}% committed · scatter ${con.scatter.toFixed(1)}`,
+          value   : `£${con.total ?? 0}M total`,
+          sublabel: `${con.percentage ?? 0}% committed · scatter ${con.scatter.toFixed(1)}`,
           color   : trColor,
         });
       });

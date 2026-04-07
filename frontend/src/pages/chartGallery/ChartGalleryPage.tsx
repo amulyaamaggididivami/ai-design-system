@@ -32,32 +32,32 @@ const miniBarsRows: [string, number, string][] = [
 
 /**
  * Q1 — contract-value-orb
- * Horizontal bars: base (solid) + variations (lighter) per contractor.
- * ContractorRow: { id, name, shortName, base, variations, totalCommitment, commitmentPct }
- * totals: { base, variations, totalCommitment } — shown as "Portfolio: £xM" in legend
+ * Horizontal bars: base (solid) + variation (lighter) per entity.
+ * ContractorRow: { id, name, abbreviation?, base?, variation?, total?, percentage? }
+ * totals: { base?, variation?, total? } — shown as "Portfolio: £xM" in legend
  */
 const contractValueData = {
   contractors: [
-    { id: 'c1', name: 'Tata Projects',     shortName: 'Tata',   base: 142, variations: 18.4, totalCommitment: 160.4, commitmentPct: 87 },
-    { id: 'c2', name: 'L&T Construction',  shortName: 'L&T',    base: 198, variations: 12.6, totalCommitment: 210.6, commitmentPct: 92 },
-    { id: 'c3', name: 'Afcons Infra',      shortName: 'Afcons', base: 89,  variations: 22.1, totalCommitment: 111.1, commitmentPct: 78 },
-    { id: 'c4', name: 'NCC Ltd',           shortName: 'NCC',    base: 156, variations: 8.9,  totalCommitment: 164.9, commitmentPct: 95 },
-    { id: 'c5', name: 'KEC International', shortName: 'KEC',    base: 74,  variations: 31.2, totalCommitment: 105.2, commitmentPct: 69 },
+    { id: 'c1', name: 'Tata Projects',        base: 142, variation: 18.4, total: 160.4, percentage: 87 },
+    { id: 'c2', name: 'L&T Construction',     base: 198, variation: 12.6, total: 210.6, percentage: 92 },
+    { id: 'c3', name: 'Afcons Infra',      base: 89,  variation: 22.1, total: 111.1, percentage: 78 },
+    { id: 'c4', name: 'NCC Ltd',             base: 156, variation: 8.9,  total: 164.9, percentage: 95 },
+    { id: 'c5', name: 'KEC International',    base: 74,  variation: 31.2, total: 105.2, percentage: 69 },
   ],
-  totals: { base: 659, variations: 93.2, totalCommitment: 752.2 },
+  totals: { base: 659, variation: 93.2, total: 752.2 },
 };
 
 /**
  * Q2 — contract-bars
- * Triangle KPI map per contractor — same ContractorRow[] shape as above.
- * Each triangle vertex = Base (top), Variations (lower-right), Commitment % (lower-left).
+ * Triangle KPI map per entity — same ContractorRow[] shape as above.
+ * Each triangle vertex = base (top), variation (lower-right), percentage (lower-left).
  */
 const contractBarsContractors = contractValueData.contractors;
 
 /**
  * Q3 — commitment-race
- * Progress race — how far each contractor is toward 100% commitment.
- * Same ContractorRow[] — only commitmentPct and shortName are rendered.
+ * Progress race — how far each entity is toward 100% commitment.
+ * Same ContractorRow[] — only percentage and abbreviation are rendered.
  */
 const commitmentRaceContractors = contractValueData.contractors;
 
@@ -89,15 +89,15 @@ const ewCategories = [
 
 /**
  * Q6 — contractor-rank
- * Ranked horizontal exposure bars — open EW count per contractor.
- * EWOpenContractorRow: { id, name, shortName, openCount: number }
+ * Ranked horizontal exposure bars — open count per entity.
+ * EWOpenContractorRow: { id, name, abbreviation?, count? }
  */
 const contractorRankContractors = [
-  { id: 'c1', name: 'Tata Projects',     shortName: 'Tata',   openCount: 7 },
-  { id: 'c3', name: 'Afcons Infra',      shortName: 'Afcons', openCount: 4 },
-  { id: 'c2', name: 'L&T Construction',  shortName: 'L&T',    openCount: 3 },
-  { id: 'c5', name: 'KEC International', shortName: 'KEC',    openCount: 2 },
-  { id: 'c4', name: 'NCC Ltd',           shortName: 'NCC',    openCount: 2 },
+  { id: 'c1', name: 'Tata Projects',     abbreviation: 'Tata',   count: 7 },
+  { id: 'c3', name: 'Afcons Infra',      abbreviation: 'Afcons', count: 4 },
+  { id: 'c2', name: 'L&T Construction',  abbreviation: 'L&T',    count: 3 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 2 },
+  { id: 'c4', name: 'NCC Ltd',           abbreviation: 'NCC',    count: 2 },
 ];
 
 /**
@@ -115,17 +115,17 @@ const severityBands = [
 
 /**
  * Q8 — nce-tree
- * Radial tree — branch thickness proportional to NCE count per contractor.
- * NCEContractorRow: { id, name, shortName, count: number }
+ * Radial tree — branch thickness proportional to count per entity.
+ * NCEContractorRow: { id, name, abbreviation?, count? }
  * total = sum of all counts (displayed at root).
  */
 const nceTotal = 25;
 const nceByContractorData = [
-  { id: 'c1', name: 'Tata Projects',     shortName: 'Tata',   count: 8 },
-  { id: 'c3', name: 'Afcons Infra',      shortName: 'Afcons', count: 6 },
-  { id: 'c2', name: 'L&T Construction',  shortName: 'L&T',    count: 4 },
-  { id: 'c4', name: 'NCC Ltd',           shortName: 'NCC',    count: 4 },
-  { id: 'c5', name: 'KEC International', shortName: 'KEC',    count: 3 },
+  { id: 'c1', name: 'Tata Projects',     abbreviation: 'Tata',   count: 8 },
+  { id: 'c3', name: 'Afcons Infra',      abbreviation: 'Afcons', count: 6 },
+  { id: 'c2', name: 'L&T Construction',  abbreviation: 'L&T',    count: 4 },
+  { id: 'c4', name: 'NCC Ltd',           abbreviation: 'NCC',    count: 4 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
 ];
 
 /**
@@ -137,15 +137,15 @@ const compensationGaugeData = { pct: 60, confirmed: 15, total: 25 };
 
 /**
  * Q10 — variation-split
- * Stacked bar — implemented (solid) vs unimplemented (lighter) per contractor.
- * VariationRow: { id, name, shortName, implemented: number, unimplemented: number }
+ * Stacked bar — implemented (solid) vs unimplemented (lighter) per entity.
+ * VariationRow: { id, name, abbreviation?, implemented?, unimplemented? }
  */
 const variationSplitContractors = [
-  { id: 'c1', name: 'Tata Projects',     shortName: 'Tata',   implemented: 12, unimplemented: 4 },
-  { id: 'c2', name: 'L&T Construction',  shortName: 'L&T',    implemented: 8,  unimplemented: 6 },
-  { id: 'c3', name: 'Afcons Infra',      shortName: 'Afcons', implemented: 5,  unimplemented: 9 },
-  { id: 'c4', name: 'NCC Ltd',           shortName: 'NCC',    implemented: 11, unimplemented: 2 },
-  { id: 'c5', name: 'KEC International', shortName: 'KEC',    implemented: 6,  unimplemented: 8 },
+  { id: 'c1', name: 'Tata Projects',     abbreviation: 'Tata',   implemented: 12, unimplemented: 4 },
+  { id: 'c2', name: 'L&T Construction',  abbreviation: 'L&T',    implemented: 8,  unimplemented: 6 },
+  { id: 'c3', name: 'Afcons Infra',      abbreviation: 'Afcons', implemented: 5,  unimplemented: 9 },
+  { id: 'c4', name: 'NCC Ltd',           abbreviation: 'NCC',    implemented: 11, unimplemented: 2 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6,  unimplemented: 8 },
 ];
 
 /**
@@ -182,7 +182,7 @@ const quotationTrendData = [
 /**
  * Q13 — weekly-flow
  * Sankey flow — base + variation streams per contractor converge into total commitment.
- * Same ContractorRow[] used by contract-value-orb / contract-bars / commitment-race.
+ * Same ContractorRow[] — base, variation, total, percentage.
  */
 const weeklyFlowContractors = contractValueData.contractors;
 
@@ -415,7 +415,7 @@ export function ChartGalleryPage() {
       <KeyHighlights block={HIGHLIGHTS.q4} />
 
       <h3>Q5 — ew-category</h3>
-      <VisualizationRenderer config={{ type: 'ew-category', categories: ewCategories }} />
+      <VisualizationRenderer config={{ type: 'ew-category', categories: ewCategories, title: 'Early Warnings by Category' }} />
       <KeyHighlights block={HIGHLIGHTS.q5} />
 
       <h3>Q6 — contractor-rank</h3>
