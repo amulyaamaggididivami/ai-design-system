@@ -17,7 +17,7 @@ export function CommitmentRace({ contractors, 'data-testid': testId }: Commitmen
   const hoverMap = useRef<Map<string, number>>(new Map());
 
   // Sort by commitmentPct descending
-  const sorted = [...contractors].sort((a, b) => b.commitmentPct - a.commitmentPct);
+  const sorted = [...contractors].sort((a, b) => (b.percentage ?? 0) - (a.percentage ?? 0));
 
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
 
@@ -80,7 +80,7 @@ export function CommitmentRace({ contractors, 'data-testid': testId }: Commitmen
         ctx.setLineDash([]);
 
         // Runner animation
-        const trackProgress = contractor.commitmentPct / 100;
+        const trackProgress = (contractor.percentage ?? 0) / 100;
         const animProg = Math.min(trackProgress, trackProgress * easeOutCubic(Math.min(1, T * 0.005)));
         const runnerX = padL + trackW * animProg;
 
@@ -111,8 +111,8 @@ export function CommitmentRace({ contractors, 'data-testid': testId }: Commitmen
           14,
           {
             label: contractor.name,
-            value: `${contractor.commitmentPct}% commitment`,
-            sublabel: `Base: £${contractor.base}M · Variations: £${contractor.variations}M`,
+            value: `${contractor.percentage ?? 0}% commitment`,
+            sublabel: `Base: £${contractor.base ?? 0}M · Variations: £${contractor.variation ?? 0}M`,
             color,
           },
         );
@@ -122,13 +122,13 @@ export function CommitmentRace({ contractors, 'data-testid': testId }: Commitmen
         ctx.fillStyle = rgb(color, 0.9 + hp * 0.1);
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
-        ctx.fillText(`${contractor.commitmentPct}%`, runnerX + 10, trackY + trackH / 2);
+        ctx.fillText(`${contractor.percentage ?? 0}%`, runnerX + 10, trackY + trackH / 2);
 
-        // Left label: contractor shortName
+        // Left label: contractor abbreviation
         ctx.font = `${hp > 0 ? 'bold ' : ''}10px 'JetBrains Mono', monospace`;
         ctx.fillStyle = hp > 0 ? color : rgb(CC.t2, 0.8);
         ctx.textAlign = 'right';
-        ctx.fillText(contractor.shortName, padL - 8, trackY + trackH / 2);
+        ctx.fillText(contractor.abbreviation ?? contractor.name.slice(0, 6), padL - 8, trackY + trackH / 2);
       });
 
       // Finish line

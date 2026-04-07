@@ -32,9 +32,9 @@ export function WeeklyFlow({ contractors, 'data-testid': testId }: WeeklyFlowPro
     const padB   = 26;
     const nodeGap = 6; // gap between contractor nodes
 
-    const totalBase  = contractors.reduce((s, c) => s + c.base, 0);
-    const totalVar   = contractors.reduce((s, c) => s + c.variations, 0);
-    const grandTotal = contractors.reduce((s, c) => s + c.totalCommitment, 0);
+    const totalBase  = contractors.reduce((s, c) => s + (c.base ?? 0), 0);
+    const totalVar   = contractors.reduce((s, c) => s + (c.variation ?? 0), 0);
+    const grandTotal = contractors.reduce((s, c) => s + (c.total ?? 0), 0);
 
     // ── Contractor nodes — proportional heights (Sankey) ─────────────────────
     const availH      = H - padT - padB;
@@ -43,7 +43,7 @@ export function WeeklyFlow({ contractors, 'data-testid': testId }: WeeklyFlowPro
 
     let cumNodeY = padT;
     const contNodes = contractors.map((c, i) => {
-      const nh   = Math.max(24, (c.totalCommitment / grandTotal) * flowableH);
+      const nh   = Math.max(24, ((c.total ?? 0) / (grandTotal || 1)) * flowableH);
       const node = {
         x    : col1X - nodeW / 2,
         y    : cumNodeY,
@@ -90,8 +90,8 @@ export function WeeklyFlow({ contractors, 'data-testid': testId }: WeeklyFlowPro
         if (localP < 0.01) return;
 
         // Proportional bands within the contractor node
-        const baseFrac    = c.base       / c.totalCommitment;
-        const varFrac     = c.variations / c.totalCommitment;
+        const baseFrac    = (c.base ?? 0) / (c.total || 1);
+        const varFrac     = (c.variation ?? 0) / (c.total || 1);
         const baseBandH   = cn.h * baseFrac;
         const varBandH    = cn.h * varFrac;
 
@@ -100,10 +100,10 @@ export function WeeklyFlow({ contractors, 'data-testid': testId }: WeeklyFlowPro
         const varSourceY  = cn.y + baseBandH + varBandH / 2;
 
         // Destination Y: proportional slice within mid nodes
-        const baseFlowH    = Math.max(2, (c.base       / totalBase) * baseH);
-        const varFlowH     = Math.max(2, (c.variations / totalVar)  * varH);
-        const bActualEndY  = baseNode.y + contractors.slice(0, i).reduce((s, cc) => s + (cc.base       / totalBase) * baseH, 0) + baseFlowH / 2;
-        const vActualEndY  = varNode.y  + contractors.slice(0, i).reduce((s, cc) => s + (cc.variations / totalVar)  * varH,  0) + varFlowH  / 2;
+        const baseFlowH    = Math.max(2, ((c.base ?? 0)     / totalBase) * baseH);
+        const varFlowH     = Math.max(2, ((c.variation ?? 0) / totalVar)  * varH);
+        const bActualEndY  = baseNode.y + contractors.slice(0, i).reduce((s, cc) => s + ((cc.base ?? 0)       / totalBase) * baseH, 0) + baseFlowH / 2;
+        const vActualEndY  = varNode.y  + contractors.slice(0, i).reduce((s, cc) => s + ((cc.variation ?? 0) / totalVar)  * varH,  0) + varFlowH  / 2;
 
         const alpha = hp * 0.2 + 0.18;
         drawBezierFlow(ctx, cn.x + nodeW, baseSourceY, col2X - nodeW / 2, bActualEndY, baseFlowH * localP, cn.color, alpha);
@@ -136,8 +136,8 @@ export function WeeklyFlow({ contractors, 'data-testid': testId }: WeeklyFlowPro
 
         registerHitRect(hitZonesRef.current, c.id, cn.x, cn.y, nodeW, cn.h, {
           label   : c.name,
-          value   : `£${c.totalCommitment}M total commitment`,
-          sublabel: `Base £${c.base}M  +  Variations £${c.variations}M`,
+          value   : `£${c.total ?? 0}M total commitment`,
+          sublabel: `Base £${c.base ?? 0}M  +  Variations £${c.variation ?? 0}M`,
           color   : cn.color,
         });
 
@@ -158,11 +158,11 @@ export function WeeklyFlow({ contractors, 'data-testid': testId }: WeeklyFlowPro
           ctx.fillStyle    = hp > 0 ? cn.color : rgb(CC.t2, 0.9);
           ctx.textAlign    = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillText(c.shortName, cn.x + nodeW / 2, cn.h >= 36 ? cn.cy - 5 : cn.cy);
+          ctx.fillText(c.abbreviation ?? c.name.slice(0, 6), cn.x + nodeW / 2, cn.h >= 36 ? cn.cy - 5 : cn.cy);
           if (cn.h >= 36) {
             ctx.font      = "8px 'JetBrains Mono', monospace";
             ctx.fillStyle = rgb(CC.t3, 0.8);
-            ctx.fillText(`£${c.totalCommitment}M`, cn.x + nodeW / 2, cn.cy + 7);
+            ctx.fillText(`£${c.total ?? 0}M`, cn.x + nodeW / 2, cn.cy + 7);
           }
           ctx.globalAlpha  = 1;
           ctx.textBaseline = 'alphabetic';

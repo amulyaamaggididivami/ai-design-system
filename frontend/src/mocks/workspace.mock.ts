@@ -535,13 +535,13 @@ export const recommendationCards = [
 
 export const contractData = {
   contractors: [
-    { id: 'c1', name: 'Tata Projects',    shortName: 'Tata',   base: 142, variations: 18.4, totalCommitment: 160.4, commitmentPct: 87 },
-    { id: 'c2', name: 'L&T Construction', shortName: 'L&T',    base: 198, variations: 12.6, totalCommitment: 210.6, commitmentPct: 92 },
-    { id: 'c3', name: 'Afcons Infra',     shortName: 'Afcons', base: 89,  variations: 22.1, totalCommitment: 111.1, commitmentPct: 78 },
-    { id: 'c4', name: 'NCC Ltd',          shortName: 'NCC',    base: 156, variations: 8.9,  totalCommitment: 164.9, commitmentPct: 95 },
-    { id: 'c5', name: 'KEC International',shortName: 'KEC',    base: 74,  variations: 31.2, totalCommitment: 105.2, commitmentPct: 69 },
+    { id: 'c1', name: 'Tata Projects',    abbreviation: 'Tata',   base: 142, variation: 18.4, total: 160.4, percentage: 87 },
+    { id: 'c2', name: 'L&T Construction', abbreviation: 'L&T',    base: 198, variation: 12.6, total: 210.6, percentage: 92 },
+    { id: 'c3', name: 'Afcons Infra',     abbreviation: 'Afcons', base: 89,  variation: 22.1, total: 111.1, percentage: 78 },
+    { id: 'c4', name: 'NCC Ltd',          abbreviation: 'NCC',    base: 156, variation: 8.9,  total: 164.9, percentage: 95 },
+    { id: 'c5', name: 'KEC International',abbreviation: 'KEC',    base: 74,  variation: 31.2, total: 105.2, percentage: 69 },
   ],
-  totals: { base: 659, variations: 93.2, totalCommitment: 752.2 },
+  totals: { base: 659, variation: 93.2, total: 752.2 },
 };
 
 export const ewStatusData = [
@@ -567,29 +567,29 @@ export const ewSeverityData = [
 ];
 
 export const ewOpenByContractor = [
-  { id: 'c1', name: 'Tata Projects',     shortName: 'Tata',   openCount: 7 },
-  { id: 'c3', name: 'Afcons Infra',      shortName: 'Afcons', openCount: 4 },
-  { id: 'c2', name: 'L&T Construction',  shortName: 'L&T',    openCount: 3 },
-  { id: 'c5', name: 'KEC International', shortName: 'KEC',    openCount: 2 },
-  { id: 'c4', name: 'NCC Ltd',           shortName: 'NCC',    openCount: 2 },
+  { id: 'c1', name: 'Tata Projects',     abbreviation: 'Tata',   count: 7 },
+  { id: 'c3', name: 'Afcons Infra',      abbreviation: 'Afcons', count: 4 },
+  { id: 'c2', name: 'L&T Construction',  abbreviation: 'L&T',    count: 3 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 2 },
+  { id: 'c4', name: 'NCC Ltd',           abbreviation: 'NCC',    count: 2 },
 ];
 
 export const nceByContractor = [
-  { id: 'c1', name: 'Tata Projects',     shortName: 'Tata',   count: 8 },
-  { id: 'c3', name: 'Afcons Infra',      shortName: 'Afcons', count: 6 },
-  { id: 'c2', name: 'L&T Construction',  shortName: 'L&T',    count: 4 },
-  { id: 'c4', name: 'NCC Ltd',           shortName: 'NCC',    count: 4 },
-  { id: 'c5', name: 'KEC International', shortName: 'KEC',    count: 3 },
+  { id: 'c1', name: 'Tata Projects',     abbreviation: 'Tata',   count: 8 },
+  { id: 'c3', name: 'Afcons Infra',      abbreviation: 'Afcons', count: 6 },
+  { id: 'c2', name: 'L&T Construction',  abbreviation: 'L&T',    count: 4 },
+  { id: 'c4', name: 'NCC Ltd',           abbreviation: 'NCC',    count: 4 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
 ];
 
 export const nceCompensationData = { total: 25, confirmed: 15, pctConfirmed: 60 };
 
 export const variationByContractor = [
-  { id: 'c1', name: 'Tata Projects',     shortName: 'Tata',   implemented: 12, unimplemented: 4 },
-  { id: 'c2', name: 'L&T Construction',  shortName: 'L&T',    implemented: 8,  unimplemented: 6 },
-  { id: 'c3', name: 'Afcons Infra',      shortName: 'Afcons', implemented: 5,  unimplemented: 9 },
-  { id: 'c4', name: 'NCC Ltd',           shortName: 'NCC',    implemented: 11, unimplemented: 2 },
-  { id: 'c5', name: 'KEC International', shortName: 'KEC',    implemented: 6,  unimplemented: 8 },
+  { id: 'c1', name: 'Tata Projects',     abbreviation: 'Tata',   implemented: 12, unimplemented: 4 },
+  { id: 'c2', name: 'L&T Construction',  abbreviation: 'L&T',    implemented: 8,  unimplemented: 6 },
+  { id: 'c3', name: 'Afcons Infra',      abbreviation: 'Afcons', implemented: 5,  unimplemented: 9 },
+  { id: 'c4', name: 'NCC Ltd',           abbreviation: 'NCC',    implemented: 11, unimplemented: 2 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6,  unimplemented: 8 },
 ];
 
 export const quotationSummary = {

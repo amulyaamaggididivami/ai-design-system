@@ -27,7 +27,7 @@ export function NCETree({ total, byContractor, 'data-testid': testId }: NCETreeP
     const rootY = H / 2;
     const rootR = 32;
     const leafX = W - 80;
-    const maxCount = Math.max(...byContractor.map(c => c.count));
+    const maxCount = Math.max(...byContractor.map(c => c.count ?? 0));
     const leafSpacing = (H - 60) / (byContractor.length - 1);
     const leafStartY = 30;
 
@@ -58,7 +58,7 @@ export function NCETree({ total, byContractor, 'data-testid': testId }: NCETreeP
         const localP = stagger(progress, i, byContractor.length, easeOutCubic);
         const lpos = leafPositions[i];
         const hp = hoverMap.current.get(c.id) ?? 0;
-        const branchThickness = Math.max(1.5, (c.count / maxCount) * 6);
+        const branchThickness = Math.max(1.5, ((c.count ?? 0) / maxCount) * 6);
 
         if (localP < 0.01) return;
 
@@ -88,7 +88,7 @@ export function NCETree({ total, byContractor, 'data-testid': testId }: NCETreeP
         // Leaf node
         if (localP > 0.85) {
           const leafFade = Math.min(1, (localP - 0.85) / 0.15);
-          const leafR = 4 + (c.count / maxCount) * 12;
+          const leafR = 4 + ((c.count ?? 0) / maxCount) * 12;
 
           drawGlow(ctx, lpos.x, lpos.y, leafR * 2.5, color, (0.25 + hp * 0.2) * leafFade);
           ctx.beginPath();
@@ -98,8 +98,8 @@ export function NCETree({ total, byContractor, 'data-testid': testId }: NCETreeP
 
           registerHitCircle(hitZonesRef.current, c.id, lpos.x, lpos.y, leafR + 8, {
             label: c.name,
-            value: `${c.count} NCEs raised`,
-            sublabel: `${Math.round((c.count / total) * 100)}% of all NCEs`,
+            value: `${c.count ?? 0} NCEs raised`,
+            sublabel: `${Math.round(((c.count ?? 0) / total) * 100)}% of all NCEs`,
             color,
           });
 
@@ -108,10 +108,10 @@ export function NCETree({ total, byContractor, 'data-testid': testId }: NCETreeP
           ctx.font = `bold 9px 'JetBrains Mono', monospace`;
           ctx.fillStyle = hp > 0 ? color : rgb(CC.t2, 0.85);
           ctx.textAlign = 'left';
-          ctx.fillText(c.shortName, lpos.x + leafR + 6, lpos.y - 3);
+          ctx.fillText(c.abbreviation ?? c.name.slice(0, 6), lpos.x + leafR + 6, lpos.y - 3);
           ctx.font = `bold 11px 'JetBrains Mono', monospace`;
           ctx.fillStyle = hp > 0 ? color : CC.t1;
-          ctx.fillText(String(c.count), lpos.x + leafR + 6, lpos.y + 10);
+          ctx.fillText(String(c.count ?? 0), lpos.x + leafR + 6, lpos.y + 10);
           ctx.globalAlpha = 1;
         }
       });
