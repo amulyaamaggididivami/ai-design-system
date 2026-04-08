@@ -6,13 +6,19 @@ import { stagger, tickHoverProgress, easeOutQuart } from '../../canvas/easing';
 import { CC, PALETTE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
 import type { VariationSplitProps } from './types';
 
-const W = 680;
-const H = 320;
+const W      = 680;
+const BAR_H  = 26;
+const GAP    = 14;
+const PAD_T  = 16;
+const PAD_B  = 48; // extra room for legend
 
 export function VariationSplit({ contractors, 'data-testid': testId }: VariationSplitProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
+
+  const n = contractors.length;
+  const H = PAD_T + PAD_B + n * BAR_H + Math.max(0, n - 1) * GAP;
 
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
 
@@ -25,14 +31,12 @@ export function VariationSplit({ contractors, 'data-testid': testId }: Variation
 
     const padL = 60;
     const padR = 28;
-    const padT = 16;
-    const padB = 32;
-    const barH = 26;
-    const gap = 14;
+    const padT = PAD_T;
+    const barH = BAR_H;
+    const gap = GAP;
     const trackW = W - padL - padR;
     const maxTotal = Math.max(...contractors.map(c => (c.implemented ?? 0) + (c.unimplemented ?? 0)));
-    const totalH = contractors.length * (barH + gap) - gap;
-    const startY = padT + (H - padT - padB - totalH) / 2;
+    const startY = padT;
 
     let raf: number;
 
@@ -132,7 +136,8 @@ export function VariationSplit({ contractors, 'data-testid': testId }: Variation
         }
       });
 
-      // Legend below bars — centered over track
+      // Legend below bars
+      const totalH = n * (barH + gap) - gap;
       const legendY = startY + totalH + 24;
       const trackCX = padL + trackW / 2;
       ctx.font = "9px 'JetBrains Mono', monospace";
@@ -148,7 +153,7 @@ export function VariationSplit({ contractors, 'data-testid': testId }: Variation
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [contractors]);
+  }, [contractors, H]);
 
   return (
     <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>

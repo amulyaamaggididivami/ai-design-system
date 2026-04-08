@@ -8,22 +8,25 @@ import { useCanvasLoop } from '../../canvas/useCanvasLoop';
 import type { ContractValueOrbProps } from './types';
 
 const W = 680;
-const H = 220;
 const COLORS = [CC.blue, CC.cyan, CC.amber, CC.purple, CC.green];
 const PAD    = { left: 8, right: 64, top: 16, bottom: 38 };
 const NAME_W = 88;
 const BAR_H  = 18;
+const MIN_GAP = 6;
 
 export function ContractValueOrb({ data, 'data-testid': testId }: ContractValueOrbProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap  = useRef<Map<string, number>>(new Map());
-  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
 
   const { contractors, totals } = data;
   const n             = contractors.length;
+  const H             = PAD.top + PAD.bottom + n * BAR_H + Math.max(0, n - 1) * MIN_GAP;
+  const fmt           = (v: number) => parseFloat(v.toFixed(2));
   const maxCommitment = Math.max(...contractors.map(c => c.total ?? 0), 1);
   const barArea       = W - PAD.left - NAME_W - PAD.right;
-  const gap           = n > 1 ? (H - PAD.top - PAD.bottom - n * BAR_H) / (n - 1) : 0;
+  const gap           = n > 1 ? MIN_GAP : 0;
+
+  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
 
   useCanvasLoop(
     canvasRef,
@@ -99,14 +102,14 @@ export function ContractValueOrb({ data, 'data-testid': testId }: ContractValueO
           ctx.fillStyle    = hp > 0 ? color : CC.t2;
           ctx.textAlign    = 'left';
           ctx.textBaseline = 'middle';
-          ctx.fillText(`£${con.total ?? 0}M`, x0 + totalW + 6, y + BAR_H / 2);
+          ctx.fillText(`£${fmt(con.total ?? 0)}M`, x0 + totalW + 6, y + BAR_H / 2);
           ctx.globalAlpha = 1;
         }
 
         registerHitRect(hitZonesRef.current, con.id, x0, y, Math.max(totalW, 1), BAR_H, {
           label   : con.name,
-          value   : `£${con.total ?? 0}M total`,
-          sublabel: `Base £${con.base ?? 0}M + Var £${con.variation ?? 0}M · ${con.percentage ?? 0}% committed`,
+          value   : `£${fmt(con.total ?? 0)}M total`,
+          sublabel: `Base £${fmt(con.base ?? 0)}M + Var £${fmt(con.variation ?? 0)}M · ${con.percentage ?? 0}% committed`,
           color,
         });
       });
@@ -145,7 +148,7 @@ export function ContractValueOrb({ data, 'data-testid': testId }: ContractValueO
       ctx.font      = `bold 8px 'JetBrains Mono', monospace`;
       ctx.textAlign = 'right';
       ctx.fillStyle = rgb(CC.t2, 0.6);
-      ctx.fillText(`Portfolio: £${totals?.total ?? 0}M`, W - 8, ly);
+      ctx.fillText(`Portfolio: £${fmt(totals?.total ?? 0)}M`, W - 8, ly);
     },
     true,
     { easing: easeOutQuart },
