@@ -7,12 +7,17 @@ import { CC, PALETTE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtil
 import type { WeeklyFlowProps } from './types';
 
 const W = 800;
-const H = 360;
+const MIN_NODE_H  = 24;
+const WF_PAD_T    = 20;
+const WF_PAD_B    = 26;
+const WF_NODE_GAP = 6;
 
 export function WeeklyFlow({ contractors, 'data-testid': testId }: WeeklyFlowProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
+
+  const H = Math.max(360, WF_PAD_T + WF_PAD_B + contractors.length * MIN_NODE_H + Math.max(0, contractors.length - 1) * WF_NODE_GAP);
 
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
 
@@ -21,8 +26,7 @@ export function WeeklyFlow({ contractors, 'data-testid': testId }: WeeklyFlowPro
     if (!canvas) return;
     const ctx = setupCanvas(canvas, W, H);
     frameRef.current = 0;
-    const DURATION = 80;
-
+    const DURATION = 80;    const fmt = (v: number) => parseFloat(v.toFixed(2));
     // ── Layout constants ─────────────────────────────────────────────────────
     const col1X  = 100;
     const col2X  = 420;
@@ -136,8 +140,8 @@ export function WeeklyFlow({ contractors, 'data-testid': testId }: WeeklyFlowPro
 
         registerHitRect(hitZonesRef.current, c.id, cn.x, cn.y, nodeW, cn.h, {
           label   : c.name,
-          value   : `£${c.total ?? 0}M total commitment`,
-          sublabel: `Base £${c.base ?? 0}M  +  Variations £${c.variation ?? 0}M`,
+          value   : `£${fmt(c.total ?? 0)}M total commitment`,
+          sublabel: `Base £${fmt(c.base ?? 0)}M  +  Variations £${fmt(c.variation ?? 0)}M`,
           color   : cn.color,
         });
 
@@ -162,7 +166,7 @@ export function WeeklyFlow({ contractors, 'data-testid': testId }: WeeklyFlowPro
           if (cn.h >= 36) {
             ctx.font      = "8px 'JetBrains Mono', monospace";
             ctx.fillStyle = rgb(CC.t3, 0.8);
-            ctx.fillText(`£${c.total ?? 0}M`, cn.x + nodeW / 2, cn.cy + 7);
+            ctx.fillText(`£${fmt(c.total ?? 0)}M`, cn.x + nodeW / 2, cn.cy + 7);
           }
           ctx.globalAlpha  = 1;
           ctx.textBaseline = 'alphabetic';
@@ -190,7 +194,7 @@ export function WeeklyFlow({ contractors, 'data-testid': testId }: WeeklyFlowPro
         ctx.fillText('Base Value', col2X, baseNode.cy - 6);
         ctx.font         = "10px 'JetBrains Mono', monospace";
         ctx.fillStyle    = CC.t1;
-        ctx.fillText(`£${totalBase}M`, col2X, baseNode.cy + 8);
+        ctx.fillText(`£${fmt(totalBase)}M`, col2X, baseNode.cy + 8);
         ctx.globalAlpha  = 1;
         ctx.textBaseline = 'alphabetic';
 
@@ -210,7 +214,7 @@ export function WeeklyFlow({ contractors, 'data-testid': testId }: WeeklyFlowPro
         ctx.fillText('Variations', col2X, varNode.cy - 4);
         ctx.font         = "10px 'JetBrains Mono', monospace";
         ctx.fillStyle    = CC.t1;
-        ctx.fillText(`£${totalVar}M`, col2X, varNode.cy + 8);
+        ctx.fillText(`£${fmt(totalVar)}M`, col2X, varNode.cy + 8);
         ctx.globalAlpha  = 1;
         ctx.textBaseline = 'alphabetic';
       }
@@ -235,7 +239,7 @@ export function WeeklyFlow({ contractors, 'data-testid': testId }: WeeklyFlowPro
         ctx.fillText('Total Commitment', col3X, totalNode.cy - 12);
         ctx.font         = "bold 16px 'JetBrains Mono', monospace";
         ctx.fillStyle    = CC.cyan;
-        ctx.fillText(`£${grandTotal}M`, col3X, totalNode.cy + 6);
+        ctx.fillText(`£${fmt(grandTotal)}M`, col3X, totalNode.cy + 6);
         ctx.globalAlpha  = 1;
         ctx.textBaseline = 'alphabetic';
       }

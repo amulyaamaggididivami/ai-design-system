@@ -6,8 +6,11 @@ import { easeOutCubic } from '../../canvas/easing';
 import { CC, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
 import type { CommitmentRaceProps } from './types';
 
-const W = 680;
-const H = 300;
+const W         = 680;
+const TRACK_H   = 42;
+const TRACK_GAP = 10;
+const PAD_T     = 24;
+const PAD_B     = 20;
 
 const RACE_COLORS = [CC.green, CC.blue, CC.cyan, CC.amber, CC.red];
 
@@ -18,6 +21,7 @@ export function CommitmentRace({ contractors, 'data-testid': testId }: Commitmen
 
   // Sort by commitmentPct descending
   const sorted = [...contractors].sort((a, b) => (b.percentage ?? 0) - (a.percentage ?? 0));
+  const H      = PAD_T + sorted.length * TRACK_H + Math.max(0, sorted.length - 1) * TRACK_GAP + PAD_B;
 
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
 
@@ -27,10 +31,10 @@ export function CommitmentRace({ contractors, 'data-testid': testId }: Commitmen
     const ctx = setupCanvas(canvas, W, H);
     frameRef.current = 0;
 
-    const padL = W * 0.13;
-    const padR = W * 0.08;
-    const padT = H * 0.08;
-    const trackH = H * 0.14;
+    const padL   = W * 0.13;
+    const padR   = W * 0.08;
+    const padT   = PAD_T;
+    const trackH = TRACK_H;
     const trackW = W - padL - padR;
 
     let raf: number;

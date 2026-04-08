@@ -43,6 +43,24 @@ const contractValueData = {
     { id: 'c3', name: 'Afcons Infra',      base: 89,  variation: 22.1, total: 111.1, percentage: 78 },
     { id: 'c4', name: 'NCC Ltd',             base: 156, variation: 8.9,  total: 164.9, percentage: 95 },
     { id: 'c5', name: 'KEC International',    base: 74,  variation: 31.2, total: 105.2, percentage: 69 },
+    { id: 'c6', name: 'Other Contractors',    base: 98,  variation: 12.2, total: 110.2, percentage: 89 },
+    { id: 'c7', name: 'Unallocated Budget',   base: 30,   variation: 10,    total: 40,     percentage: 36  },
+    { id: 'c8', name: 'L&T Construction',     base: 198, variation: 12.6, total: 210.6, percentage: 92 },
+    { id: 'c9', name: 'L&T Construction',     base: 198, variation: 12.6, total: 210.6, percentage: 92 },
+    { id: 'c10', name: 'L&T Construction',     base: 198, variation: 12.6, total: 210.6, percentage: 92 },
+    { id: 'c11', name: 'L&T Construction',     base: 198, variation: 12.6, total: 210.6, percentage: 92 },
+    { id: 'c12', name: 'L&T Construction',     base: 198, variation: 12.6, total: 210.6, percentage: 92 },
+    { id: 'c13', name: 'L&T Construction',     base: 198, variation: 12.6, total: 210.6, percentage: 92 },
+    { id: 'c14', name: 'L&T Construction',     base: 198, variation: 12.6, total: 210.6, percentage: 92 },
+    { id: 'c15', name: 'L&T Construction',     base: 198, variation: 12.6, total: 210.6, percentage: 92 },
+    { id: 'c16', name: 'L&T Construction',     base: 198, variation: 12.6, total: 210.6, percentage: 92 },
+    { id: 'c17', name: 'L&T Construction',     base: 198, variation: 12.6, total: 210.6, percentage: 92 },
+    { id: 'c18', name: 'L&T Construction',     base: 198, variation: 12.6, total: 210.6, percentage: 92 },
+    { id: 'c19', name: 'L&T Construction',     base: 198, variation: 12.6, total: 210.6, percentage: 92 },
+    { id: 'c20', name: 'L&T Construction',     base: 198, variation: 12.6, total: 210.6, percentage: 92 },
+    { id: 'c21', name: 'L&T Construction',     base: 198, variation: 12.6, total: 210.6, percentage: 92 },
+    { id: 'c22', name: 'L&T Construction',     base: 198, variation: 12.6, total: 210.6, percentage: 92 },
+    
   ],
   totals: { base: 659, variation: 93.2, total: 752.2 },
 };
@@ -93,11 +111,11 @@ const ewCategories = [
  * EWOpenContractorRow: { id, name, abbreviation?, count? }
  */
 const contractorRankContractors = [
-  { id: 'c1', name: 'Tata Projects',     abbreviation: 'Tata',   count: 7 },
-  { id: 'c3', name: 'Afcons Infra',      abbreviation: 'Afcons', count: 4 },
-  { id: 'c2', name: 'L&T Construction',  abbreviation: 'L&T',    count: 3 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 2 },
-  { id: 'c4', name: 'NCC Ltd',           abbreviation: 'NCC',    count: 2 },
+  { id: 'c1', name: 'Tata Projects',     abbreviation: 'Tata Prohecttttt',   count: 7 },
+  { id: 'c3', name: 'Afcons Infra',      abbreviation: 'Afconssssss', count: 4 },
+  { id: 'c2', name: 'L&T Construction',  abbreviation: 'L&Tsssssss',    count: 3 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KECcccccc',    count: 2 },
+  { id: 'c4', name: 'NCC Ltd',           abbreviation: 'NCCcccccc',    count: 2 },
 ];
 
 /**
