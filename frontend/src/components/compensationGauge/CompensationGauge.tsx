@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 
 import { setupCanvas } from '../../canvas/canvasUtils';
-import { CC, rgb, drawGlow } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, rgb, drawGlow } from '../../canvas/canvasUtils';
 import { easeOutBack, easeOutCubic } from '../../canvas/easing';
 import type { CompensationGaugeProps } from './types';
 
@@ -71,7 +71,7 @@ export function CompensationGauge({ pct, confirmed, total, 'data-testid': testId
       ].forEach(({ label, angle }) => {
         const lx = cx + Math.cos(angle) * (R + 46);
         const ly = cy + Math.sin(angle) * (R + 46);
-        ctx.font = "13px 'JetBrains Mono', monospace";
+        ctx.font = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle = rgb(CC.t3, 0.55);
         ctx.textAlign = 'center';
         ctx.fillText(label, lx, ly + 3);
@@ -144,7 +144,7 @@ export function CompensationGauge({ pct, confirmed, total, 'data-testid': testId
       if (progress > 0.5) {
         const fade = Math.min(1, (progress - 0.5) / 0.5);
         ctx.globalAlpha = fade;
-        ctx.font = `bold 22px 'JetBrains Mono', monospace`;
+        ctx.font = `500 24px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle = gaugeColor;
         ctx.textAlign = 'center';
         ctx.fillText(`${Math.round(pct * needleP)}%`, cx, cy - 38);
@@ -155,12 +155,12 @@ export function CompensationGauge({ pct, confirmed, total, 'data-testid': testId
       if (progress > 0.7) {
         const fade = Math.min(1, (progress - 0.7) / 0.3);
         ctx.globalAlpha = fade;
-        ctx.font = "13px 'JetBrains Mono', monospace";
-        ctx.fillStyle = CC.t2;
+        ctx.font = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.fillStyle = AXIS_LABEL.color;
         ctx.textAlign = 'center';
         ctx.fillText('NCEs confirmed', cx, cy + 32);
-        ctx.font = "bold 11px 'JetBrains Mono', monospace";
-        ctx.fillStyle = CC.t2;
+        ctx.font = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.fillStyle = AXIS_LABEL.color;
         ctx.fillText(`${confirmed} of ${total} NCEs are confirmed compensation events`, cx, cy + 52);
         ctx.globalAlpha = 1;
       }
@@ -181,7 +181,7 @@ export function CompensationGauge({ pct, confirmed, total, 'data-testid': testId
         if (i % 5 === 0) {
           const lx = cx + Math.cos(tickAngle) * (R + 18);
           const ly = cy + Math.sin(tickAngle) * (R + 18);
-          ctx.font = "11px 'JetBrains Mono', monospace";
+          ctx.font = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
           ctx.fillStyle = rgb(CC.t3, 0.45);
           ctx.textAlign = 'center';
           ctx.fillText(`${i * 10}%`, lx, ly + 3);

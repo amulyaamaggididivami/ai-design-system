@@ -3,7 +3,7 @@ import { useRef, useEffect } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
 import { tickHoverProgress, easeOutCubic } from '../../canvas/easing';
-import { CC, rgb, drawGlow, setupCanvas, drawCrosshair } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, rgb, drawGlow, setupCanvas, drawCrosshair } from '../../canvas/canvasUtils';
 import type { QuotationTrendProps } from './types';
 
 const W = 680;
@@ -63,8 +63,8 @@ export function QuotationTrend({ trend = [], 'data-testid': testId }: QuotationT
         ctx.lineTo(padL + chartW, y);
         ctx.stroke();
         ctx.setLineDash([]);
-        ctx.font = "10px 'JetBrains Mono', monospace";
-        ctx.fillStyle = rgb(CC.t4, 0.6);
+        ctx.font = AXIS_LABEL.font;
+        ctx.fillStyle = AXIS_LABEL.color;
         ctx.textAlign = 'right';
         ctx.fillText(String(Math.round(maxCount * frac)), padL - 6, y + 3);
       });
@@ -73,15 +73,15 @@ export function QuotationTrend({ trend = [], 'data-testid': testId }: QuotationT
       ctx.save();
       ctx.translate(12, padT + chartH / 2);
       ctx.rotate(-Math.PI / 2);
-      ctx.font = "11px 'JetBrains Mono', monospace";
-      ctx.fillStyle = rgb(CC.t3, 0.5);
+      ctx.font = AXIS_LABEL.font;
+      ctx.fillStyle = AXIS_LABEL.color;
       ctx.textAlign = 'center';
       ctx.fillText('Submissions', 0, 0);
       ctx.restore();
 
       // X-axis label
-      ctx.font = "11px 'JetBrains Mono', monospace";
-      ctx.fillStyle = rgb(CC.t3, 0.5);
+      ctx.font = AXIS_LABEL.font;
+      ctx.fillStyle = AXIS_LABEL.color;
       ctx.textAlign = 'center';
       ctx.fillText('Week', padL + chartW / 2, H - 6);
 
@@ -165,15 +165,15 @@ export function QuotationTrend({ trend = [], 'data-testid': testId }: QuotationT
 
         // Count label above point
         if (hp > 0 || isPeak) {
-          ctx.font = `bold 10px 'JetBrains Mono', monospace`;
+          ctx.font = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
           ctx.fillStyle = CC.cyan;
           ctx.textAlign = 'center';
           ctx.fillText(String(pt.point.count), pt.x, pt.y - 10);
         }
 
         // Week label below axis
-        ctx.font = "10px 'JetBrains Mono', monospace";
-        ctx.fillStyle = hp > 0 ? CC.cyan : rgb(CC.t3, 0.6);
+        ctx.font = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.fillStyle = hp > 0 ? CC.cyan : AXIS_LABEL.color;
         ctx.textAlign = 'center';
         ctx.fillText(pt.point.week, pt.x, H - padB + 14);
       });

@@ -3,7 +3,7 @@ import { useRef, useEffect } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { tickHoverProgress, easeOutQuart } from '../../canvas/easing';
-import { CC, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
 import type { SeverityBandsProps } from './types';
 
 const W = 680;
@@ -132,19 +132,19 @@ export function SeverityBands({ severities, 'data-testid': testId }: SeverityBan
           ctx.globalAlpha = fade;
 
           // Severity name — top above band
-          ctx.font = `bold 10px 'JetBrains Mono', monospace`;
+          ctx.font = `bold ` + AXIS_LABEL.font;
           ctx.fillStyle = hp > 0 ? color : rgb(color, 0.9);
           ctx.textAlign = 'center';
           ctx.fillText(sev.severity, cx, padT - 12);
 
           // Count — inside band
-          ctx.font = `bold ${fullW > 80 ? '18' : '13'}px 'JetBrains Mono', monospace`;
+          ctx.font = `bold ` + AXIS_LABEL.font;
           ctx.fillStyle = hp > 0 ? CC.t1 : rgb(CC.t1, 0.85);
           ctx.fillText(String(sev.count), cx, padT + bandH / 2 + 6);
 
           // Pct below band
-          ctx.font = "9px 'JetBrains Mono', monospace";
-          ctx.fillStyle = hp > 0 ? color : rgb(CC.t3, 0.7);
+          ctx.font = AXIS_LABEL.font;
+          ctx.fillStyle = hp > 0 ? color : AXIS_LABEL.color;
           ctx.fillText(`${Math.round((sev.count / total) * 100)}%`, cx, padT + bandH + 18);
           ctx.globalAlpha = 1;
         }

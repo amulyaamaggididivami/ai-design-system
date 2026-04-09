@@ -3,7 +3,7 @@ import { useRef, useEffect } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { stagger, tickHoverProgress, easeOutQuart } from '../../canvas/easing';
-import { CC, PALETTE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, LEGEND_LABEL, PALETTE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
 import type { VariationSplitProps } from './types';
 
 const W = 680;
@@ -73,7 +73,7 @@ export function VariationSplit({ contractors = [], 'data-testid': testId }: Vari
         });
 
         // Contractor name
-        ctx.font = `9px 'JetBrains Mono', monospace`;
+        ctx.font = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle = rgb(accentColor, 0.85);
         ctx.textAlign = 'right';
         ctx.fillText(c.abbreviation ?? c.name.slice(0, 6), padL - 8, y + barH / 2 + 4);
@@ -94,7 +94,7 @@ export function VariationSplit({ contractors = [], 'data-testid': testId }: Vari
 
           // Implemented count
           if (implW > 28 && localP > 0.5) {
-            ctx.font = `bold 10px 'JetBrains Mono', monospace`;
+            ctx.font = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
             ctx.fillStyle = hpImpl > 0 ? CC.green : rgb(CC.t1, 0.8);
             ctx.textAlign = 'center';
             ctx.fillText(String(c.implemented ?? 0), padL + implW / 2, y + barH / 2 + 4);
@@ -114,7 +114,7 @@ export function VariationSplit({ contractors = [], 'data-testid': testId }: Vari
 
           // Unimplemented count
           if (unimplW > 28 && localP > 0.5) {
-            ctx.font = `${hpUn > 0 ? 'bold ' : ''}10px 'JetBrains Mono', monospace`;
+            ctx.font = `${hpUn > 0 ? '500' : '500'} 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
             ctx.fillStyle = hpUn > 0 ? CC.amber : rgb(CC.t3, 0.8);
             ctx.textAlign = 'center';
             ctx.fillText(String(c.unimplemented ?? 0), padL + implW + unimplW / 2, y + barH / 2 + 4);
@@ -135,12 +135,12 @@ export function VariationSplit({ contractors = [], 'data-testid': testId }: Vari
       // Legend below bars — centered over track
       const legendY = startY + totalH + 24;
       const trackCX = padL + trackW / 2;
-      ctx.font = "9px 'JetBrains Mono', monospace";
+      ctx.font = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
       ctx.textAlign = 'right';
       ctx.fillStyle = CC.green;
       ctx.fillText('■ Implemented', trackCX - 10, legendY);
       ctx.textAlign = 'left';
-      ctx.fillStyle = rgb(CC.t3, 0.7);
+      ctx.fillStyle = LEGEND_LABEL.color;
       ctx.fillText('■ Unimplemented', trackCX + 10, legendY);
 
       raf = requestAnimationFrame(draw);

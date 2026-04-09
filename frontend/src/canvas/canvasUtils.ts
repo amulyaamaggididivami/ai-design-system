@@ -6,24 +6,55 @@
 // --- Color tokens ---
 
 export const CC = {
-  bg:     '#070B12',
+  bg:     '#0C0E12',
   bgL:    '#0C1420',
-  sf:     '#111B28',
-  bd:     '#1C2D42',
-  blue:   '#3B8BF6',
-  cyan:   '#22D3EE',
-  orange: '#F0813A',
-  red:    '#F06060',
-  green:  '#34D399',
-  purple: '#A78BFA',
-  amber:  '#FBBF24',
-  t1:     '#F1F5F9',
-  t2:     '#94A3B8',
-  t3:     '#64748B',
+  sf:     '#13161B',
+  bd:     '#22262F',
+  blue:   '#2970FF',
+  cyan:   '#36BFFA',
+  orange: '#EF6820',
+  red:    '#D92D20',
+  green:  '#16B364',
+  purple: '#7A5AF8',
+  amber:  '#FAC515',
+  t1:     '#F7F7F7',
+  t2:     '#94979C',
+  t3:     '#94979C',
   t4:     '#334155',
 } as const;
 
 export const PALETTE = [CC.blue, CC.cyan, CC.amber, CC.purple, CC.green, CC.red];
+
+// --- Typography tokens ---
+
+/**
+ * Axis label style — applied to all x-axis and y-axis tick labels, titles, and legends.
+ * Change once here to update every chart.
+ *   color:       #94979C  (CC.t2)
+ *   font-family: Satoshi Variable, DM Sans (SANS fallback)
+ *   font-size:   12px
+ *   font-weight: 400
+ *   line-height: 18px (informational — not applicable in canvas ctx.font)
+ */
+export const AXIS_LABEL = {
+  font:  "400 12px 'Satoshi Variable', 'DM Sans', sans-serif",
+  color: CC.t2,   // #94979C
+} as const;
+
+/**
+ * Legend label style — applied to all chart legend items (swatches, keys, footers).
+ * Change once here to update every chart legend.
+ *   color:       #94979C  (CC.t2)
+ *   font-family: Satoshi Variable, DM Sans (SANS fallback)
+ *   font-size:   12px
+ *   font-weight: 400
+ *   line-height: 18px (informational — not applicable in canvas ctx.font)
+ *   text-align:  center  (set ctx.textAlign = 'center' at the draw call site)
+ */
+export const LEGEND_LABEL = {
+  font:  "400 12px 'Satoshi Variable', 'DM Sans', sans-serif",
+  color: CC.t2,   // #94979C
+} as const;
 
 // --- Color helpers ---
 

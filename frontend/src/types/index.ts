@@ -200,7 +200,7 @@ export type QuotationTrendPoint = { week: string; count: number; value: number }
 
 export type KeyHighlightChip = { value: string; label: string; color?: string };
 export type KeyHighlightBadge = { text: string; severity: 'red' | 'amber' | 'green' };
-export type KeyHighlightDot = { val: number; color: string; name: string };
+export type KeyHighlightDot = { val: number; color?: string; name: string };
 export type FlagsListRow = { text: string; tag: string; date: string; severity: 'red' | 'amber' | 'green' };
 export type ComparisonRow = { label: string; cells: string[]; color?: string };
 
@@ -208,7 +208,7 @@ export type ScorecardRow = {
   name: string;
   value: string;
   pct: number;        // 0–100, drives the inline bar width
-  color: string;
+  color?: string;
   badge?: string;
   badgeSeverity?: 'green' | 'amber' | 'red';
   sublabel?: string;
@@ -217,9 +217,9 @@ export type ScorecardRow = {
 export type KeyHighlightBlock =
   | { type: 'stats';           items: Array<{ value: string; label: string; color?: string }>; takeaway?: string }
   | { type: 'chips';           items: KeyHighlightChip[]; takeaway?: string }
-  | { type: 'ranked';          items: Array<{ name: string; value: string; color: string; kpiLabel?: string }>; takeaway?: string }
-  | { type: 'proportion';      leftPct: number; leftLabel: string; leftValue: string; leftColor: string; rightPct: number; rightLabel: string; rightValue: string; rightColor: string; chips?: KeyHighlightChip[]; takeaway?: string }
-  | { type: 'ring';            pct: number; label: string; color: string; chips?: KeyHighlightChip[]; takeaway?: string }
+  | { type: 'ranked';          items: Array<{ name: string; value: string; color?: string; kpiLabel?: string }>; takeaway?: string }
+  | { type: 'proportion';      leftPct: number; leftLabel: string; leftValue: string; leftColor?: string; rightPct: number; rightLabel: string; rightValue: string; rightColor?: string; chips?: KeyHighlightChip[]; takeaway?: string }
+  | { type: 'ring';            pct: number; label: string; color?: string; chips?: KeyHighlightChip[]; takeaway?: string }
   | { type: 'badges';          items: KeyHighlightBadge[]; textSize?: number; takeaway?: string }
   | { type: 'dot-strip';       min: number; max: number; unit: string; dots: KeyHighlightDot[]; chips?: KeyHighlightChip[]; takeaway?: string }
   | { type: 'scorecard-rows';  items: ScorecardRow[]; takeaway?: string }

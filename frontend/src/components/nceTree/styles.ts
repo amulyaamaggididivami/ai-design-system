@@ -1,5 +1,5 @@
 export const containerStyle: React.CSSProperties = {
-  background: '#070B12',
+  background: '#13161B',
   borderRadius: 12,
   overflow: 'hidden',
 };

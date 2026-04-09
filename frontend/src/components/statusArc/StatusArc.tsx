@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
-import { CC, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
 import type { StatusArcProps } from './types';
 
 const W = 460;
@@ -95,7 +95,7 @@ export function StatusArc({ segments, title, 'data-testid': testId }: StatusArcP
         // Count label at midpoint
         const midX = (cxCenter + sx) / 2;
         const midY = (cyCenter + sy) / 2;
-        ctx.font = "bold 9px 'JetBrains Mono', monospace";
+        ctx.font = `bold ` + AXIS_LABEL.font;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = rgb(color, 0.85);
@@ -124,7 +124,7 @@ export function StatusArc({ segments, title, 'data-testid': testId }: StatusArcP
         ctx.fill();
 
         // Label inside
-        ctx.font = `bold 9px 'JetBrains Mono', monospace`;
+        ctx.font = `bold ` + AXIS_LABEL.font;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = rgb(CC.t1, 0.9);
@@ -156,12 +156,12 @@ export function StatusArc({ segments, title, 'data-testid': testId }: StatusArcP
       ctx.fillStyle = centerGrad;
       ctx.fill();
 
-      ctx.font = `bold 8px 'JetBrains Mono', monospace`;
+      ctx.font = AXIS_LABEL.font;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillStyle = rgb(CC.t1, 0.9);
       ctx.fillText('EW Status', cxCenter, cyCenter - 4);
-      ctx.font = `bold 10px 'JetBrains Mono', monospace`;
+      ctx.font = `bold ` + AXIS_LABEL.font;
       ctx.fillStyle = CC.t1;
       ctx.fillText(String(total), cxCenter, cyCenter + 8);
 

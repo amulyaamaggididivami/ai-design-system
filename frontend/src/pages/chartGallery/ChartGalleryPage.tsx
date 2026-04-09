@@ -194,11 +194,11 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
   q1: {
     type: 'stats',
     items: [
-      { value: '£752.2M', label: 'total portfolio commitment — base plus all approved variations', color: '#3B8BF6' },
-      { value: '£659M',   label: 'base contract value across all 5 active contractors',            color: '#22D3EE' },
-      { value: '£93.2M',  label: 'variations approved — 12.4% on top of base contract value',     color: '#FBBF24' },
-      { value: 'L&T',     label: 'largest share at £210.6M total — 28% of the full portfolio',    color: '#A78BFA' },
-      { value: 'KEC 42%', label: 'highest variation-to-base ratio — 3× the portfolio average',    color: '#34D399' },
+      { value: '£752.2M', label: 'total portfolio commitment — base plus all approved variations',  },
+      { value: '£659M',   label: 'base contract value across all 5 active contractors',           },
+      { value: '£93.2M',  label: 'variations approved — 12.4% on top of base contract value',     },
+      { value: 'L&T',     label: 'largest share at £210.6M total — 28% of the full portfolio',     },
+      { value: 'KEC 42%', label: 'highest variation-to-base ratio — 3× the portfolio average',    },
     ],
     takeaway: 'L&T and NCC together anchor 50% of portfolio value. KEC\'s 42% variation ratio is 3× the average — the clearest single-contractor risk flag.',
   },
@@ -221,9 +221,9 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
   q3: {
     type: 'chips',
     items: [
-      { value: '84%',    label: 'portfolio-weighted average commitment — 16 points below full close', color: '#3B8BF6' },
-      { value: '26 pts', label: 'spread from NCC (95%) to KEC (69%) — widest performance gap',       color: '#FBBF24' },
-      { value: '2 of 5', label: 'contractors below the 80% target — Afcons at 78% and KEC at 69%',  color: '#F06060' },
+      { value: '84%',    label: 'portfolio-weighted average commitment — 16 points below full close',  },
+      { value: '26 pts', label: 'spread from NCC (95%) to KEC (69%) — widest performance gap',      },
+      { value: '2 of 5', label: 'contractors below the 80% target — Afcons at 78% and KEC at 69%',},
     ],
     takeaway: 'The 26-point spread signals a deeply uneven portfolio — KEC\'s 42% variation ratio is the primary factor keeping its commitment furthest from the finish line.',
   },
@@ -232,10 +232,10 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
   q4: {
     type: 'chips',
     items: [
-      { value: '40 EWs',   label: 'total Early Warnings active across all 5 contractors right now',  color: '#94A3B8' },
-      { value: '18 Open',  label: '45% still active and unresolved — risk actively in flight',       color: '#F06060' },
-      { value: '10 Stuck', label: 'submitted but awaiting decision — in commercial or legal limbo',  color: '#FBBF24' },
-      { value: '30%',      label: 'resolution rate — only 12 of 40 EWs fully closed to date',       color: '#34D399' },
+      { value: '40 EWs',   label: 'total Early Warnings active across all 5 contractors right now',  },
+      { value: '18 Open',  label: '45% still active and unresolved — risk actively in flight',        },
+      { value: '10 Stuck', label: 'submitted but awaiting decision — in commercial or legal limbo',  },
+      { value: '30%',      label: 'resolution rate — only 12 of 40 EWs fully closed to date',       },
     ],
     takeaway: '70% of EWs remain live — the combined open and pending backlog will convert to NCEs if commercial decisions are not accelerated.',
   },
@@ -257,11 +257,11 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
   q6: {
     type: 'scorecard-rows',
     items: [
-      { name: 'Tata',   value: '7 open', pct: 100, color: '#3B8BF6', badge: 'High risk',  badgeSeverity: 'red',   sublabel: '39% of all open EWs' },
-      { name: 'Afcons', value: '4 open', pct: 57,  color: '#FBBF24', badge: 'Elevated',   badgeSeverity: 'amber', sublabel: '22% — combined 61%' },
-      { name: 'L&T',    value: '3 open', pct: 43,  color: '#22D3EE', badge: 'Moderate',   badgeSeverity: 'amber', sublabel: '17% share' },
-      { name: 'NCC',    value: '2 open', pct: 29,  color: '#A78BFA', badge: 'Low risk',   badgeSeverity: 'green', sublabel: '11% — well managed' },
-      { name: 'KEC',    value: '2 open', pct: 29,  color: '#34D399', badge: 'Low risk',   badgeSeverity: 'green', sublabel: '11% — well managed' },
+      { name: 'Tata',   value: '7 open', pct: 100, color: '#3B8BF6', badge: 'High risk',    sublabel: '39% of all open EWs' },
+      { name: 'Afcons', value: '4 open', pct: 57,  color: '#FBBF24', badge: 'Elevated',    sublabel: '22% — combined 61%' },
+      { name: 'L&T',    value: '3 open', pct: 43,  color: '#22D3EE', badge: 'Moderate',  sublabel: '17% share' },
+      { name: 'NCC',    value: '2 open', pct: 29,  color: '#A78BFA', badge: 'Low risk',  sublabel: '11% — well managed' },
+      { name: 'KEC',    value: '2 open', pct: 29,  color: '#34D399', badge: 'Low risk',  sublabel: '11% — well managed' },
     ],
     takeaway: 'Tata holds 39% of open EWs — resolving Tata\'s backlog alone would reduce the total portfolio open count by over a third.',
   },

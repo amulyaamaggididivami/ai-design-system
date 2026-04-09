@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { easeOutQuart, stagger, tickHoverProgress } from '../../canvas/easing';
-import { CC, rgb, drawGlow } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, LEGEND_LABEL, rgb, drawGlow } from '../../canvas/canvasUtils';
 import { useCanvasLoop } from '../../canvas/useCanvasLoop';
 import type { ContractValueOrbProps } from './types';
 
@@ -43,9 +43,9 @@ export function ContractValueOrb({ data, 'data-testid': testId }: ContractValueO
         const totalW = ((con.total ?? 0) / maxCommitment) * barArea * localP;
         const varW   = totalW - baseW;
 
-        // Contractor name
-        ctx.font         = `${hp > 0 ? 'bold ' : ''}10px 'DM Sans', sans-serif`;
-        ctx.fillStyle    = hp > 0 ? color : rgb(CC.t2, 0.8);
+        // Contractor name  y-axis
+        ctx.font         = `${hp > 0 ? '500' : '500'} 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.fillStyle    = hp > 0 ? color : AXIS_LABEL.color;
         ctx.textAlign    = 'right';
         ctx.textBaseline = 'middle';
         ctx.fillText(con.abbreviation ?? con.name.slice(0, 6), x0 - 8, y + BAR_H / 2);
@@ -95,7 +95,7 @@ export function ContractValueOrb({ data, 'data-testid': testId }: ContractValueO
         if (localP > 0.35) {
           const fade = Math.min(1, (localP - 0.35) / 0.4);
           ctx.globalAlpha  = fade;
-          ctx.font         = `bold 9px 'JetBrains Mono', monospace`;
+          ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
           ctx.fillStyle    = hp > 0 ? color : CC.t2;
           ctx.textAlign    = 'left';
           ctx.textBaseline = 'middle';
@@ -114,7 +114,7 @@ export function ContractValueOrb({ data, 'data-testid': testId }: ContractValueO
       // Legend row
       const ly = H - 14;
       ctx.textBaseline = 'middle';
-      ctx.font         = `7px 'DM Sans', sans-serif`;
+      ctx.font         = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
       ctx.textAlign    = 'left';
 
       // Base swatch
@@ -122,7 +122,7 @@ export function ContractValueOrb({ data, 'data-testid': testId }: ContractValueO
       ctx.beginPath();
       ctx.roundRect(PAD.left + NAME_W, ly - 3, 14, 6, 2);
       ctx.fill();
-      ctx.fillStyle = rgb(CC.t3, 0.45);
+      ctx.fillStyle = LEGEND_LABEL.color;
       ctx.fillText('base value', PAD.left + NAME_W + 18, ly);
 
       // Variation swatch
@@ -138,13 +138,13 @@ export function ContractValueOrb({ data, 'data-testid': testId }: ContractValueO
       ctx.lineTo(PAD.left + NAME_W + 101, ly + 3);
       ctx.stroke();
       ctx.setLineDash([]);
-      ctx.fillStyle = rgb(CC.t3, 0.45);
+      ctx.fillStyle = LEGEND_LABEL.color;
       ctx.fillText('approved variations', PAD.left + NAME_W + 112, ly);
 
       // Portfolio total right-aligned
-      ctx.font      = `bold 8px 'JetBrains Mono', monospace`;
+      ctx.font      = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
       ctx.textAlign = 'right';
-      ctx.fillStyle = rgb(CC.t2, 0.6);
+      ctx.fillStyle = LEGEND_LABEL.color;
       ctx.fillText(`Portfolio: £${totals?.total ?? 0}M`, W - 8, ly);
     },
     true,

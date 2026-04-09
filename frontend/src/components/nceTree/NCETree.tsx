@@ -3,7 +3,7 @@ import { useRef, useEffect } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
 import { stagger, tickHoverProgress, easeOutCubic } from '../../canvas/easing';
-import { CC, PALETTE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, PALETTE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
 import type { NCETreeProps } from './types';
 
 const W = 680;
@@ -105,11 +105,11 @@ export function NCETree({ total = 0, byContractor = [], 'data-testid': testId }:
 
           // Name and count labels
           ctx.globalAlpha = leafFade;
-          ctx.font = `bold 9px 'JetBrains Mono', monospace`;
+          ctx.font = AXIS_LABEL.font;
           ctx.fillStyle = hp > 0 ? color : rgb(CC.t2, 0.85);
           ctx.textAlign = 'left';
           ctx.fillText(c.abbreviation ?? c.name.slice(0, 6), lpos.x + leafR + 6, lpos.y - 3);
-          ctx.font = `bold 11px 'JetBrains Mono', monospace`;
+          ctx.font = AXIS_LABEL.font;
           ctx.fillStyle = hp > 0 ? color : CC.t1;
           ctx.fillText(String(c.count ?? 0), lpos.x + leafR + 6, lpos.y + 10);
           ctx.globalAlpha = 1;
@@ -128,12 +128,12 @@ export function NCETree({ total = 0, byContractor = [], 'data-testid': testId }:
       if (progress > 0.4) {
         const fade = Math.min(1, (progress - 0.4) / 0.4);
         ctx.globalAlpha = fade;
-        ctx.font = `bold 18px 'JetBrains Mono', monospace`;
+        ctx.font = `500 24px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle = CC.t1;
         ctx.textAlign = 'center';
         ctx.fillText(String(total), rootX, rootY + 5);
-        ctx.font = `8px 'JetBrains Mono', monospace`;
-        ctx.fillStyle = CC.t3;
+        ctx.font = AXIS_LABEL.font;
+        ctx.fillStyle = AXIS_LABEL.color;
         ctx.fillText('NCEs', rootX, rootY + 18);
         ctx.globalAlpha = 1;
       }

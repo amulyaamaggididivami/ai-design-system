@@ -3,7 +3,7 @@ import { useRef, useEffect } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { dampedPulse } from '../../canvas/easing';
-import { CC, rgb, drawGlow, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, rgb, drawGlow, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
 import type { ContractorRankProps } from './types';
 
 const W = 780;
@@ -94,7 +94,7 @@ export function ContractorRank({ contractors, 'data-testid': testId }: Contracto
         }
 
         // Rank badge top-left
-        ctx.font         = `bold 8px 'JetBrains Mono', monospace`;
+        ctx.font         = `bold ` + AXIS_LABEL.font;
         ctx.textAlign    = 'left';
         ctx.textBaseline = 'top';
         ctx.fillStyle    = rgb(color, 0.5 + hp * 0.35);
@@ -117,21 +117,21 @@ export function ContractorRank({ contractors, 'data-testid': testId }: Contracto
         ctx.stroke();
 
         // ShortName inside circle
-        ctx.font         = `bold ${Math.min(10, cardW * 0.11)}px 'JetBrains Mono', monospace`;
+        ctx.font         = `bold ` + AXIS_LABEL.font;
         ctx.textAlign    = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle    = rgb(CC.t1, 0.9);
         ctx.fillText(contractor.abbreviation ?? contractor.name.slice(0, 6), photoX, photoY);
 
         // Open count — large
-        ctx.font         = `bold ${Math.min(18, cardW * 0.18)}px 'JetBrains Mono', monospace`;
+        ctx.font         = `bold 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.textBaseline = 'alphabetic';
         ctx.fillStyle    = rgb(color, 0.9 + hp * 0.1);
         ctx.fillText(String(contractor.count ?? 0), photoX, cardY + cardH * 0.76);
 
         // "open EWs" label
-        ctx.font      = `8px 'JetBrains Mono', monospace`;
-        ctx.fillStyle = rgb(CC.t2, 0.6);
+        ctx.font      = AXIS_LABEL.font;
+        ctx.fillStyle = AXIS_LABEL.color;
         ctx.fillText('open EWs', photoX, cardY + cardH * 0.88);
 
         // Tooltip with rank, %, risk level

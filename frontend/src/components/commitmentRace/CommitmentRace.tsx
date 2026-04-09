@@ -3,7 +3,7 @@ import { useRef, useEffect } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
 import { easeOutCubic } from '../../canvas/easing';
-import { CC, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
 import type { CommitmentRaceProps } from './types';
 
 const W = 680;
@@ -118,15 +118,15 @@ export function CommitmentRace({ contractors = [], 'data-testid': testId }: Comm
         );
 
         // Runner percentage label
-        ctx.font = `bold 10px 'JetBrains Mono', monospace`;
+        ctx.font = `bold ` + AXIS_LABEL.font;
         ctx.fillStyle = rgb(color, 0.9 + hp * 0.1);
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
         ctx.fillText(`${contractor.percentage ?? 0}%`, runnerX + 10, trackY + trackH / 2);
 
         // Left label: contractor abbreviation
-        ctx.font = `${hp > 0 ? 'bold ' : ''}10px 'JetBrains Mono', monospace`;
-        ctx.fillStyle = hp > 0 ? color : rgb(CC.t2, 0.8);
+        ctx.font = `${hp > 0 ? 'bold ' : ''}` + AXIS_LABEL.font;
+        ctx.fillStyle = hp > 0 ? color : AXIS_LABEL.color;
         ctx.textAlign = 'right';
         ctx.fillText(contractor.abbreviation ?? contractor.name.slice(0, 6), padL - 8, trackY + trackH / 2);
       });

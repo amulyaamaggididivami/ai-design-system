@@ -1,20 +1,40 @@
+import type React from 'react';
+import { CC } from '../../canvas/canvasUtils';
 import type { KeyHighlightBlock, KeyHighlightChip, KeyHighlightBadge, KeyHighlightDot, ScorecardRow, FlagsListRow, ComparisonRow } from '../../types';
 
 // ─── Shared palette & fonts ──────────────────────────────────────────────────
 const C = {
-  bg:     'rgba(255,255,255,0.025)',
-  border: 'rgba(28,45,66,0.9)',
-  t1:     '#F1F5F9',
-  t2:     '#CBD5E1',
-  t3:     '#94A3B8',
-  t4:     '#64748B',
-  red:    '#F06060',
-  amber:  '#FBBF24',
-  green:  '#34D399',
+  bg:     CC.sf,
+  border: CC.bd,
+  t1:     CC.t1,
+  t2:     CC.t2,
+  t3:     CC.t3,
+  t4:     CC.t4,
+  red:    CC.red,
+  amber:  CC.amber,
+  green:  CC.green,
 } as const;
 
 const MONO = "'JetBrains Mono', monospace";
-const SANS = "'DM Sans', sans-serif";
+const SANS = "'Satoshi Variable', 'DM Sans', sans-serif";
+
+// Typography spec — Display xs / Medium — applied to value text
+const VALUE: React.CSSProperties = {
+  color:      '#F7F7F7',
+  fontFamily: SANS,
+  fontSize:   24,
+  fontWeight: 500,
+  lineHeight: '32px',
+};
+
+// Typography spec — Text sm / Regular — applied to label/description text
+const LABEL: React.CSSProperties = {
+  color:      '#CECFD2',
+  fontFamily: SANS,
+  fontSize:   14,
+  fontWeight: 400,
+  lineHeight: '20px',
+};
 
 // ─── ChipRow — shared small chip row used by several block types ─────────────
 function ChipRow({ chips }: { chips: KeyHighlightChip[] }) {
@@ -31,10 +51,10 @@ function ChipRow({ chips }: { chips: KeyHighlightChip[] }) {
             borderRadius: 5,
           }}
         >
-          <span style={{ fontSize: 13, fontWeight: 700, color: chip.color ?? C.t1, fontFamily: MONO }}>
+          <span style={{ ...VALUE, color: chip.color ?? C.t1 }}>
             {chip.value}
           </span>
-          <span style={{ fontSize: 11, color: C.t4, fontFamily: SANS, lineHeight: 1.4 }}>
+          <span style={{ ...LABEL, flex: 1 }}>
             {chip.label}
           </span>
         </div>
@@ -54,17 +74,15 @@ function Stats({ items }: { items: Array<{ value: string; label: string; color?:
           key={i}
           style={{
             flex: 1, padding: '12px 16px',
-            background: C.bg,
             border: `1px solid ${C.border}`,
-            borderTop: `2px solid ${item.color ?? C.t4}`,
-            borderRadius: 7,
-            textAlign: 'center' as const,
+            background: C.bg,
+            textAlign: 'left' as const,
           }}
         >
-          <div style={{ fontSize: 22, fontWeight: 700, color: item.color ?? C.t1, fontFamily: MONO, lineHeight: 1.15 }}>
+          <div style={{ ...VALUE, color: item.color ?? C.t1 }}>
             {item.value}
           </div>
-          <div style={{ fontSize: 11, color: C.t4, fontFamily: SANS, marginTop: 5, lineHeight: 1.45 }}>
+          <div style={{ ...LABEL, marginTop: 5 }}>
             {item.label}
           </div>
         </div>
@@ -76,7 +94,7 @@ function Stats({ items }: { items: Array<{ value: string; label: string; color?:
 // ─── Ranked ──────────────────────────────────────────────────────────────────
 // Name chip + value + description rows — each with colored left border
 // Used for: Q2, Q5, Q6
-function Ranked({ items }: { items: Array<{ name: string; value: string; color: string; kpiLabel?: string }> }) {
+function Ranked({ items }: { items: Array<{ name: string; value: string; color?: string; kpiLabel?: string }> }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 5 }}>
       {items.map((item, i) => (
@@ -87,23 +105,23 @@ function Ranked({ items }: { items: Array<{ name: string; value: string; color: 
             padding: '9px 14px',
             background: C.bg,
             border: `1px solid ${C.border}`,
-            borderLeft: `3px solid ${item.color}`,
+            borderLeft: `3px solid ${item.color ?? C.t2}`,
             borderRadius: 6,
           }}
         >
           <span
             style={{
-              fontSize: 11, fontWeight: 600, color: item.color,
-              background: item.color + '22', padding: '2px 8px',
+              fontSize: 11, fontWeight: 600, color: item.color ?? C.t2,
+              background: (item.color ?? C.t2) + '22', padding: '2px 8px',
               borderRadius: 4, fontFamily: SANS, flexShrink: 0,
             }}
           >
             {item.name}
           </span>
-          <span style={{ fontSize: 18, fontWeight: 700, color: item.color, fontFamily: MONO, minWidth: 70, flexShrink: 0 }}>
+          <span style={{ ...VALUE, color: item.color ?? C.t1, minWidth: 70, flexShrink: 0 }}>
             {item.value}
           </span>
-          <span style={{ fontSize: 11, color: C.t4, fontFamily: SANS, flex: 1, lineHeight: 1.45 }}>
+          <span style={{ ...LABEL, flex: 1 }}>
             {item.kpiLabel}
           </span>
         </div>
@@ -125,13 +143,13 @@ function Chips({ items }: { items: KeyHighlightChip[] }) {
             flex: 1, padding: '14px 16px',
             background: C.bg,
             border: `1px solid ${(item.color ? item.color + '30' : C.border)}`,
-            borderRadius: 7,
+            // borderRadius: 7,
           }}
         >
-          <div style={{ fontSize: 26, fontWeight: 700, color: item.color ?? C.t1, fontFamily: MONO, lineHeight: 1.1 }}>
+          <div style={{ ...VALUE, color: item.color ?? C.t1 }}>
             {item.value}
           </div>
-          <div style={{ fontSize: 14, color: C.t4, fontFamily: SANS, marginTop: 6, lineHeight: 1.5 }}>
+          <div style={{ ...LABEL, marginTop: 6 }}>
             {item.label}
           </div>
         </div>
@@ -172,7 +190,7 @@ function Badges({ items }: { items: KeyHighlightBadge[] }) {
                 flexShrink: 0, marginTop: 5,
               }}
             />
-            <span style={{ fontSize: 12, color: C.t2, fontFamily: SANS, lineHeight: 1.6 }}>
+            <span style={{ ...LABEL }}>
               {item.text}
             </span>
           </div>
@@ -212,6 +230,7 @@ function DotStrip({ min, max, unit, dots, chips }: {
         {/* Dots */}
         {dots.map((dot, i) => {
           const pct = ((dot.val - min) / range) * 100;
+          const dotColor = dot.color ?? CC.blue;
           const above = i % 2 === 0; // alternate label side to reduce crowding
           return (
             <div
@@ -225,10 +244,10 @@ function DotStrip({ min, max, unit, dots, chips }: {
             >
               {above && (
                 <div style={{ textAlign: 'center' as const, marginBottom: 2 }}>
-                  <div style={{ fontSize: 9, color: dot.color, fontFamily: SANS, whiteSpace: 'nowrap' as const }}>
+                  <div style={{ fontSize: 9, color: dotColor, fontFamily: SANS, whiteSpace: 'nowrap' as const }}>
                     {dot.name}
                   </div>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: dot.color, fontFamily: MONO, whiteSpace: 'nowrap' as const }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: dotColor, fontFamily: MONO, whiteSpace: 'nowrap' as const }}>
                     {dot.val}{unit}
                   </div>
                 </div>
@@ -236,17 +255,17 @@ function DotStrip({ min, max, unit, dots, chips }: {
               {/* Dot */}
               <div
                 style={{
-                  width: 10, height: 10, borderRadius: '50%', background: dot.color,
-                  boxShadow: `0 0 8px ${dot.color}70`,
+                  width: 10, height: 10, borderRadius: '50%', background: dotColor,
+                  boxShadow: `0 0 8px ${dotColor}70`,
                   margin: above ? '0 auto' : '26px auto 0',
                 }}
               />
               {!above && (
                 <div style={{ textAlign: 'center' as const, marginTop: 4 }}>
-                  <div style={{ fontSize: 9, color: dot.color, fontFamily: SANS, whiteSpace: 'nowrap' as const }}>
+                  <div style={{ fontSize: 9, color: dotColor, fontFamily: SANS, whiteSpace: 'nowrap' as const }}>
                     {dot.name}
                   </div>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: dot.color, fontFamily: MONO, whiteSpace: 'nowrap' as const }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: dotColor, fontFamily: MONO, whiteSpace: 'nowrap' as const }}>
                     {dot.val}{unit}
                   </div>
                 </div>
@@ -264,34 +283,36 @@ function DotStrip({ min, max, unit, dots, chips }: {
 // Horizontal split bar showing left/right percentage breakdown
 // Used for: Q13
 function Proportion({ leftPct, leftLabel, leftValue, leftColor, rightPct, rightLabel, rightValue, rightColor, chips }: {
-  leftPct: number; leftLabel: string; leftValue: string; leftColor: string;
-  rightPct: number; rightLabel: string; rightValue: string; rightColor: string;
+  leftPct: number; leftLabel: string; leftValue: string; leftColor?: string;
+  rightPct: number; rightLabel: string; rightValue: string; rightColor?: string;
   chips?: KeyHighlightChip[];
 }) {
+  const lColor = leftColor ?? CC.blue;
+  const rColor = rightColor ?? CC.cyan;
   return (
     <div>
       {/* Split bar */}
       <div style={{ display: 'flex', borderRadius: 6, overflow: 'hidden', height: 36, marginBottom: 8 }}>
         <div
           style={{
-            width: `${leftPct}%`, background: leftColor + '38',
+            width: `${leftPct}%`, background: lColor + '38',
             display: 'flex', alignItems: 'center', justifyContent: 'flex-end',
             paddingRight: 12,
           }}
         >
-          <span style={{ fontSize: 12, fontWeight: 700, color: leftColor, fontFamily: MONO }}>
+          <span style={{ fontSize: 12, fontWeight: 700, color: lColor, fontFamily: MONO }}>
             {leftValue}
           </span>
         </div>
         <div style={{ width: 1, background: 'rgba(255,255,255,0.12)', flexShrink: 0 }} />
         <div
           style={{
-            width: `${rightPct}%`, background: rightColor + '2A',
+            width: `${rightPct}%`, background: rColor + '2A',
             display: 'flex', alignItems: 'center',
             paddingLeft: 12,
           }}
         >
-          <span style={{ fontSize: 12, fontWeight: 700, color: rightColor, fontFamily: MONO }}>
+          <span style={{ fontSize: 12, fontWeight: 700, color: rColor, fontFamily: MONO }}>
             {rightValue}
           </span>
         </div>
@@ -299,12 +320,12 @@ function Proportion({ leftPct, leftLabel, leftValue, leftColor, rightPct, rightL
       {/* Labels */}
       <div style={{ display: 'flex', marginBottom: chips ? 4 : 0 }}>
         <div style={{ width: `${leftPct}%` }}>
-          <span style={{ fontSize: 10, color: leftColor, fontFamily: SANS }}>
+          <span style={{ fontSize: 10, color: lColor, fontFamily: SANS }}>
             {leftPct}% {leftLabel}
           </span>
         </div>
         <div style={{ width: `${rightPct}%`, paddingLeft: 10 }}>
-          <span style={{ fontSize: 10, color: rightColor, fontFamily: SANS }}>
+          <span style={{ fontSize: 10, color: rColor, fontFamily: SANS }}>
             {rightPct}% {rightLabel}
           </span>
         </div>
@@ -317,10 +338,11 @@ function Proportion({ leftPct, leftLabel, leftValue, leftColor, rightPct, rightL
 // ─── Ring ────────────────────────────────────────────────────────────────────
 // Mini SVG donut ring showing an overall % + chips on the right
 // Used for: Q10
-function Ring({ pct, label, color, chips }: {
-  pct: number; label: string; color: string;
+function Ring({ pct, label, color: colorProp, chips }: {
+  pct: number; label: string; color?: string;
   chips?: KeyHighlightChip[];
 }) {
+  const color = colorProp ?? CC.blue;
   const r      = 30;
   const cx     = 40;
   const cy     = 40;
@@ -354,7 +376,7 @@ function Ring({ pct, label, color, chips }: {
       </div>
       {/* Label + chips */}
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 12, color: C.t3, fontFamily: SANS, marginBottom: 10, lineHeight: 1.5 }}>
+        <div style={{ ...LABEL, marginBottom: 10 }}>
           {label}
         </div>
         {chips && (
@@ -370,10 +392,10 @@ function Ring({ pct, label, color, chips }: {
                   borderRadius: 5,
                 }}
               >
-                <span style={{ fontSize: 13, fontWeight: 700, color: chip.color ?? C.t1, fontFamily: MONO }}>
+            <span style={{ ...VALUE, color: chip.color ?? C.t1 }}>
                   {chip.value}
                 </span>
-                <span style={{ fontSize: 11, color: C.t4, fontFamily: SANS, lineHeight: 1.4 }}>
+                <span style={{ ...LABEL }}>
                   {chip.label}
                 </span>
               </div>
@@ -410,15 +432,15 @@ function ScorecardRows({ items }: { items: ScorecardRow[] }) {
             padding: '8px 12px',
             background: C.bg,
             border: `1px solid ${C.border}`,
-            borderLeft: `3px solid ${item.color}`,
+            borderLeft: `3px solid ${item.color ?? C.t2}`,
             borderRadius: 6,
           }}
         >
           {/* Name */}
           <span
             style={{
-              fontSize: 11, fontWeight: 600, color: item.color,
-              background: item.color + '1A', padding: '2px 7px',
+              fontSize: 11, fontWeight: 600, color: item.color ?? C.t2,
+              background: (item.color ?? C.t2) + '1A', padding: '2px 7px',
               borderRadius: 4, fontFamily: SANS, flexShrink: 0, minWidth: 62,
               textAlign: 'center' as const,
             }}
@@ -432,7 +454,7 @@ function ScorecardRows({ items }: { items: ScorecardRow[] }) {
               style={{
                 height: '100%',
                 width: `${item.pct}%`,
-                background: item.color,
+                background: item.color ?? C.t2,
                 borderRadius: 2,
                 opacity: 0.75,
               }}
@@ -440,7 +462,7 @@ function ScorecardRows({ items }: { items: ScorecardRow[] }) {
           </div>
 
           {/* Value */}
-          <span style={{ fontSize: 13, fontWeight: 700, color: item.color, fontFamily: MONO, flexShrink: 0, minWidth: 52, textAlign: 'right' as const }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: item.color ?? C.t1, fontFamily: MONO, flexShrink: 0, minWidth: 52, textAlign: 'right' as const }}>
             {item.value}
           </span>
 
@@ -462,7 +484,7 @@ function ScorecardRows({ items }: { items: ScorecardRow[] }) {
 
           {/* Sublabel */}
           {item.sublabel && (
-            <span style={{ fontSize: 10, color: C.t4, fontFamily: SANS, flexShrink: 0, minWidth: 80, textAlign: 'right' as const }}>
+            <span style={{ ...LABEL, flexShrink: 0, minWidth: 80, textAlign: 'right' as const }}>
               {item.sublabel}
             </span>
           )}
@@ -504,7 +526,7 @@ function FlagsList({ items }: { items: FlagsListRow[] }) {
                 flexShrink: 0, marginTop: 5,
               }}
             />
-            <span style={{ flex: 1, fontSize: 12, color: C.t2, fontFamily: SANS, lineHeight: 1.5 }}>
+            <span style={{ flex: 1, ...LABEL }}>
               {item.text}
             </span>
             <span
@@ -516,7 +538,7 @@ function FlagsList({ items }: { items: FlagsListRow[] }) {
             >
               {item.tag}
             </span>
-            <span style={{ fontSize: 10, color: C.t4, fontFamily: MONO, flexShrink: 0, marginTop: 1 }}>
+            <span style={{ ...LABEL, flexShrink: 0, marginTop: 1 }}>
               {item.date}
             </span>
           </div>
@@ -597,22 +619,22 @@ function Takeaway({ text }: { text: string }) {
       style={{
         marginTop: 10,
         padding: '8px 12px',
-        background: 'rgba(255,255,255,0.015)',
-        border: `1px solid ${C.border}`,
-        borderLeft: '2px solid rgba(100,116,139,0.35)',
+        border: `1px solid ${CC.bd}`,
+        borderLeft: `4px solid #FFAE43`,
         borderRadius: 5,
+        background: `linear-gradient(90deg, rgba(255, 174, 67, 0.10) -48.4%, rgba(19, 22, 27, 0.10) 83.98%), ${CC.sf}`,
       }}
     >
       <span
         style={{
-          fontSize: 10, fontWeight: 700, color: C.t4,
-          fontFamily: SANS, letterSpacing: 0.5,
-          textTransform: 'uppercase' as const, marginRight: 8,
+          fontSize: 14, fontWeight: 500, color: CC.t1,
+          fontFamily: SANS, lineHeight: '20px',
+          marginRight: 8,
         }}
       >
         Takeaway
       </span>
-      <span style={{ fontSize: 11, color: C.t3, fontFamily: SANS, lineHeight: 1.6 }}>
+      <span style={{ ...LABEL }}>
         {text}
       </span>
     </div>

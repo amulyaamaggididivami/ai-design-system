@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 
 import { setupCanvas } from '../../canvas/canvasUtils';
-import { CC, rgb, drawGlow } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, rgb, drawGlow } from '../../canvas/canvasUtils';
 import { easeOutBack, easeOutCubic } from '../../canvas/easing';
 import type { QuotationBalanceProps } from './types';
 
@@ -104,8 +104,8 @@ export function QuotationBalance({ accepted, submitted, 'data-testid': testId }:
         ctx.fillStyle = CC.green;
         ctx.textAlign = 'center';
         ctx.fillText(accepted.label, leftEnd.x, leftPanY + leftPanH + 18);
-        ctx.font = "9px 'JetBrains Mono', monospace";
-        ctx.fillStyle = CC.t2;
+        ctx.font = AXIS_LABEL.font;
+        ctx.fillStyle = AXIS_LABEL.color;
         ctx.fillText('Accepted', leftEnd.x, leftPanY + leftPanH + 32);
         ctx.fillText(`${accepted.count} quotations`, leftEnd.x, leftPanY + leftPanH + 44);
         ctx.globalAlpha = 1;
@@ -142,8 +142,8 @@ export function QuotationBalance({ accepted, submitted, 'data-testid': testId }:
         ctx.fillStyle = CC.amber;
         ctx.textAlign = 'center';
         ctx.fillText(submitted.label, rightEnd.x, rightPanY + rightPanH + 18);
-        ctx.font = "9px 'JetBrains Mono', monospace";
-        ctx.fillStyle = CC.t2;
+        ctx.font = AXIS_LABEL.font;
+        ctx.fillStyle = AXIS_LABEL.color;
         ctx.fillText('Submitted', rightEnd.x, rightPanY + rightPanH + 32);
         ctx.fillText(`${submitted.count} quotations`, rightEnd.x, rightPanY + rightPanH + 44);
         ctx.globalAlpha = 1;
@@ -153,8 +153,8 @@ export function QuotationBalance({ accepted, submitted, 'data-testid': testId }:
       if (progress > 0.85 && Math.abs(tilt) > 1) {
         const fade = Math.min(1, (progress - 0.85) / 0.15);
         ctx.globalAlpha = fade * 0.6;
-        ctx.font = "8px 'JetBrains Mono', monospace";
-        ctx.fillStyle = CC.t3;
+        ctx.font = AXIS_LABEL.font;
+        ctx.fillStyle = AXIS_LABEL.color;
         ctx.textAlign = 'center';
         ctx.fillText(`${Math.abs(tilt).toFixed(1)}° tilt toward accepted`, cx, H - 12);
         ctx.globalAlpha = 1;

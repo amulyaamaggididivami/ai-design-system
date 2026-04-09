@@ -3,7 +3,7 @@ import { useRef, useEffect } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { stagger, tickHoverProgress, easeOutCubic } from '../../canvas/easing';
-import { CC, PALETTE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, PALETTE, AXIS_LABEL, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
 import type { WeeklyFlowProps } from './types';
 
 const W = 800;
@@ -122,7 +122,7 @@ export function WeeklyFlow({ contractors = [], 'data-testid': testId }: WeeklyFl
       // ── Column labels ────────────────────────────────────────────────────
       ['Contractors', 'Components', 'Total'].forEach((label, ci) => {
         const x = [col1X, col2X, col3X][ci];
-        ctx.font      = "9px 'JetBrains Mono', monospace";
+        ctx.font      = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle = rgb(CC.t3, 0.5);
         ctx.textAlign = 'center';
         ctx.fillText(label, x, H - 8);
@@ -154,13 +154,13 @@ export function WeeklyFlow({ contractors = [], 'data-testid': testId }: WeeklyFl
         if (localP > 0.6 && cn.h >= 24) {
           const fade = Math.min(1, (localP - 0.6) / 0.4);
           ctx.globalAlpha  = fade;
-          ctx.font         = `${hp > 0 ? 'bold ' : ''}9px 'JetBrains Mono', monospace`;
+          ctx.font         = `${hp > 0 ? '500' : '500'} 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
           ctx.fillStyle    = hp > 0 ? cn.color : rgb(CC.t2, 0.9);
           ctx.textAlign    = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillText(c.abbreviation ?? c.name.slice(0, 6), cn.x + nodeW / 2, cn.h >= 36 ? cn.cy - 5 : cn.cy);
           if (cn.h >= 36) {
-            ctx.font      = "8px 'JetBrains Mono', monospace";
+            ctx.font      = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
             ctx.fillStyle = rgb(CC.t3, 0.8);
             ctx.fillText(`£${c.total ?? 0}M`, cn.x + nodeW / 2, cn.cy + 7);
           }
@@ -184,11 +184,11 @@ export function WeeklyFlow({ contractors = [], 'data-testid': testId }: WeeklyFl
 
         ctx.globalAlpha  = fp;
         ctx.textBaseline = 'middle';
-        ctx.font         = "bold 9px 'JetBrains Mono', monospace";
+        ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle    = CC.blue;
         ctx.textAlign    = 'center';
         ctx.fillText('Base Value', col2X, baseNode.cy - 6);
-        ctx.font         = "10px 'JetBrains Mono', monospace";
+        ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle    = CC.t1;
         ctx.fillText(`£${totalBase}M`, col2X, baseNode.cy + 8);
         ctx.globalAlpha  = 1;
@@ -204,11 +204,11 @@ export function WeeklyFlow({ contractors = [], 'data-testid': testId }: WeeklyFl
 
         ctx.globalAlpha  = fp;
         ctx.textBaseline = 'middle';
-        ctx.font         = "bold 9px 'JetBrains Mono', monospace";
+        ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle    = CC.amber;
         ctx.textAlign    = 'center';
         ctx.fillText('Variations', col2X, varNode.cy - 4);
-        ctx.font         = "10px 'JetBrains Mono', monospace";
+        ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle    = CC.t1;
         ctx.fillText(`£${totalVar}M`, col2X, varNode.cy + 8);
         ctx.globalAlpha  = 1;
@@ -229,11 +229,11 @@ export function WeeklyFlow({ contractors = [], 'data-testid': testId }: WeeklyFl
 
         ctx.globalAlpha  = fp;
         ctx.textBaseline = 'middle';
-        ctx.font         = "9px 'JetBrains Mono', monospace";
+        ctx.font         = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle    = CC.t2;
         ctx.textAlign    = 'center';
         ctx.fillText('Total Commitment', col3X, totalNode.cy - 12);
-        ctx.font         = "bold 16px 'JetBrains Mono', monospace";
+        ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle    = CC.cyan;
         ctx.fillText(`£${grandTotal}M`, col3X, totalNode.cy + 6);
         ctx.globalAlpha  = 1;
