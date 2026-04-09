@@ -56,23 +56,24 @@ export function CanvasTooltip({ visible, x, y, content, parentW }: CanvasTooltip
         pointerEvents: 'none',
         background: CC.sf,
         border: `1px solid ${CC.bd}`,
-        borderLeft: '2px solid var(--tooltip-accent)',
+        borderLeft: `2px solid var(--tooltip-accent)`,
         borderRadius: 6,
-        padding: '6px 10px',
+        padding: '8px 12px',
         opacity: 0,
         transition: 'opacity 0.15s ease',
         zIndex: 20,
-        fontFamily: "'JetBrains Mono', monospace",
+        fontFamily: "'Satoshi Variable', 'DM Sans', sans-serif",
       }}
     >
       {label && (
         <div
           style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 10,
-            color: CC.t3,
-            marginBottom: 2,
+            fontSize: 12,
+            fontWeight: 400,
+            color: CC.t2,
+            marginBottom: 3,
             whiteSpace: 'nowrap',
+            lineHeight: '18px',
           }}
         >
           {label}
@@ -80,10 +81,11 @@ export function CanvasTooltip({ visible, x, y, content, parentW }: CanvasTooltip
       )}
       <div
         style={{
-          fontSize: 11,
+          fontSize: 14,
+          fontWeight: 500,
           color: CC.t1,
-          fontWeight: 600,
           whiteSpace: 'nowrap',
+          lineHeight: '20px',
         }}
       >
         {value}
@@ -91,10 +93,12 @@ export function CanvasTooltip({ visible, x, y, content, parentW }: CanvasTooltip
       {sublabel && (
         <div
           style={{
-            fontSize: 9,
+            fontSize: 12,
+            fontWeight: 400,
             color: 'var(--tooltip-accent)',
-            marginTop: 2,
+            marginTop: 3,
             whiteSpace: 'nowrap',
+            lineHeight: '18px',
           }}
         >
           {sublabel}

@@ -37,7 +37,7 @@ const LABEL: React.CSSProperties = {
 };
 
 // ─── ChipRow — shared small chip row used by several block types ─────────────
-function ChipRow({ chips }: { chips: KeyHighlightChip[] }) {
+function ChipRow({ chips = [] }: { chips: KeyHighlightChip[] }) {
   return (
     <div style={{ display: 'flex', gap: 6, marginTop: 10 }}>
       {chips.map((chip, i) => (
@@ -66,7 +66,7 @@ function ChipRow({ chips }: { chips: KeyHighlightChip[] }) {
 // ─── Stats ───────────────────────────────────────────────────────────────────
 // 3 equal tiles — large number, small label, colored top border
 // Used for: Q1, Q11, Q12
-function Stats({ items }: { items: Array<{ value: string; label: string; color?: string }> }) {
+function Stats({ items = [] }: { items: Array<{ value: string; label: string; color?: string }> }) {
   return (
     <div style={{ display: 'flex', gap: 8 }}>
       {items.map((item, i) => (
@@ -94,7 +94,7 @@ function Stats({ items }: { items: Array<{ value: string; label: string; color?:
 // ─── Ranked ──────────────────────────────────────────────────────────────────
 // Name chip + value + description rows — each with colored left border
 // Used for: Q2, Q5, Q6
-function Ranked({ items }: { items: Array<{ name: string; value: string; color?: string; kpiLabel?: string }> }) {
+function Ranked({ items = [] }: { items: Array<{ name: string; value: string; color?: string; kpiLabel?: string }> }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 5 }}>
       {items.map((item, i) => (
@@ -133,7 +133,7 @@ function Ranked({ items }: { items: Array<{ name: string; value: string; color?:
 // ─── Chips ───────────────────────────────────────────────────────────────────
 // Large value callout cards — value prominent, label below
 // Used for: Q4, Q8
-function Chips({ items }: { items: KeyHighlightChip[] }) {
+function Chips({ items = [] }: { items: KeyHighlightChip[] }) {
   return (
     <div style={{ display: 'flex', gap: 8 }}>
       {items.map((item, i) => (
@@ -167,7 +167,7 @@ const BADGE_COLOR: Record<KeyHighlightBadge['severity'], string> = {
   green: C.green,
 };
 
-function Badges({ items }: { items: KeyHighlightBadge[] }) {
+function Badges({ items = [] }: { items: KeyHighlightBadge[] }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 5 }}>
       {items.map((item, i) => {
@@ -204,7 +204,7 @@ function Badges({ items }: { items: KeyHighlightBadge[] }) {
 // Contractors as colored dots on a min→max range track
 // Labels alternate above/below to avoid crowding at the high end
 // Used for: Q3
-function DotStrip({ min, max, unit, dots, chips }: {
+function DotStrip({ min, max, unit, dots = [], chips = [] }: {
   min: number; max: number; unit: string;
   dots: KeyHighlightDot[];
   chips?: KeyHighlightChip[];
@@ -421,7 +421,7 @@ const BADGE_FG: Record<'green' | 'amber' | 'red', string> = {
   red:   '#F06060',
 };
 
-function ScorecardRows({ items }: { items: ScorecardRow[] }) {
+function ScorecardRows({ items = [] }: { items: ScorecardRow[] }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 5 }}>
       {items.map((item, i) => (
@@ -503,7 +503,7 @@ const FLAG_COLOR: Record<FlagsListRow['severity'], string> = {
   green: C.green,
 };
 
-function FlagsList({ items }: { items: FlagsListRow[] }) {
+function FlagsList({ items = [] }: { items: FlagsListRow[] }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 5 }}>
       {items.map((item, i) => {
@@ -551,7 +551,7 @@ function FlagsList({ items }: { items: FlagsListRow[] }) {
 // ─── ComparisonRows ───────────────────────────────────────────────────────────
 // Mini table: label column + N data columns, each row color-coded with a left border
 // Used for: Q2 (contractor base/var breakdown), Q11 (quotation accepted vs submitted)
-function ComparisonRows({ columns, rows }: { columns: string[]; rows: ComparisonRow[] }) {
+function ComparisonRows({ columns = [], rows = [] }: { columns: string[]; rows: ComparisonRow[] }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 5 }}>
       {/* Column headers */}

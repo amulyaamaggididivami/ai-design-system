@@ -18,7 +18,7 @@ const RISK_LABELS = [
   'Low exposure',
 ];
 
-export function ContractorRank({ contractors, 'data-testid': testId }: ContractorRankProps) {
+export function ContractorRank({ contractors = [], 'data-testid': testId }: ContractorRankProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef  = useRef(0);
   const hoverMap  = useRef<Map<string, number>>(new Map());

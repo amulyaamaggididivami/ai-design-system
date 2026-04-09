@@ -14,7 +14,7 @@ const STATUS_COLORS: Record<string, string> = {
   Closed: CC.green,
 };
 
-export function StatusArc({ segments, title, 'data-testid': testId }: StatusArcProps) {
+export function StatusArc({ segments = [], title, 'data-testid': testId }: StatusArcProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
   const hoverMap = useRef<Map<string, number>>(new Map());

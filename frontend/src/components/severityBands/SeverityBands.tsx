@@ -16,7 +16,7 @@ const SEVERITY_COLORS: Record<string, string> = {
   Low:      CC.green,
 };
 
-export function SeverityBands({ severities, 'data-testid': testId }: SeverityBandsProps) {
+export function SeverityBands({ severities = [], 'data-testid': testId }: SeverityBandsProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);

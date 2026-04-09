@@ -15,7 +15,7 @@ const COLORS    = [CC.blue, CC.cyan, CC.amber, CC.purple, CC.green];
 const KPI_NAMES = ['Base Value', 'Variations', 'Commitment'];
 const KPI_SHORT = ['Base',       'Var',        'Commit'   ];
 
-export function ContractBars({ contractors, 'data-testid': testId }: ContractBarsProps) {
+export function ContractBars({ contractors = [], 'data-testid': testId }: ContractBarsProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap  = useRef<Map<string, number>>(new Map());
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });

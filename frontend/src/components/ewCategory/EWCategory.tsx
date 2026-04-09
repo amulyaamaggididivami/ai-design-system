@@ -9,7 +9,7 @@ import type { EWCategoryProps } from './types';
 const W = 680;
 const H = 260;
 
-export function EWCategory({ categories, 'data-testid': testId }: EWCategoryProps) {
+export function EWCategory({ categories = [], 'data-testid': testId }: EWCategoryProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
   const hoverMap = useRef<Map<string, number>>(new Map());
