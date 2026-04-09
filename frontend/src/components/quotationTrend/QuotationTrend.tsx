@@ -9,7 +9,7 @@ import type { QuotationTrendProps } from './types';
 const W = 680;
 const H = 280;
 
-export function QuotationTrend({ trend, 'data-testid': testId }: QuotationTrendProps) {
+export function QuotationTrend({ trend = [], 'data-testid': testId }: QuotationTrendProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
@@ -31,7 +31,7 @@ export function QuotationTrend({ trend, 'data-testid': testId }: QuotationTrendP
     const chartH = H - padT - padB;
     const maxCount = Math.max(...trend.map(p => p.count));
     const n = trend.length;
-    const stepX = chartW / (n - 1);
+    const stepX = n > 1 ? chartW / (n - 1) : chartW;
 
     const pts = trend.map((p, i) => ({
       x: padL + i * stepX,

@@ -11,7 +11,7 @@ const H = 300;
 
 const RACE_COLORS = [CC.green, CC.blue, CC.cyan, CC.amber, CC.red];
 
-export function CommitmentRace({ contractors, 'data-testid': testId }: CommitmentRaceProps) {
+export function CommitmentRace({ contractors = [], 'data-testid': testId }: CommitmentRaceProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
   const hoverMap = useRef<Map<string, number>>(new Map());
