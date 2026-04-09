@@ -19,7 +19,7 @@ export function ContractValueOrb({ data, 'data-testid': testId }: ContractValueO
   const hoverMap  = useRef<Map<string, number>>(new Map());
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
 
-  const { contractors, totals } = data;
+  const { contractors = [], totals } = data;
   const n             = contractors.length;
   const maxCommitment = Math.max(...contractors.map(c => c.total ?? 0), 1);
   const barArea       = W - PAD.left - NAME_W - PAD.right;

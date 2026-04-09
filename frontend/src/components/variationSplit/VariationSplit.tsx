@@ -9,7 +9,7 @@ import type { VariationSplitProps } from './types';
 const W = 680;
 const H = 320;
 
-export function VariationSplit({ contractors, 'data-testid': testId }: VariationSplitProps) {
+export function VariationSplit({ contractors = [], 'data-testid': testId }: VariationSplitProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);

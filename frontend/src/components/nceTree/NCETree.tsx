@@ -9,7 +9,7 @@ import type { NCETreeProps } from './types';
 const W = 680;
 const H = 320;
 
-export function NCETree({ total, byContractor, 'data-testid': testId }: NCETreeProps) {
+export function NCETree({ total = 0, byContractor = [], 'data-testid': testId }: NCETreeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);

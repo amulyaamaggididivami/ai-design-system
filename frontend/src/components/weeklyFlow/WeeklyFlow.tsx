@@ -9,7 +9,7 @@ import type { WeeklyFlowProps } from './types';
 const W = 800;
 const H = 360;
 
-export function WeeklyFlow({ contractors, 'data-testid': testId }: WeeklyFlowProps) {
+export function WeeklyFlow({ contractors = [], 'data-testid': testId }: WeeklyFlowProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
