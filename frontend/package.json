@@ -1,6 +1,6 @@
 {
   "name": "@divami-artefacts/ai-design-system",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "type": "module",
   "license": "MIT",
   "module": "./dist/index.js",
@@ -50,4 +50,3 @@
     "vite-plugin-dts": "^4.5.4"
   }
 }
-
