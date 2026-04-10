@@ -132,20 +132,20 @@ export function ContractBars({ contractors = [], 'data-testid': testId }: Contra
 
           if (isTop) {
             // Name sits just above the value, both above the star
-            ctx.font      = `8px 'DM Sans', sans-serif`;
+            ctx.font      = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
             ctx.fillStyle = rgb(trColor, 0.5 + 0.15 * shp);
             ctx.fillText(star.short, star.x, star.y - 24);
 
-            ctx.font      = `bold 11px 'JetBrains Mono', monospace`;
+            ctx.font      = `500 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
             ctx.fillStyle = rgb(trColor, 0.8 + 0.15 * shp);
             ctx.fillText(star.label, star.x, star.y - 11);
           } else {
             // Name sits just below the star, value below the name
-            ctx.font      = `8px 'DM Sans', sans-serif`;
+            ctx.font      = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
             ctx.fillStyle = rgb(trColor, 0.5 + 0.15 * shp);
             ctx.fillText(star.short, star.x, star.y + 11);
 
-            ctx.font      = `bold 11px 'JetBrains Mono', monospace`;
+            ctx.font      = `500 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
             ctx.fillStyle = rgb(trColor, 0.8 + 0.15 * shp);
             ctx.fillText(star.label, star.x, star.y + 24);
           }
@@ -169,7 +169,7 @@ export function ContractBars({ contractors = [], 'data-testid': testId }: Contra
         ctx.stroke();
 
         // Contractor name below circle
-        ctx.font         = `bold 11px 'DM Sans', sans-serif`;
+        ctx.font         = `500 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.textAlign    = 'center';
         ctx.textBaseline = 'alphabetic';
         ctx.fillStyle    = rgb(CC.t2, 0.65 + hp * 0.25);
@@ -184,10 +184,10 @@ export function ContractBars({ contractors = [], 'data-testid': testId }: Contra
       });
 
       // Footer caption
-      ctx.font         = `11px 'DM Sans', sans-serif`;
+      ctx.font         = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
       ctx.textAlign    = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle    = rgb(CC.t4, 0.55);
+      ctx.fillStyle    = CC.t2;
       ctx.fillText(
         '▲ top = Base value  ·  ▼▸ lower-right = Variations  ·  ◂▼ lower-left = Commitment %  ·  hover stars for details',
         W / 2,

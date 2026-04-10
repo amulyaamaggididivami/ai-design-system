@@ -152,6 +152,7 @@ export type BaseVisualizationConfig =
   | { type: 'variation-split'; contractors: VariationRow[] }
   | { type: 'quotation-balance'; accepted: QuotationSide; submitted: QuotationSide }
   | { type: 'quotation-trend'; trend: QuotationTrendPoint[] }
+  | { type: 'trend-view'; trend: QuotationTrendPoint[] }
   | { type: 'weekly-flow'; contractors: ContractorRow[] };
 
 export type VisualizationRendererProps = {

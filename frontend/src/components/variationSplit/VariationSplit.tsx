@@ -1,18 +1,31 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { stagger, tickHoverProgress, easeOutQuart } from '../../canvas/easing';
 import { CC, AXIS_LABEL, LEGEND_LABEL, PALETTE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { ToggleButton } from '../common/ToggleButton';
 import type { VariationSplitProps } from './types';
 
-const W = 680;
-const H = 320;
+const W         = 680;
+const MAX_ITEMS = 8;
+const BAR_H     = 26;
+const GAP       = 14;
+const PAD_T     = 16;
+const PAD_B     = 32;
 
 export function VariationSplit({ contractors = [], 'data-testid': testId }: VariationSplitProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
+  const [showAll, setShowAll] = useState(false);
+
+  const visible = useMemo(
+    () => showAll ? contractors : contractors.slice(0, MAX_ITEMS),
+    [contractors, showAll],
+  );
+
+  const H = PAD_T + PAD_B + visible.length * (BAR_H + GAP) - GAP;
 
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
 
@@ -25,13 +38,13 @@ export function VariationSplit({ contractors = [], 'data-testid': testId }: Vari
 
     const padL = 60;
     const padR = 28;
-    const padT = 16;
-    const padB = 32;
-    const barH = 26;
-    const gap = 14;
+    const padT = PAD_T;
+    const padB = PAD_B;
+    const barH = BAR_H;
+    const gap = GAP;
     const trackW = W - padL - padR;
-    const maxTotal = Math.max(...contractors.map(c => (c.implemented ?? 0) + (c.unimplemented ?? 0)));
-    const totalH = contractors.length * (barH + gap) - gap;
+    const maxTotal = Math.max(...visible.map(c => (c.implemented ?? 0) + (c.unimplemented ?? 0)));
+    const totalH = visible.length * (barH + gap) - gap;
     const startY = padT + (H - padT - padB - totalH) / 2;
 
     let raf: number;
@@ -47,9 +60,9 @@ export function VariationSplit({ contractors = [], 'data-testid': testId }: Vari
       tickHoverProgress(hoverMap.current, hoveredRef.current);
       hitZonesRef.current = [];
 
-      contractors.forEach((c, i) => {
+      visible.forEach((c, i) => {
         const accentColor = PALETTE[i % PALETTE.length];
-        const localP = stagger(progress, i, contractors.length, easeOutQuart);
+        const localP = stagger(progress, i, visible.length, easeOutQuart);
         const y = startY + i * (barH + gap);
         const total = (c.implemented ?? 0) + (c.unimplemented ?? 0);
         const implW = ((c.implemented ?? 0) / maxTotal) * trackW * localP;
@@ -74,7 +87,7 @@ export function VariationSplit({ contractors = [], 'data-testid': testId }: Vari
 
         // Contractor name
         ctx.font = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
-        ctx.fillStyle = rgb(accentColor, 0.85);
+        ctx.fillStyle = CC.t2;
         ctx.textAlign = 'right';
         ctx.fillText(c.abbreviation ?? c.name.slice(0, 6), padL - 8, y + barH / 2 + 4);
 
@@ -95,7 +108,7 @@ export function VariationSplit({ contractors = [], 'data-testid': testId }: Vari
           // Implemented count
           if (implW > 28 && localP > 0.5) {
             ctx.font = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
-            ctx.fillStyle = hpImpl > 0 ? CC.green : rgb(CC.t1, 0.8);
+            ctx.fillStyle = hpImpl > 0 ? CC.green : CC.t2;
             ctx.textAlign = 'center';
             ctx.fillText(String(c.implemented ?? 0), padL + implW / 2, y + barH / 2 + 4);
           }
@@ -115,7 +128,7 @@ export function VariationSplit({ contractors = [], 'data-testid': testId }: Vari
           // Unimplemented count
           if (unimplW > 28 && localP > 0.5) {
             ctx.font = `${hpUn > 0 ? '500' : '500'} 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
-            ctx.fillStyle = hpUn > 0 ? CC.amber : rgb(CC.t3, 0.8);
+            ctx.fillStyle = hpUn > 0 ? CC.amber : CC.t2;
             ctx.textAlign = 'center';
             ctx.fillText(String(c.unimplemented ?? 0), padL + implW + unimplW / 2, y + barH / 2 + 4);
           }
@@ -148,17 +161,24 @@ export function VariationSplit({ contractors = [], 'data-testid': testId }: Vari
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [contractors]);
+  }, [visible, H]);
 
   return (
-    <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>
-      <canvas
-        ref={canvasRef}
-        role="img"
-        aria-label="Implemented vs unimplemented variations per contractor — split bar"
-        style={{ width: W, height: H, display: 'block' }}
-      />
-      <CanvasTooltip {...tooltip} parentW={W} parentH={H} />
+    <div data-testid={testId} style={{ width: W }}>
+      <div style={{ position: 'relative', width: W, height: H }}>
+        <canvas
+          ref={canvasRef}
+          role="img"
+          aria-label="Implemented vs unimplemented variations per contractor — split bar"
+          style={{ width: W, height: H, display: 'block' }}
+        />
+        <CanvasTooltip {...tooltip} parentW={W} parentH={H} />
+      </div>
+      {contractors.length > MAX_ITEMS && (
+        <div style={{ marginTop: 8 }}>
+          <ToggleButton expanded={showAll} onToggle={() => setShowAll(prev => !prev)} />
+        </div>
+      )}
     </div>
   );
 }
