@@ -178,10 +178,8 @@ function Badges({ items = [] }: { items: KeyHighlightBadge[] }) {
             style={{
               display: 'flex', alignItems: 'flex-start', gap: 10,
               padding: '10px 14px',
-              background: color + '0C',
-              border: `1px solid ${color}28`,
-              borderLeft: `3px solid ${color}`,
-              borderRadius: 6,
+              background: CC.sf,
+              border: `1px solid ${C.border}`,
             }}
           >
             <span

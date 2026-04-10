@@ -3,7 +3,7 @@ import { useRef, useEffect } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { dampedPulse } from '../../canvas/easing';
-import { CC, AXIS_LABEL, rgb, drawGlow, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, PALETTE, rgb, drawGlow, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
 import type { ContractorRankProps } from './types';
 
 const W = 780;
@@ -65,7 +65,7 @@ export function ContractorRank({ contractors = [], 'data-testid': testId }: Cont
 
       sorted.forEach((contractor, i) => {
         const isTop  = i === 0;
-        const color  = isTop ? CC.red : i === 1 ? CC.amber : CC.blue;
+        const color  = i === 0 ? CC.red : i === 1 ? CC.amber : PALETTE[i % PALETTE.length];
         const baseX  = CARD_PAD + i * (cardW + CARD_GAP);
         const hp     = hoverMap.current.get(contractor.id) ?? 0;
 
@@ -100,8 +100,8 @@ export function ContractorRank({ contractors = [], 'data-testid': testId }: Cont
         ctx.fillStyle    = rgb(color, 0.5 + hp * 0.35);
         ctx.fillText(`#${i + 1}`, x + 7, cardY + 6);
 
-        // Circular avatar
-        const photoR = cardW * 0.28;
+        // Circular avatar — cap radius so circle never overflows the card
+        const photoR = Math.min(cardW * 0.28, cardH * 0.32, 72);
         const photoX = x + w / 2;
         const photoY = cardY + cardH * 0.38;
 
