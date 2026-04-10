@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import { KeyHighlights } from '../../components/keyHighlights/KeyHighlights';
+import { Trend } from '../../components/trend/Trend';
 import { VisualizationRenderer } from '../../components/visualizationRenderer/VisualizationRenderer';
 import type { KeyHighlightBlock } from '../../types';
 
@@ -43,6 +44,17 @@ const contractValueData = {
     { id: 'c3', name: 'Afcons Infra',      base: 89,  variation: 22.1, total: 111.1, percentage: 78 },
     { id: 'c4', name: 'NCC Ltd',             base: 156, variation: 8.9,  total: 164.9, percentage: 95 },
     { id: 'c5', name: 'KEC International',    base: 74,  variation: 31.2, total: 105.2, percentage: 69 },
+    { id: 'c6', name: 'KEC International',    base: 142,  variation: 18.4, total: 160.4, percentage: 87 },
+    { id: 'c7', name: 'KEC International',    base: 74,  variation: 31.2, total: 105.2, percentage: 69 },
+    { id: 'c8', name: 'KEC International',    base: 74,  variation: 31.2, total: 105.2, percentage: 69 },
+    { id: 'c9', name: 'KEC International',    base: 198,  variation: 12.6, total: 210.6, percentage: 92 },
+    { id: 'c10', name: 'KEC International',    base: 74,  variation: 31.2, total: 105.2, percentage: 69 },
+    { id: 'c11', name: 'KEC International',    base: 74,  variation: 31.2, total: 105.2, percentage: 69 },
+    { id: 'c12', name: 'KEC International',    base: 74,  variation: 31.2, total: 105.2, percentage: 69 },
+    { id: 'c13', name: 'KEC International',    base: 74,  variation: 31.2, total: 105.2, percentage: 69 },
+    { id: 'c14', name: 'KEC International',    base: 74,  variation: 31.2, total: 105.2, percentage: 69 },
+    
+
   ],
   totals: { base: 659, variation: 93.2, total: 752.2 },
 };
@@ -146,6 +158,13 @@ const variationSplitContractors = [
   { id: 'c3', name: 'Afcons Infra',      abbreviation: 'Afcons', implemented: 5,  unimplemented: 9 },
   { id: 'c4', name: 'NCC Ltd',           abbreviation: 'NCC',    implemented: 11, unimplemented: 2 },
   { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6,  unimplemented: 8 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6,  unimplemented: 8 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6,  unimplemented: 8 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6,  unimplemented: 8 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6,  unimplemented: 8 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6,  unimplemented: 8 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6,  unimplemented: 8 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6,  unimplemented: 8 },
 ];
 
 /**
@@ -167,16 +186,27 @@ const quotationBalanceData = {
 const quotationTrendData = [
   { week: 'W1',  count: 2, value: 1.8 },
   { week: 'W2',  count: 3, value: 2.4 },
-  { week: 'W3',  count: 1, value: 0.9 },
+  { week: 'Wsdfghjk3',  count: 1, value: 0.9 },
   { week: 'W4',  count: 4, value: 3.6 },
   { week: 'W5',  count: 5, value: 4.1 },
   { week: 'W6',  count: 3, value: 2.8 },
   { week: 'W7',  count: 6, value: 5.2 },
   { week: 'W8',  count: 4, value: 3.9 },
   { week: 'W9',  count: 7, value: 6.4 },
-  { week: 'W10', count: 8, value: 7.1 },
-  { week: 'W11', count: 5, value: 4.8 },
+  { week: 'W10dfghjk', count: 29, value: 7.1 },
+  { week: 'W1sdfghj1', count: 5, value: 4.8 },
+  { week: 'W1sdfghj2', count: 30, value: 8.3 },
+  { week: 'W1wertyui2', count: 9, value: 8.3 },
+  { week: 'W1xcvbn2', count: 15, value: 8.3 },
+  { week: 'W12wertyuio', count: 50, value: 8.3 },
+  { week: 'W12', count: 10, value: 8.3 },
   { week: 'W12', count: 9, value: 8.3 },
+  { week: 'W12', count: 9, value: 8.3 },
+  { week: 'W12', count: 20, value: 8.3 },
+  { week: 'W12', count: 9, value: 8.3 },
+
+  
+
 ];
 
 /**
@@ -194,7 +224,7 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
   q1: {
     type: 'stats',
     items: [
-      { value: '£752.2M', label: 'total portfolio commitment — base plus all approved variations',  },
+      { value: '£752.2M', label: 'total portfolio commitment' },
       { value: '£659M',   label: 'base contract value across all 5 active contractors',           },
       { value: '£93.2M',  label: 'variations approved — 12.4% on top of base contract value',     },
       { value: 'L&T',     label: 'largest share at £210.6M total — 28% of the full portfolio',     },
@@ -307,9 +337,9 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
   q10: {
     type: 'chips',
     items: [
-      { value: '59%',    label: 'overall portfolio implementation rate — 42 of 71 variations actioned', color: '#34D399' },
-      { value: '29',     label: 'variations still pending across all contractors — unresolved backlog',  color: '#F06060' },
-      { value: '49 pts', label: 'spread from NCC (85%) to Afcons (36%) — largest discipline gap',       color: '#FBBF24' },
+      { value: '59%',    label: 'overall portfolio implementation rate — 42 of 71 variations actioned', },
+      { value: '29',     label: 'variations still pending across all contractors — unresolved backlog',  },
+      { value: '49 pts', label: 'spread from NCC (85%) to Afcons (36%) — largest discipline gap',       },
     ],
     takeaway: 'Afcons\' 9 and KEC\'s 8 pending variations together account for 59% of the entire unimplemented backlog.',
   },
@@ -445,6 +475,9 @@ export function ChartGalleryPage() {
       <h3>Q12 — quotation-trend</h3>
       <VisualizationRenderer config={{ type: 'quotation-trend', trend: quotationTrendData }} />
       <KeyHighlights block={HIGHLIGHTS.q12} />
+
+      <h3>Trend (standalone)</h3>
+      <Trend trend={quotationTrendData} data-testid="gallery-trend" />
 
       <h3>Q13 — weekly-flow</h3>
       <VisualizationRenderer config={{ type: 'weekly-flow', contractors: weeklyFlowContractors }} />

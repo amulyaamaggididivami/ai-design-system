@@ -11,6 +11,7 @@ export { PieChart } from './components/pieChart/PieChart';
 export { ProcessSankey, RankingSankey, SankeySvg } from './components/sankey';
 export { SeriesChart } from './components/common/SeriesChart';
 export { TrendChart } from './components/trendChart/TrendChart';
+export { Trend } from './components/trend/Trend';
 export { KeyHighlights } from './components/keyHighlights/KeyHighlights';
 export { VisualizationRenderer } from './components/visualizationRenderer/VisualizationRenderer';
 export type { BaseVisualizationConfig, KeyHighlightBlock, MiniBarRow, PointPair, SankeyLinkData, SankeyNodeData, VizRow } from './types';

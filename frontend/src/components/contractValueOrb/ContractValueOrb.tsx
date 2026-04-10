@@ -1,46 +1,64 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { easeOutQuart, stagger, tickHoverProgress } from '../../canvas/easing';
 import { CC, AXIS_LABEL, LEGEND_LABEL, rgb, drawGlow } from '../../canvas/canvasUtils';
 import { useCanvasLoop } from '../../canvas/useCanvasLoop';
+import { ToggleButton } from '../common/ToggleButton';
 import type { ContractValueOrbProps } from './types';
 
-const W = 680;
-const H = 220;
-const COLORS = [CC.blue, CC.cyan, CC.amber, CC.purple, CC.green];
-const PAD    = { left: 8, right: 64, top: 16, bottom: 38 };
-const NAME_W = 88;
-const BAR_H  = 18;
+const W        = 680;
+const MIN_H    = 220;
+const MAX_ITEMS = 8;
+const COLORS   = [CC.blue, CC.cyan, CC.amber, CC.purple, CC.green];
+const PAD      = { left: 8, right: 80, top: 16, bottom: 38 };
+const NAME_W   = 88;
+const BAR_H    = 18;
+
+function fmtValue(v: number): string {
+  const abs  = Math.abs(v);
+  const sign = v < 0 ? '-' : '';
+  if (abs >= 1_000_000) return `${sign}£${(abs / 1_000_000).toFixed(1)}M`;
+  if (abs >= 1_000)     return `${sign}£${(abs / 1_000).toFixed(1)}K`;
+  return `${sign}£${abs.toFixed(0)}`;
+}
 
 export function ContractValueOrb({ data, 'data-testid': testId }: ContractValueOrbProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap  = useRef<Map<string, number>>(new Map());
-  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
+  const [showAll, setShowAll] = useState(false);
 
   const { contractors = [], totals } = data;
-  const n             = contractors.length;
-  const maxCommitment = Math.max(...contractors.map(c => c.total ?? 0), 1);
+  const sortedContractors  = [...contractors].sort((a, b) => (b.total ?? 0) - (a.total ?? 0));
+  const visibleContractors = showAll ? sortedContractors : sortedContractors.slice(0, MAX_ITEMS);
+  const n             = visibleContractors.length;
+  const maxCommitment = Math.max(...sortedContractors.map(c => Math.abs(c.total ?? 0)), 1);
+  const dynamicH      = Math.max(MIN_H, PAD.top + PAD.bottom + n * BAR_H + Math.max(0, n - 1) * 8);
   const barArea       = W - PAD.left - NAME_W - PAD.right;
-  const gap           = n > 1 ? (H - PAD.top - PAD.bottom - n * BAR_H) / (n - 1) : 0;
+  const gap           = n > 1 ? (dynamicH - PAD.top - PAD.bottom - n * BAR_H) / (n - 1) : 0;
+
+  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: dynamicH });
 
   useCanvasLoop(
     canvasRef,
     W,
-    H,
+    dynamicH,
     (ctx, progress) => {
       tickHoverProgress(hoverMap.current, hoveredRef.current);
       hitZonesRef.current = [];
 
-      contractors.forEach((con, i) => {
+      visibleContractors.forEach((con, i) => {
         const color  = COLORS[i % COLORS.length];
         const localP = stagger(progress, i, n, easeOutQuart);
         const y      = PAD.top + i * (BAR_H + gap);
         const x0     = PAD.left + NAME_W;
         const hp     = hoverMap.current.get(con.id) ?? 0;
-        const baseW  = ((con.base ?? 0) / maxCommitment) * barArea * localP;
-        const totalW = ((con.total ?? 0) / maxCommitment) * barArea * localP;
+        // clamp to 0 so negative-total bars don't render leftward
+        const absBase  = Math.max(con.base ?? 0, 0);
+        const absTotal = Math.max(con.total ?? 0, 0);
+        const baseW  = (absBase  / maxCommitment) * barArea * localP;
+        const totalW = (absTotal / maxCommitment) * barArea * localP;
         const varW   = totalW - baseW;
 
         // Contractor name  y-axis
@@ -96,23 +114,23 @@ export function ContractValueOrb({ data, 'data-testid': testId }: ContractValueO
           const fade = Math.min(1, (localP - 0.35) / 0.4);
           ctx.globalAlpha  = fade;
           ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
-          ctx.fillStyle    = hp > 0 ? color : CC.t2;
+          ctx.fillStyle    = hp > 0 ? color : CC.t1;
           ctx.textAlign    = 'left';
           ctx.textBaseline = 'middle';
-          ctx.fillText(`£${con.total ?? 0}M`, x0 + totalW + 6, y + BAR_H / 2);
+          ctx.fillText(fmtValue(con.total ?? 0), x0 + totalW + 6, y + BAR_H / 2);
           ctx.globalAlpha = 1;
         }
 
         registerHitRect(hitZonesRef.current, con.id, x0, y, Math.max(totalW, 1), BAR_H, {
           label   : con.name,
-          value   : `£${con.total ?? 0}M total`,
-          sublabel: `Base £${con.base ?? 0}M + Var £${con.variation ?? 0}M · ${con.percentage ?? 0}% committed`,
+          value   : `${fmtValue(con.total ?? 0)} total`,
+          sublabel: `Base ${fmtValue(con.base ?? 0)} + Var ${fmtValue(con.variation ?? 0)} · ${con.percentage ?? 0}% committed`,
           color,
         });
       });
 
       // Legend row
-      const ly = H - 14;
+      const ly = dynamicH - 14;
       ctx.textBaseline = 'middle';
       ctx.font         = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
       ctx.textAlign    = 'left';
@@ -145,21 +163,28 @@ export function ContractValueOrb({ data, 'data-testid': testId }: ContractValueO
       ctx.font      = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
       ctx.textAlign = 'right';
       ctx.fillStyle = LEGEND_LABEL.color;
-      ctx.fillText(`Portfolio: £${totals?.total ?? 0}M`, W - 8, ly);
+      ctx.fillText(`Portfolio: ${fmtValue(totals?.total ?? 0)}`, W - 8, ly);
     },
     true,
     { easing: easeOutQuart },
   );
 
   return (
-    <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>
-      <canvas
-        ref={canvasRef}
-        role="img"
-        aria-label="Total contract value per contractor — horizontal bar chart"
-        style={{ width: W, height: H, display: 'block', borderRadius: 8 }}
-      />
-      <CanvasTooltip {...tooltip} parentW={W} parentH={H} />
+    <div data-testid={testId} style={{ width: W, transition: 'all 0.25s ease' }}>
+      <div style={{ position: 'relative' }}>
+        <canvas
+          ref={canvasRef}
+          role="img"
+          aria-label="Total contract value per contractor — horizontal bar chart"
+          style={{ width: W, height: dynamicH, display: 'block', borderRadius: 8 }}
+        />
+        <CanvasTooltip {...tooltip} parentW={W} parentH={dynamicH} />
+      </div>
+      {contractors.length > MAX_ITEMS && (
+        <div style={{ marginTop: 8 }}>
+          <ToggleButton expanded={showAll} onToggle={() => setShowAll(prev => !prev)} />
+        </div>
+      )}
     </div>
   );
 }

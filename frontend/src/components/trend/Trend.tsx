@@ -1,37 +1,57 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
 import { tickHoverProgress, easeOutCubic } from '../../canvas/easing';
 import { CC, AXIS_LABEL, rgb, drawGlow, setupCanvas, drawCrosshair } from '../../canvas/canvasUtils';
-import type { QuotationTrendProps } from './types';
+import type { TrendProps } from './types';
+import './trend.css';
 
-const W = 680;
+const MIN_W = 680;
 const H = 280;
+const PAD_L = 54;
+const PAD_R = 28;
+const MIN_STEP = 64;
+const LABEL_FONT = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+const LABEL_PAD = 12; // minimum gap between adjacent labels
 
-export function QuotationTrend({ trend = [], 'data-testid': testId }: QuotationTrendProps) {
+export function Trend({ trend = [], 'data-testid': testId }: TrendProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
 
-  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
+  // Measure the widest label so the step is always large enough to avoid overlap
+  const minStep = useMemo(() => {
+    if (trend.length <= 1) return MIN_STEP;
+    const tmpCanvas = document.createElement('canvas');
+    const tmpCtx = tmpCanvas.getContext('2d');
+    if (!tmpCtx) return MIN_STEP;
+    tmpCtx.font = LABEL_FONT;
+    const maxLabelW = Math.max(...trend.map(p => tmpCtx.measureText(p.week).width));
+    return Math.max(MIN_STEP, maxLabelW + LABEL_PAD);
+  }, [trend]);
+
+  const totalW = Math.max(MIN_W, PAD_L + PAD_R + Math.max(0, trend.length - 1) * minStep);
+
+  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: totalW, height: H });
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = setupCanvas(canvas, W, H);
+    const ctx = setupCanvas(canvas, totalW, H);
     frameRef.current = 0;
     const DURATION = 72;
 
-    const padL = 54;
-    const padR = 28;
+    const padL = PAD_L;
+    const padR = PAD_R;
     const padT = 30;
     const padB = 54;
-    const chartW = W - padL - padR;
+    const chartW = totalW - padL - padR;
     const chartH = H - padT - padB;
     const maxCount = Math.max(...trend.map(p => p.count), 1);
     const n = trend.length;
-    const stepX = n > 1 ? chartW / (n - 1) : chartW;
+    // Use measured minStep so actual label width drives spacing, not a fixed constant
+    const stepX = n > 1 ? Math.max(chartW / (n - 1), minStep) : chartW;
 
     const pts = trend.map((p, i) => ({
       x: padL + i * stepX,
@@ -44,7 +64,7 @@ export function QuotationTrend({ trend = [], 'data-testid': testId }: QuotationT
     const draw = () => {
       frameRef.current++;
       const T = frameRef.current;
-      ctx.clearRect(0, 0, W, H);
+      ctx.clearRect(0, 0, totalW, H);
 
       const rawP = Math.min(T / DURATION, 1);
       const progress = easeOutCubic(rawP);
@@ -76,14 +96,14 @@ export function QuotationTrend({ trend = [], 'data-testid': testId }: QuotationT
       ctx.font = AXIS_LABEL.font;
       ctx.fillStyle = AXIS_LABEL.color;
       ctx.textAlign = 'center';
-      ctx.fillText('Submissions', 0, 0);
+      ctx.fillText('Count', 0, 0);
       ctx.restore();
 
       // X-axis label
       ctx.font = AXIS_LABEL.font;
       ctx.fillStyle = AXIS_LABEL.color;
       ctx.textAlign = 'center';
-      ctx.fillText('Week', padL + chartW / 2, H - 6);
+      ctx.fillText('Period', padL + chartW / 2, H - 6);
 
       // X-axis baseline
       ctx.strokeStyle = rgb(CC.bd, 0.3);
@@ -141,7 +161,7 @@ export function QuotationTrend({ trend = [], 'data-testid': testId }: QuotationT
 
         registerHitCircle(hitZonesRef.current, id, pt.x, pt.y, 10, {
           label: pt.point.week,
-          value: `${pt.point.count} quotations submitted`,
+          value: `${pt.point.count} submissions`,
           sublabel: `£${pt.point.value}M value`,
           color: CC.cyan,
         });
@@ -165,14 +185,14 @@ export function QuotationTrend({ trend = [], 'data-testid': testId }: QuotationT
 
         // Count label above point
         if (hp > 0 || isPeak) {
-          ctx.font = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+          ctx.font = LABEL_FONT;
           ctx.fillStyle = CC.cyan;
           ctx.textAlign = 'center';
           ctx.fillText(String(pt.point.count), pt.x, pt.y - 10);
         }
 
-        // Week label below axis
-        ctx.font = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        // Period label below axis
+        ctx.font = LABEL_FONT;
         ctx.fillStyle = hp > 0 ? CC.cyan : AXIS_LABEL.color;
         ctx.textAlign = 'center';
         ctx.fillText(pt.point.week, pt.x, H - padB + 14);
@@ -183,7 +203,8 @@ export function QuotationTrend({ trend = [], 'data-testid': testId }: QuotationT
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [trend]);
+  }, [trend, totalW, minStep]);
+
 
   return (
     <div
@@ -191,14 +212,14 @@ export function QuotationTrend({ trend = [], 'data-testid': testId }: QuotationT
       className="trend-scroll"
       style={{ width: '100%', overflowX: 'auto' }}
     >
-      <div style={{ position: 'relative', width: W, height: H }}>
+      <div style={{ position: 'relative', width: totalW, height: H }}>
         <canvas
           ref={canvasRef}
           role="img"
           aria-label="Trend chart — count over time"
-          style={{ width: W, height: H, display: 'block' }}
+          style={{ width: totalW, height: H, display: 'block' }}
         />
-        <CanvasTooltip {...tooltip} parentW={W} parentH={H} />
+        <CanvasTooltip {...tooltip} parentW={totalW} parentH={H} />
       </div>
     </div>
   );

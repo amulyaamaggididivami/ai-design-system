@@ -15,7 +15,6 @@ const C = {
   green:  CC.green,
 } as const;
 
-const MONO = "'JetBrains Mono', monospace";
 const SANS = "'Satoshi Variable', 'DM Sans', sans-serif";
 
 // Typography spec — Display xs / Medium — applied to value text
@@ -44,11 +43,12 @@ function ChipRow({ chips = [] }: { chips: KeyHighlightChip[] }) {
         <div
           key={i}
           style={{
-            flex: 1, display: 'flex', alignItems: 'baseline', gap: 8,
+            width: 260, height: 120, display: 'flex', alignItems: 'baseline', gap: 8,
             padding: '8px 12px',
             background: C.bg,
             border: `1px solid ${C.border}`,
             borderRadius: 5,
+            boxSizing: 'border-box' as const,
           }}
         >
           <span style={{ ...VALUE, color: chip.color ?? C.t1 }}>
@@ -73,16 +73,19 @@ function Stats({ items = [] }: { items: Array<{ value: string; label: string; co
         <div
           key={i}
           style={{
-            flex: 1, padding: '12px 16px',
+            display: 'flex', flexDirection: 'column' as const,
+            justifyContent: 'center', alignItems: 'flex-start',
+            width: 260, height: 120, padding: 24, gap: 8,
+            flexShrink: 0,
             border: `1px solid ${C.border}`,
             background: C.bg,
-            textAlign: 'left' as const,
+            boxSizing: 'border-box' as const,
           }}
         >
           <div style={{ ...VALUE, color: item.color ?? C.t1 }}>
             {item.value}
           </div>
-          <div style={{ ...LABEL, marginTop: 5 }}>
+          <div style={{ ...LABEL }}>
             {item.label}
           </div>
         </div>
@@ -105,20 +108,18 @@ function Ranked({ items = [] }: { items: Array<{ name: string; value: string; co
             padding: '9px 14px',
             background: C.bg,
             border: `1px solid ${C.border}`,
-            borderLeft: `3px solid ${item.color ?? C.t2}`,
-            borderRadius: 6,
           }}
         >
           <span
             style={{
-              fontSize: 11, fontWeight: 600, color: item.color ?? C.t2,
+              fontSize: 14, fontWeight: 600, color: item.color ?? C.t2,
               background: (item.color ?? C.t2) + '22', padding: '2px 8px',
               borderRadius: 4, fontFamily: SANS, flexShrink: 0,
             }}
           >
             {item.name}
           </span>
-          <span style={{ ...VALUE, color: item.color ?? C.t1, minWidth: 70, flexShrink: 0 }}>
+          <span style={{ ...VALUE, fontSize: 14, color: item.color ?? C.t1, minWidth: 70, flexShrink: 0 }}>
             {item.value}
           </span>
           <span style={{ ...LABEL, flex: 1 }}>
@@ -140,16 +141,20 @@ function Chips({ items = [] }: { items: KeyHighlightChip[] }) {
         <div
           key={i}
           style={{
-            flex: 1, padding: '14px 16px',
+            display: 'flex', flexDirection: 'column' as const,
+            justifyContent: 'center', alignItems: 'flex-start',
+            width: 260, height: 120, padding: 24, gap: 8,
+            flexShrink: 0,
             background: C.bg,
             border: `1px solid ${(item.color ? item.color + '30' : C.border)}`,
+            boxSizing: 'border-box' as const,
             // borderRadius: 7,
           }}
         >
           <div style={{ ...VALUE, color: item.color ?? C.t1 }}>
             {item.value}
           </div>
-          <div style={{ ...LABEL, marginTop: 6 }}>
+          <div style={{ ...LABEL }}>
             {item.label}
           </div>
         </div>
@@ -219,10 +224,10 @@ function DotStrip({ min, max, unit, dots = [], chips = [] }: {
           }}
         />
         {/* Min / max labels */}
-        <div style={{ position: 'absolute' as const, top: 43, left: 0, fontSize: 9, color: C.t4, fontFamily: MONO }}>
+        <div style={{ position: 'absolute' as const, top: 43, left: 0, fontSize: 14, color: C.t4, fontFamily: SANS }}>
           {min}{unit}
         </div>
-        <div style={{ position: 'absolute' as const, top: 43, right: 0, fontSize: 9, color: C.t4, fontFamily: MONO }}>
+        <div style={{ position: 'absolute' as const, top: 43, right: 0, fontSize: 14, color: C.t4, fontFamily: SANS }}>
           {max}{unit}
         </div>
         {/* Dots */}
@@ -242,10 +247,10 @@ function DotStrip({ min, max, unit, dots = [], chips = [] }: {
             >
               {above && (
                 <div style={{ textAlign: 'center' as const, marginBottom: 2 }}>
-                  <div style={{ fontSize: 9, color: dotColor, fontFamily: SANS, whiteSpace: 'nowrap' as const }}>
+                  <div style={{ fontSize: 14, color: dotColor, fontFamily: SANS, whiteSpace: 'nowrap' as const }}>
                     {dot.name}
                   </div>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: dotColor, fontFamily: MONO, whiteSpace: 'nowrap' as const }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: dotColor, fontFamily: SANS, whiteSpace: 'nowrap' as const }}>
                     {dot.val}{unit}
                   </div>
                 </div>
@@ -260,10 +265,10 @@ function DotStrip({ min, max, unit, dots = [], chips = [] }: {
               />
               {!above && (
                 <div style={{ textAlign: 'center' as const, marginTop: 4 }}>
-                  <div style={{ fontSize: 9, color: dotColor, fontFamily: SANS, whiteSpace: 'nowrap' as const }}>
+                  <div style={{ fontSize: 14, color: dotColor, fontFamily: SANS, whiteSpace: 'nowrap' as const }}>
                     {dot.name}
                   </div>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: dotColor, fontFamily: MONO, whiteSpace: 'nowrap' as const }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: dotColor, fontFamily: SANS, whiteSpace: 'nowrap' as const }}>
                     {dot.val}{unit}
                   </div>
                 </div>
@@ -298,7 +303,7 @@ function Proportion({ leftPct, leftLabel, leftValue, leftColor, rightPct, rightL
             paddingRight: 12,
           }}
         >
-          <span style={{ fontSize: 12, fontWeight: 700, color: lColor, fontFamily: MONO }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: lColor, fontFamily: SANS }}>
             {leftValue}
           </span>
         </div>
@@ -310,7 +315,7 @@ function Proportion({ leftPct, leftLabel, leftValue, leftColor, rightPct, rightL
             paddingLeft: 12,
           }}
         >
-          <span style={{ fontSize: 12, fontWeight: 700, color: rColor, fontFamily: MONO }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: rColor, fontFamily: SANS }}>
             {rightValue}
           </span>
         </div>
@@ -318,12 +323,12 @@ function Proportion({ leftPct, leftLabel, leftValue, leftColor, rightPct, rightL
       {/* Labels */}
       <div style={{ display: 'flex', marginBottom: chips ? 4 : 0 }}>
         <div style={{ width: `${leftPct}%` }}>
-          <span style={{ fontSize: 10, color: lColor, fontFamily: SANS }}>
+          <span style={{ fontSize: 14, color: lColor, fontFamily: SANS }}>
             {leftPct}% {leftLabel}
           </span>
         </div>
         <div style={{ width: `${rightPct}%`, paddingLeft: 10 }}>
-          <span style={{ fontSize: 10, color: rColor, fontFamily: SANS }}>
+          <span style={{ fontSize: 14, color: rColor, fontFamily: SANS }}>
             {rightPct}% {rightLabel}
           </span>
         </div>
@@ -369,7 +374,7 @@ function Ring({ pct, label, color: colorProp, chips }: {
             textAlign: 'center' as const,
           }}
         >
-          <div style={{ fontSize: 15, fontWeight: 700, color, fontFamily: MONO }}>{pct}%</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color, fontFamily: SANS }}>{pct}%</div>
         </div>
       </div>
       {/* Label + chips */}
@@ -430,14 +435,12 @@ function ScorecardRows({ items = [] }: { items: ScorecardRow[] }) {
             padding: '8px 12px',
             background: C.bg,
             border: `1px solid ${C.border}`,
-            borderLeft: `3px solid ${item.color ?? C.t2}`,
-            borderRadius: 6,
           }}
         >
           {/* Name */}
           <span
             style={{
-              fontSize: 11, fontWeight: 600, color: item.color ?? C.t2,
+              fontSize: 14, fontWeight: 600, color: item.color ?? C.t2,
               background: (item.color ?? C.t2) + '1A', padding: '2px 7px',
               borderRadius: 4, fontFamily: SANS, flexShrink: 0, minWidth: 62,
               textAlign: 'center' as const,
@@ -460,7 +463,7 @@ function ScorecardRows({ items = [] }: { items: ScorecardRow[] }) {
           </div>
 
           {/* Value */}
-          <span style={{ fontSize: 13, fontWeight: 700, color: item.color ?? C.t1, fontFamily: MONO, flexShrink: 0, minWidth: 52, textAlign: 'right' as const }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: item.color ?? C.t1, fontFamily: SANS, flexShrink: 0, minWidth: 52, textAlign: 'right' as const }}>
             {item.value}
           </span>
 
@@ -468,7 +471,7 @@ function ScorecardRows({ items = [] }: { items: ScorecardRow[] }) {
           {item.badge && item.badgeSeverity && (
             <span
               style={{
-                fontSize: 10, fontWeight: 600,
+                fontSize: 14, fontWeight: 600,
                 color: BADGE_FG[item.badgeSeverity],
                 background: BADGE_BG[item.badgeSeverity],
                 padding: '2px 7px', borderRadius: 4,
@@ -529,7 +532,7 @@ function FlagsList({ items = [] }: { items: FlagsListRow[] }) {
             </span>
             <span
               style={{
-                fontSize: 10, fontWeight: 600, color,
+                fontSize: 14, fontWeight: 600, color,
                 background: color + '20', padding: '2px 7px',
                 borderRadius: 4, fontFamily: SANS, flexShrink: 0,
               }}
@@ -565,7 +568,7 @@ function ComparisonRows({ columns = [], rows = [] }: { columns: string[]; rows: 
           <div
             key={i}
             style={{
-              flex: 1, fontSize: 9, fontWeight: 600, color: C.t4,
+              flex: 1, fontSize: 14, fontWeight: 600, color: C.t2,
               fontFamily: SANS, textTransform: 'uppercase' as const, letterSpacing: 0.6,
             }}
           >
@@ -582,14 +585,12 @@ function ComparisonRows({ columns = [], rows = [] }: { columns: string[]; rows: 
             padding: '8px 12px',
             background: C.bg,
             border: `1px solid ${C.border}`,
-            borderLeft: `3px solid ${row.color ?? C.t4}`,
-            borderRadius: 6,
           }}
         >
           <span
             style={{
-              fontSize: 11, fontWeight: 600,
-              color: row.color ?? C.t2,
+              fontSize: 14, fontWeight: 600,
+              color: C.t2,
               background: (row.color ?? C.t4) + '1A',
               padding: '2px 8px', borderRadius: 4,
               fontFamily: SANS, flexShrink: 0, minWidth: 64,
@@ -599,7 +600,7 @@ function ComparisonRows({ columns = [], rows = [] }: { columns: string[]; rows: 
             {row.label}
           </span>
           {row.cells.map((cell, j) => (
-            <span key={j} style={{ flex: 1, fontSize: 13, fontWeight: 700, color: row.color ?? C.t1, fontFamily: MONO }}>
+            <span key={j} style={{ flex: 1, fontSize: 14, fontWeight: 700, color: row.color ?? C.t1, fontFamily: SANS }}>
               {cell}
             </span>
           ))}
@@ -615,7 +616,6 @@ function Takeaway({ text }: { text: string }) {
   return (
     <div
       style={{
-        marginTop: 10,
         padding: '8px 12px',
         border: `1px solid ${CC.bd}`,
         borderLeft: `4px solid #FFAE43`,
@@ -662,7 +662,7 @@ export function KeyHighlights({ block }: { block?: KeyHighlightBlock }) {
   if (!block.takeaway) return inner;
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {inner}
       <Takeaway text={block.takeaway} />
     </div>

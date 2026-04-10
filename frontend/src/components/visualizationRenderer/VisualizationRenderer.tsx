@@ -13,6 +13,7 @@ import { PieChart } from '../pieChart/PieChart';
 import { ProcessSankey, RankingSankey } from '../sankey';
 import { QuotationBalance } from '../quotationBalance';
 import { QuotationTrend } from '../quotationTrend';
+import { Trend } from '../trend';
 import { SeverityBands } from '../severityBands';
 import { StatusArc } from '../statusArc';
 import { TrendChart } from '../trendChart/TrendChart';
@@ -43,6 +44,7 @@ export function VisualizationRenderer({ config, className }: VisualizationRender
   if (config.type === 'variation-split') return <VariationSplit contractors={config.contractors} />;
   if (config.type === 'quotation-balance') return <QuotationBalance accepted={config.accepted} submitted={config.submitted} />;
   if (config.type === 'quotation-trend') return <QuotationTrend trend={config.trend} />;
+  if (config.type === 'trend-view') return <Trend trend={config.trend} />;
   if (config.type === 'weekly-flow') return <WeeklyFlow contractors={config.contractors} />;
 
   return <div className="viz-empty">Visualization unavailable</div>;
