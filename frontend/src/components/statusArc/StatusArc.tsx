@@ -1,8 +1,10 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
 import { CC, AXIS_LABEL, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
+import { ChartEmptyState } from '../common/ChartEmptyState';
+import type { EWStatusRow } from '../../types';
 import type { StatusArcProps } from './types';
 
 const W = 460;
@@ -14,12 +16,16 @@ const STATUS_COLORS: Record<string, string> = {
   Closed: CC.green,
 };
 
-export function StatusArc({ segments = [], title, 'data-testid': testId }: StatusArcProps) {
+export function StatusArc({ segments: rawSegments = [], title, 'data-testid': testId }: StatusArcProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
   const hoverMap = useRef<Map<string, number>>(new Map());
 
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
+  const segments = useMemo(
+    () => (rawSegments as unknown[]).filter((s): s is EWStatusRow => s != null && typeof s === 'object'),
+    [rawSegments],
+  );
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -179,6 +185,9 @@ export function StatusArc({ segments = [], title, 'data-testid': testId }: Statu
     draw();
     return () => cancelAnimationFrame(raf);
   }, [segments, title]);
+
+  const isEmpty = segments.length === 0;
+  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testId} />;
 
   return (
     <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>

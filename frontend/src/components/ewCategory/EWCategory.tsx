@@ -1,20 +1,26 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
 import { dampedPulse } from '../../canvas/easing';
 import { CC, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
+import { ChartEmptyState } from '../common/ChartEmptyState';
+import type { EWCategoryRow } from '../../types';
 import type { EWCategoryProps } from './types';
 
 const W = 680;
 const H = 260;
 
-export function EWCategory({ categories = [], 'data-testid': testId }: EWCategoryProps) {
+export function EWCategory({ categories: rawCategories = [], 'data-testid': testId }: EWCategoryProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
   const hoverMap = useRef<Map<string, number>>(new Map());
 
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
+  const categories = useMemo(
+    () => (rawCategories as unknown[]).filter((c): c is EWCategoryRow => c != null && typeof c === 'object'),
+    [rawCategories],
+  );
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -128,6 +134,9 @@ export function EWCategory({ categories = [], 'data-testid': testId }: EWCategor
     draw();
     return () => cancelAnimationFrame(raf);
   }, [categories]);
+
+  const isEmpty = categories.length === 0;
+  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testId} />;
 
   return (
     <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>

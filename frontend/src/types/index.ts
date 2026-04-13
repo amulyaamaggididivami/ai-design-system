@@ -173,8 +173,8 @@ export type ContractorRow = {
 };
 
 export type ContractData = {
-  contractors: ContractorRow[];
-  totals?: { base?: number; variation?: number; total?: number };
+  contractors: (ContractorRow | number | null)[];
+  totals?: { base?: number; variation?: number; total?: number } | null;
 };
 
 export type EWStatusRow = { status: string; count: number };

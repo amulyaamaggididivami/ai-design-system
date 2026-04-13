@@ -517,8 +517,6 @@ function FlagsList({ items = [] }: { items: FlagsListRow[] }) {
               padding: '9px 12px',
               background: color + '0A',
               border: `1px solid ${color}25`,
-              borderLeft: `3px solid ${color}`,
-              borderRadius: 6,
             }}
           >
             <span

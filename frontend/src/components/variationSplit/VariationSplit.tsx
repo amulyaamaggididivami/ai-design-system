@@ -3,8 +3,10 @@ import { useRef, useEffect, useState, useMemo } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { stagger, tickHoverProgress, easeOutQuart } from '../../canvas/easing';
-import { CC, AXIS_LABEL, LEGEND_LABEL, PALETTE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, LEGEND_LABEL, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { ChartEmptyState } from '../common/ChartEmptyState';
 import { ToggleButton } from '../common/ToggleButton';
+import type { VariationRow } from '../../types';
 import type { VariationSplitProps } from './types';
 
 const W         = 680;
@@ -14,12 +16,16 @@ const GAP       = 14;
 const PAD_T     = 16;
 const PAD_B     = 32;
 
-export function VariationSplit({ contractors = [], 'data-testid': testId }: VariationSplitProps) {
+export function VariationSplit({ contractors: rawContractors = [], 'data-testid': testId }: VariationSplitProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
   const [showAll, setShowAll] = useState(false);
 
+  const contractors = useMemo(
+    () => (rawContractors as unknown[]).filter((c): c is VariationRow => c != null && typeof c === 'object'),
+    [rawContractors],
+  );
   const visible = useMemo(
     () => showAll ? contractors : contractors.slice(0, MAX_ITEMS),
     [contractors, showAll],
@@ -61,7 +67,6 @@ export function VariationSplit({ contractors = [], 'data-testid': testId }: Vari
       hitZonesRef.current = [];
 
       visible.forEach((c, i) => {
-        const accentColor = PALETTE[i % PALETTE.length];
         const localP = stagger(progress, i, visible.length, easeOutQuart);
         const y = startY + i * (barH + gap);
         const total = (c.implemented ?? 0) + (c.unimplemented ?? 0);
@@ -162,6 +167,9 @@ export function VariationSplit({ contractors = [], 'data-testid': testId }: Vari
     draw();
     return () => cancelAnimationFrame(raf);
   }, [visible, H]);
+
+  const isEmpty = contractors.length === 0;
+  if (isEmpty) return <ChartEmptyState width={W} height={160} data-testid={testId} />;
 
   return (
     <div data-testid={testId} style={{ width: W }}>

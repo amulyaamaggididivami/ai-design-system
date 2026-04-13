@@ -5,7 +5,9 @@ import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInt
 import { easeOutQuart, stagger, tickHoverProgress } from '../../canvas/easing';
 import { CC, AXIS_LABEL, LEGEND_LABEL, rgb, drawGlow } from '../../canvas/canvasUtils';
 import { useCanvasLoop } from '../../canvas/useCanvasLoop';
+import { ChartEmptyState } from '../common/ChartEmptyState';
 import { ToggleButton } from '../common/ToggleButton';
+import type { ContractorRow } from '../../types';
 import type { ContractValueOrbProps } from './types';
 
 const W        = 680;
@@ -30,13 +32,16 @@ export function ContractValueOrb({ data, 'data-testid': testId }: ContractValueO
   const [showAll, setShowAll] = useState(false);
 
   const { contractors = [], totals } = data;
-  const sortedContractors  = [...contractors].sort((a, b) => (b.total ?? 0) - (a.total ?? 0));
+  const validContractors   = contractors.filter((c): c is ContractorRow => c != null && typeof c === 'object');
+  const sortedContractors  = [...validContractors].sort((a, b) => (b.total ?? 0) - (a.total ?? 0));
   const visibleContractors = showAll ? sortedContractors : sortedContractors.slice(0, MAX_ITEMS);
   const n             = visibleContractors.length;
   const maxCommitment = Math.max(...sortedContractors.map(c => Math.abs(c.total ?? 0)), 1);
   const dynamicH      = Math.max(MIN_H, PAD.top + PAD.bottom + n * BAR_H + Math.max(0, n - 1) * 8);
   const barArea       = W - PAD.left - NAME_W - PAD.right;
   const gap           = n > 1 ? (dynamicH - PAD.top - PAD.bottom - n * BAR_H) / (n - 1) : 0;
+
+  const isEmpty = validContractors.length === 0;
 
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: dynamicH });
 
@@ -169,6 +174,10 @@ export function ContractValueOrb({ data, 'data-testid': testId }: ContractValueO
     { easing: easeOutQuart },
   );
 
+  if (isEmpty) {
+    return <ChartEmptyState width={W} height={MIN_H} message="No contract data available" data-testid={testId} />;
+  }
+
   return (
     <div data-testid={testId} style={{ width: W, transition: 'all 0.25s ease' }}>
       <div style={{ position: 'relative' }}>
@@ -180,7 +189,7 @@ export function ContractValueOrb({ data, 'data-testid': testId }: ContractValueO
         />
         <CanvasTooltip {...tooltip} parentW={W} parentH={dynamicH} />
       </div>
-      {contractors.length > MAX_ITEMS && (
+      {validContractors.length > MAX_ITEMS && (
         <div style={{ marginTop: 8 }}>
           <ToggleButton expanded={showAll} onToggle={() => setShowAll(prev => !prev)} />
         </div>

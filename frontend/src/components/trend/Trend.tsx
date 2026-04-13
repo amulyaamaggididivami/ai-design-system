@@ -2,8 +2,10 @@ import { useRef, useEffect, useMemo } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
-import { tickHoverProgress, easeOutCubic } from '../../canvas/easing';
+import { easeOutCubic } from '../../canvas/easing';
 import { CC, AXIS_LABEL, rgb, drawGlow, setupCanvas, drawCrosshair } from '../../canvas/canvasUtils';
+import { ChartEmptyState } from '../common/ChartEmptyState';
+import type { QuotationTrendPoint } from '../../types';
 import type { TrendProps } from './types';
 import './trend.css';
 
@@ -15,10 +17,16 @@ const MIN_STEP = 64;
 const LABEL_FONT = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
 const LABEL_PAD = 12; // minimum gap between adjacent labels
 
-export function Trend({ trend = [], 'data-testid': testId }: TrendProps) {
+export function Trend({ trend: rawTrend = [], 'data-testid': testId }: TrendProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
+  const yAxisRef = useRef<HTMLCanvasElement>(null);
+
+  const trend = useMemo(
+    () => (rawTrend as unknown[]).filter((p): p is QuotationTrendPoint => p != null && typeof p === 'object'),
+    [rawTrend],
+  );
 
   // Measure the widest label so the step is always large enough to avoid overlap
   const minStep = useMemo(() => {
@@ -39,6 +47,7 @@ export function Trend({ trend = [], 'data-testid': testId }: TrendProps) {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = setupCanvas(canvas, totalW, H);
+    const yCtx = yAxisRef.current ? setupCanvas(yAxisRef.current, PAD_L, H) : null;
     frameRef.current = 0;
     const DURATION = 72;
 
@@ -66,13 +75,49 @@ export function Trend({ trend = [], 'data-testid': testId }: TrendProps) {
       const T = frameRef.current;
       ctx.clearRect(0, 0, totalW, H);
 
+      // Y-axis sticky overlay — redraws every frame so labels stay in sync during animation
+      if (yCtx) {
+        yCtx.clearRect(0, 0, PAD_L, H);
+        yCtx.fillStyle = CC.bg;
+        yCtx.fillRect(0, 0, PAD_L, H);
+        [0.25, 0.5, 0.75, 1.0].forEach(frac => {
+          const y = padT + chartH - frac * chartH;
+          yCtx.font = AXIS_LABEL.font;
+          yCtx.fillStyle = AXIS_LABEL.color;
+          yCtx.textAlign = 'right';
+          yCtx.fillText(String(Math.round(maxCount * frac)), PAD_L - 6, y + 3);
+        });
+        yCtx.save();
+        yCtx.translate(12, padT + chartH / 2);
+        yCtx.rotate(-Math.PI / 2);
+        yCtx.font = AXIS_LABEL.font;
+        yCtx.fillStyle = AXIS_LABEL.color;
+        yCtx.textAlign = 'center';
+        yCtx.fillText('Count', 0, 0);
+        yCtx.restore();
+      }
+
       const rawP = Math.min(T / DURATION, 1);
       const progress = easeOutCubic(rawP);
 
-      tickHoverProgress(hoverMap.current, hoveredRef.current);
+      const hoveredId = hoveredRef.current;
+
+      // Reset all non-hovered points instantly so only one point is ever active
+      hoverMap.current.forEach((_, key) => {
+        if (key !== hoveredId) {
+          hoverMap.current.set(key, 0);
+        }
+      });
+
+      // Smoothly animate the hovered point in
+      if (hoveredId) {
+        const prev = hoverMap.current.get(hoveredId) ?? 0;
+        hoverMap.current.set(hoveredId, Math.min(prev + 0.2, 1));
+      }
+
       hitZonesRef.current = [];
 
-      // Grid lines
+      // Grid lines — start from padL so they don't render under the sticky Y-axis overlay
       [0.25, 0.5, 0.75, 1.0].forEach(frac => {
         const y = padT + chartH - frac * chartH;
         ctx.strokeStyle = rgb(CC.bd, 0.18);
@@ -83,21 +128,8 @@ export function Trend({ trend = [], 'data-testid': testId }: TrendProps) {
         ctx.lineTo(padL + chartW, y);
         ctx.stroke();
         ctx.setLineDash([]);
-        ctx.font = AXIS_LABEL.font;
-        ctx.fillStyle = AXIS_LABEL.color;
-        ctx.textAlign = 'right';
-        ctx.fillText(String(Math.round(maxCount * frac)), padL - 6, y + 3);
+        // Y-axis tick labels and rotated label are drawn on the sticky yAxisRef canvas only
       });
-
-      // Y-axis label (rotated)
-      ctx.save();
-      ctx.translate(12, padT + chartH / 2);
-      ctx.rotate(-Math.PI / 2);
-      ctx.font = AXIS_LABEL.font;
-      ctx.fillStyle = AXIS_LABEL.color;
-      ctx.textAlign = 'center';
-      ctx.fillText('Count', 0, 0);
-      ctx.restore();
 
       // X-axis label
       ctx.font = AXIS_LABEL.font;
@@ -205,22 +237,38 @@ export function Trend({ trend = [], 'data-testid': testId }: TrendProps) {
     return () => cancelAnimationFrame(raf);
   }, [trend, totalW, minStep]);
 
+  const isEmpty = trend.length < 2;
+  if (isEmpty) return <ChartEmptyState width={MIN_W} height={H} data-testid={testId} />;
 
   return (
-    <div
-      data-testid={testId}
-      className="trend-scroll"
-      style={{ width: '100%', overflowX: 'auto' }}
-    >
-      <div style={{ position: 'relative', width: totalW, height: H }}>
-        <canvas
-          ref={canvasRef}
-          role="img"
-          aria-label="Trend chart — count over time"
-          style={{ width: totalW, height: H, display: 'block' }}
-        />
-        <CanvasTooltip {...tooltip} parentW={totalW} parentH={H} />
+    <div data-testid={testId} style={{ position: 'relative', width: '100%' }}>
+      <div
+        className="trend-scroll"
+        style={{ width: '100%', overflowX: 'auto' }}
+      >
+        <div style={{ position: 'relative', width: totalW, height: H }}>
+          <canvas
+            ref={canvasRef}
+            role="img"
+            aria-label="Trend chart — count over time"
+            style={{ width: totalW, height: H, display: 'block' }}
+          />
+          <CanvasTooltip {...tooltip} parentW={totalW} parentH={H} />
+        </div>
       </div>
+      {/* Y-axis canvas pinned outside the scroll container so it never scrolls */}
+      <canvas
+        ref={yAxisRef}
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: PAD_L,
+          height: H,
+          pointerEvents: 'none',
+        }}
+      />
     </div>
   );
 }

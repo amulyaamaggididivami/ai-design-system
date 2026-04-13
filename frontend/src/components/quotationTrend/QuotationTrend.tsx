@@ -1,20 +1,26 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
 import { tickHoverProgress, easeOutCubic } from '../../canvas/easing';
 import { CC, AXIS_LABEL, rgb, drawGlow, setupCanvas, drawCrosshair } from '../../canvas/canvasUtils';
+import { ChartEmptyState } from '../common/ChartEmptyState';
+import type { QuotationTrendPoint } from '../../types';
 import type { QuotationTrendProps } from './types';
 
 const W = 680;
 const H = 280;
 
-export function QuotationTrend({ trend = [], 'data-testid': testId }: QuotationTrendProps) {
+export function QuotationTrend({ trend: rawTrend = [], 'data-testid': testId }: QuotationTrendProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
 
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
+  const trend = useMemo(
+    () => (rawTrend as unknown[]).filter((p): p is QuotationTrendPoint => p != null && typeof p === 'object'),
+    [rawTrend],
+  );
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -184,6 +190,9 @@ export function QuotationTrend({ trend = [], 'data-testid': testId }: QuotationT
     draw();
     return () => cancelAnimationFrame(raf);
   }, [trend]);
+
+  const isEmpty = trend.length < 2;
+  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testId} />;
 
   return (
     <div

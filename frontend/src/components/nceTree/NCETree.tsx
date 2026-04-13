@@ -1,20 +1,26 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
 import { stagger, tickHoverProgress, easeOutCubic } from '../../canvas/easing';
 import { CC, AXIS_LABEL, PALETTE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { ChartEmptyState } from '../common/ChartEmptyState';
+import type { NCEContractorRow } from '../../types';
 import type { NCETreeProps } from './types';
 
 const W = 680;
 const H = 320;
 
-export function NCETree({ total = 0, byContractor = [], 'data-testid': testId }: NCETreeProps) {
+export function NCETree({ total = 0, byContractor: rawByContractor = [], 'data-testid': testId }: NCETreeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
 
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
+  const byContractor = useMemo(
+    () => (rawByContractor as unknown[]).filter((c): c is NCEContractorRow => c != null && typeof c === 'object'),
+    [rawByContractor],
+  );
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -144,6 +150,9 @@ export function NCETree({ total = 0, byContractor = [], 'data-testid': testId }:
     draw();
     return () => cancelAnimationFrame(raf);
   }, [total, byContractor]);
+
+  const isEmpty = byContractor.length === 0;
+  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testId} />;
 
   return (
     <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>

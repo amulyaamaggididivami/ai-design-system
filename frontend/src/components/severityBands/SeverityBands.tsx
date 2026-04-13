@@ -1,9 +1,11 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { tickHoverProgress, easeOutQuart } from '../../canvas/easing';
 import { CC, AXIS_LABEL, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { ChartEmptyState } from '../common/ChartEmptyState';
+import type { EWSeverityRow } from '../../types';
 import type { SeverityBandsProps } from './types';
 
 const W = 680;
@@ -16,12 +18,16 @@ const SEVERITY_COLORS: Record<string, string> = {
   Low:      CC.green,
 };
 
-export function SeverityBands({ severities = [], 'data-testid': testId }: SeverityBandsProps) {
+export function SeverityBands({ severities: rawSeverities = [], 'data-testid': testId }: SeverityBandsProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
 
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
+  const severities = useMemo(
+    () => (rawSeverities as unknown[]).filter((s): s is EWSeverityRow => s != null && typeof s === 'object'),
+    [rawSeverities],
+  );
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -167,6 +173,9 @@ export function SeverityBands({ severities = [], 'data-testid': testId }: Severi
     draw();
     return () => cancelAnimationFrame(raf);
   }, [severities]);
+
+  const isEmpty = severities.length === 0;
+  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testId} />;
 
   return (
     <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>

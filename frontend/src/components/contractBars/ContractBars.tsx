@@ -5,6 +5,8 @@ import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasI
 import { dampedPulse, tickHoverProgress } from '../../canvas/easing';
 import { CC, rgb, drawGlow, drawDust, drawScanline } from '../../canvas/canvasUtils';
 import { useCanvasLoop } from '../../canvas/useCanvasLoop';
+import { ChartEmptyState } from '../common/ChartEmptyState';
+import type { ContractorRow } from '../../types';
 import type { ContractBarsProps } from './types';
 
 const W         = 780;
@@ -15,10 +17,15 @@ const COLORS    = [CC.blue, CC.cyan, CC.amber, CC.purple, CC.green];
 const KPI_NAMES = ['Base Value', 'Variations', 'Commitment'];
 const KPI_SHORT = ['Base',       'Var',        'Commit'   ];
 
-export function ContractBars({ contractors = [], 'data-testid': testId }: ContractBarsProps) {
+export function ContractBars({ contractors: rawContractors = [], 'data-testid': testId }: ContractBarsProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap  = useRef<Map<string, number>>(new Map());
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
+
+  const contractors = useMemo(
+    () => (rawContractors as unknown[]).filter((c): c is ContractorRow => c != null && typeof c === 'object'),
+    [rawContractors],
+  );
 
   const constellations = useMemo(() => {
     const maxBase = Math.max(...contractors.map(c => c.base ?? 0));
@@ -198,6 +205,9 @@ export function ContractBars({ contractors = [], 'data-testid': testId }: Contra
     },
     true,
   );
+
+  const isEmpty = constellations.length === 0;
+  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testId} />;
 
   return (
     <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>

@@ -4,7 +4,9 @@ import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
 import { easeOutCubic } from '../../canvas/easing';
 import { CC, AXIS_LABEL, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
+import { ChartEmptyState } from '../common/ChartEmptyState';
 import { ToggleButton } from '../common/ToggleButton';
+import type { ContractorRow } from '../../types';
 import type { CommitmentRaceProps } from './types';
 
 const W          = 680;
@@ -24,12 +26,16 @@ function fmtValue(v: number): string {
   return `${sign}£${abs.toFixed(0)}`;
 }
 
-export function CommitmentRace({ contractors = [], 'data-testid': testId }: CommitmentRaceProps) {
+export function CommitmentRace({ contractors: rawContractors = [], 'data-testid': testId }: CommitmentRaceProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef  = useRef(0);
   const hoverMap  = useRef<Map<string, number>>(new Map());
   const [showAll, setShowAll] = useState(false);
 
+  const contractors = useMemo(
+    () => (rawContractors as unknown[]).filter((c): c is ContractorRow => c != null && typeof c === 'object'),
+    [rawContractors],
+  );
   const sorted = useMemo(
     () => [...contractors].sort((a, b) => (b.percentage ?? 0) - (a.percentage ?? 0)),
     [contractors],
@@ -170,6 +176,9 @@ export function CommitmentRace({ contractors = [], 'data-testid': testId }: Comm
     draw();
     return () => cancelAnimationFrame(raf);
   }, [visible, H]);
+
+  const isEmpty = sorted.length === 0;
+  if (isEmpty) return <ChartEmptyState width={W} height={160} data-testid={testId} />;
 
   return (
     <div data-testid={testId} style={{ width: W }}>

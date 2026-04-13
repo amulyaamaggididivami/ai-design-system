@@ -1,9 +1,11 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { dampedPulse } from '../../canvas/easing';
 import { CC, AXIS_LABEL, PALETTE, rgb, drawGlow, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
+import { ChartEmptyState } from '../common/ChartEmptyState';
+import type { EWOpenContractorRow } from '../../types';
 import type { ContractorRankProps } from './types';
 
 const W = 780;
@@ -18,13 +20,16 @@ const RISK_LABELS = [
   'Low exposure',
 ];
 
-export function ContractorRank({ contractors = [], 'data-testid': testId }: ContractorRankProps) {
+export function ContractorRank({ contractors: rawContractors = [], 'data-testid': testId }: ContractorRankProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef  = useRef(0);
   const hoverMap  = useRef<Map<string, number>>(new Map());
 
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
-
+  const contractors = useMemo(
+    () => (rawContractors as unknown[]).filter((c): c is EWOpenContractorRow => c != null && typeof c === 'object'),
+    [rawContractors],
+  );
   const sorted = [...contractors].sort((a, b) => (b.count ?? 0) - (a.count ?? 0)).slice(0, 5);
   const total  = sorted.reduce((s, c) => s + (c.count ?? 0), 0);
 
@@ -162,6 +167,9 @@ export function ContractorRank({ contractors = [], 'data-testid': testId }: Cont
     draw();
     return () => cancelAnimationFrame(raf);
   }, [sorted, total]);
+
+  const isEmpty = sorted.length === 0;
+  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testId} />;
 
   return (
     <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>
