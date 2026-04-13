@@ -11,5 +11,5 @@ export default meta;
 type Story = StoryObj<typeof WeeklyFlow>;
 
 export const Default: Story = {
-  args: { contractors: contractData.contractors, 'data-testid': 'weekly-flow' },
+  args: { items: contractData.items, 'data-testid': 'weekly-flow' },
 };

@@ -2,67 +2,44 @@ import { useRef, useEffect, useMemo } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
-import { easeOutCubic } from '../../canvas/easing';
+import { tickHoverProgress, easeOutCubic } from '../../canvas/easing';
 import { CC, AXIS_LABEL, rgb, drawGlow, setupCanvas, drawCrosshair } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import type { QuotationTrendPoint } from '../../types';
-import type { TrendProps } from './types';
-import './trend.css';
+import type { AreaLineChartProps } from './types';
 
-const MIN_W = 680;
+const W = 680;
 const H = 280;
-const PAD_L = 54;
-const PAD_R = 28;
-const MIN_STEP = 64;
-const LABEL_FONT = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
-const LABEL_PAD = 12; // minimum gap between adjacent labels
 
-export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendProps) {
+export function AreaLineChart({ points: rawTrend = [], 'data-testid': testId }: AreaLineChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
-  const yAxisRef = useRef<HTMLCanvasElement>(null);
 
-  const points = useMemo(
-    () => (rawPoints as unknown[]).filter((p): p is QuotationTrendPoint => p != null && typeof p === 'object'),
-    [rawPoints],
+  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
+  const trend = useMemo(
+    () => (rawTrend as unknown[]).filter((p): p is QuotationTrendPoint => p != null && typeof p === 'object'),
+    [rawTrend],
   );
-
-  // Measure the widest label so the step is always large enough to avoid overlap
-  const minStep = useMemo(() => {
-    if (points.length <= 1) return MIN_STEP;
-    const tmpCanvas = document.createElement('canvas');
-    const tmpCtx = tmpCanvas.getContext('2d');
-    if (!tmpCtx) return MIN_STEP;
-    tmpCtx.font = LABEL_FONT;
-    const maxLabelW = Math.max(...points.map(p => tmpCtx.measureText(p.week).width));
-    return Math.max(MIN_STEP, maxLabelW + LABEL_PAD);
-  }, [points]);
-
-  const totalW = Math.max(MIN_W, PAD_L + PAD_R + Math.max(0, points.length - 1) * minStep);
-
-  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: totalW, height: H });
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = setupCanvas(canvas, totalW, H);
-    const yCtx = yAxisRef.current ? setupCanvas(yAxisRef.current, PAD_L, H) : null;
+    const ctx = setupCanvas(canvas, W, H);
     frameRef.current = 0;
     const DURATION = 72;
 
-    const padL = PAD_L;
-    const padR = PAD_R;
+    const padL = 54;
+    const padR = 28;
     const padT = 30;
     const padB = 54;
-    const chartW = totalW - padL - padR;
+    const chartW = W - padL - padR;
     const chartH = H - padT - padB;
-    const maxCount = Math.max(...points.map(p => p.count), 1);
-    const n = points.length;
-    // Use measured minStep so actual label width drives spacing, not a fixed constant
-    const stepX = n > 1 ? Math.max(chartW / (n - 1), minStep) : chartW;
+    const maxCount = Math.max(...trend.map(p => p.count), 1);
+    const n = trend.length;
+    const stepX = n > 1 ? chartW / (n - 1) : chartW;
 
-    const pts = points.map((p, i) => ({
+    const pts = trend.map((p, i) => ({
       x: padL + i * stepX,
       y: padT + chartH - (p.count / maxCount) * chartH,
       point: p,
@@ -73,51 +50,15 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
     const draw = () => {
       frameRef.current++;
       const T = frameRef.current;
-      ctx.clearRect(0, 0, totalW, H);
-
-      // Y-axis sticky overlay — redraws every frame so labels stay in sync during animation
-      if (yCtx) {
-        yCtx.clearRect(0, 0, PAD_L, H);
-        yCtx.fillStyle = CC.bg;
-        yCtx.fillRect(0, 0, PAD_L, H);
-        [0.25, 0.5, 0.75, 1.0].forEach(frac => {
-          const y = padT + chartH - frac * chartH;
-          yCtx.font = AXIS_LABEL.font;
-          yCtx.fillStyle = AXIS_LABEL.color;
-          yCtx.textAlign = 'right';
-          yCtx.fillText(String(Math.round(maxCount * frac)), PAD_L - 6, y + 3);
-        });
-        yCtx.save();
-        yCtx.translate(12, padT + chartH / 2);
-        yCtx.rotate(-Math.PI / 2);
-        yCtx.font = AXIS_LABEL.font;
-        yCtx.fillStyle = AXIS_LABEL.color;
-        yCtx.textAlign = 'center';
-        yCtx.fillText('Count', 0, 0);
-        yCtx.restore();
-      }
+      ctx.clearRect(0, 0, W, H);
 
       const rawP = Math.min(T / DURATION, 1);
       const progress = easeOutCubic(rawP);
 
-      const hoveredId = hoveredRef.current;
-
-      // Reset all non-hovered points instantly so only one point is ever active
-      hoverMap.current.forEach((_, key) => {
-        if (key !== hoveredId) {
-          hoverMap.current.set(key, 0);
-        }
-      });
-
-      // Smoothly animate the hovered point in
-      if (hoveredId) {
-        const prev = hoverMap.current.get(hoveredId) ?? 0;
-        hoverMap.current.set(hoveredId, Math.min(prev + 0.2, 1));
-      }
-
+      tickHoverProgress(hoverMap.current, hoveredRef.current);
       hitZonesRef.current = [];
 
-      // Grid lines — start from padL so they don't render under the sticky Y-axis overlay
+      // Grid lines
       [0.25, 0.5, 0.75, 1.0].forEach(frac => {
         const y = padT + chartH - frac * chartH;
         ctx.strokeStyle = rgb(CC.bd, 0.18);
@@ -128,14 +69,27 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
         ctx.lineTo(padL + chartW, y);
         ctx.stroke();
         ctx.setLineDash([]);
-        // Y-axis tick labels and rotated label are drawn on the sticky yAxisRef canvas only
+        ctx.font = AXIS_LABEL.font;
+        ctx.fillStyle = AXIS_LABEL.color;
+        ctx.textAlign = 'right';
+        ctx.fillText(String(Math.round(maxCount * frac)), padL - 6, y + 3);
       });
+
+      // Y-axis label (rotated)
+      ctx.save();
+      ctx.translate(12, padT + chartH / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.font = AXIS_LABEL.font;
+      ctx.fillStyle = AXIS_LABEL.color;
+      ctx.textAlign = 'center';
+      ctx.fillText('Submissions', 0, 0);
+      ctx.restore();
 
       // X-axis label
       ctx.font = AXIS_LABEL.font;
       ctx.fillStyle = AXIS_LABEL.color;
       ctx.textAlign = 'center';
-      ctx.fillText('Period', padL + chartW / 2, H - 6);
+      ctx.fillText('Week', padL + chartW / 2, H - 6);
 
       // X-axis baseline
       ctx.strokeStyle = rgb(CC.bd, 0.3);
@@ -193,7 +147,7 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
 
         registerHitCircle(hitZonesRef.current, id, pt.x, pt.y, 10, {
           label: pt.point.week,
-          value: `${pt.point.count} submissions`,
+          value: `${pt.point.count} quotations submitted`,
           sublabel: `£${pt.point.value}M value`,
           color: CC.cyan,
         });
@@ -217,14 +171,14 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
 
         // Count label above point
         if (hp > 0 || isPeak) {
-          ctx.font = LABEL_FONT;
+          ctx.font = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
           ctx.fillStyle = CC.cyan;
           ctx.textAlign = 'center';
           ctx.fillText(String(pt.point.count), pt.x, pt.y - 10);
         }
 
-        // Period label below axis
-        ctx.font = LABEL_FONT;
+        // Week label below axis
+        ctx.font = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle = hp > 0 ? CC.cyan : AXIS_LABEL.color;
         ctx.textAlign = 'center';
         ctx.fillText(pt.point.week, pt.x, H - padB + 14);
@@ -235,40 +189,26 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [points, totalW, minStep]);
+  }, [trend]);
 
-  const isEmpty = points.length < 2;
-  if (isEmpty) return <ChartEmptyState width={MIN_W} height={H} data-testid={testId} />;
+  const isEmpty = trend.length < 2;
+  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testId} />;
 
   return (
-    <div data-testid={testId} style={{ position: 'relative', width: '100%' }}>
-      <div
-        className="trend-scroll"
-        style={{ width: '100%', overflowX: 'auto' }}
-      >
-        <div style={{ position: 'relative', width: totalW, height: H }}>
-          <canvas
-            ref={canvasRef}
-            role="img"
-            aria-label="Trend chart — count over time"
-            style={{ width: totalW, height: H, display: 'block' }}
-          />
-          <CanvasTooltip {...tooltip} parentW={totalW} parentH={H} />
-        </div>
+    <div
+      data-testid={testId}
+      className="trend-scroll"
+      style={{ width: '100%', overflowX: 'auto' }}
+    >
+      <div style={{ position: 'relative', width: W, height: H }}>
+        <canvas
+          ref={canvasRef}
+          role="img"
+          aria-label="Trend chart — count over time"
+          style={{ width: W, height: H, display: 'block' }}
+        />
+        <CanvasTooltip {...tooltip} parentW={W} parentH={H} />
       </div>
-      {/* Y-axis canvas pinned outside the scroll container so it never scrolls */}
-      <canvas
-        ref={yAxisRef}
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: PAD_L,
-          height: H,
-          pointerEvents: 'none',
-        }}
-      />
     </div>
   );
 }
