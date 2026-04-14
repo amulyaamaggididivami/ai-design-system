@@ -100,7 +100,7 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
       if (progress > 0.5) {
         const fade = Math.min(1, (progress - 0.5) / 0.5);
         ctx.globalAlpha = fade;
-        ctx.font = "bold 14px 'JetBrains Mono', monospace";
+        ctx.font = "bold 14px 'Satoshi Variable', 'DM Sans', sans-serif";
         ctx.fillStyle = CC.green;
         ctx.textAlign = 'center';
         ctx.fillText(left.label, leftEnd.x, leftPanY + leftPanH + 18);
@@ -138,7 +138,7 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
       if (progress > 0.5) {
         const fade = Math.min(1, (progress - 0.5) / 0.5);
         ctx.globalAlpha = fade;
-        ctx.font = "bold 14px 'JetBrains Mono', monospace";
+        ctx.font = "bold 14px 'Satoshi Variable', 'DM Sans', sans-serif";
         ctx.fillStyle = CC.amber;
         ctx.textAlign = 'center';
         ctx.fillText(right.label, rightEnd.x, rightPanY + rightPanH + 18);

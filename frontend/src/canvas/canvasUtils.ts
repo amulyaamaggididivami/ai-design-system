@@ -13,17 +13,18 @@ export const CC = {
   blue:   '#2970FF',
   cyan:   '#36BFFA',
   orange: '#EF6820',
-  red:    '#D92D20',
-  green:  '#16B364',
+  red:    '#EF6820',
+  green:  '#71B941',
   purple: '#7A5AF8',
   amber:  '#FAC515',
   t1:     '#F7F7F7',
-  t2:     '#94979C',
+  t2:     '#C2C2C2',
   t3:     '#94979C',
   t4:     '#334155',
 } as const;
 
 export const PALETTE = [CC.blue, CC.cyan, CC.amber, CC.purple, CC.green, CC.red];
+
 
 // --- Typography tokens ---
 
@@ -37,8 +38,8 @@ export const PALETTE = [CC.blue, CC.cyan, CC.amber, CC.purple, CC.green, CC.red]
  *   line-height: 18px (informational — not applicable in canvas ctx.font)
  */
 export const AXIS_LABEL = {
-  font:  "400 12px 'Satoshi Variable', 'DM Sans', sans-serif",
-  color: CC.t2,   // #94979C
+  font:  "400 14px 'Satoshi Variable', 'DM Sans', sans-serif",
+  color: '#C2C2C2',   // #94979C
 } as const;
 
 /**
@@ -52,8 +53,8 @@ export const AXIS_LABEL = {
  *   text-align:  center  (set ctx.textAlign = 'center' at the draw call site)
  */
 export const LEGEND_LABEL = {
-  font:  "400 12px 'Satoshi Variable', 'DM Sans', sans-serif",
-  color: CC.t2,   // #94979C
+  font:  "400 14px 'Satoshi Variable', 'DM Sans', sans-serif",
+  color: '#C2C2C2',   // #94979C
 } as const;
 
 // --- Color helpers ---

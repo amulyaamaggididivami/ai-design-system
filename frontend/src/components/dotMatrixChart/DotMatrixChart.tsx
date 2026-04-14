@@ -119,7 +119,7 @@ export function DotMatrixChart({ items: rawCategories = [], 'data-testid': testI
 
         // Column label below grid
         const labelY = padT + rows * cellH + 16;
-        ctx.font = `${isHighlight ? 'bold ' : ''}9px 'JetBrains Mono', monospace`;
+        ctx.font = `${isHighlight ? 'bold ' : ''}14px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'alphabetic';
         ctx.fillStyle = isHighlight ? CC.cyan : rgb(CC.t2, 0.65);

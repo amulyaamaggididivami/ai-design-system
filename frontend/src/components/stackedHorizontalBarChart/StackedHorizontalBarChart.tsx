@@ -67,7 +67,7 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
         const varW   = totalW - baseW;
 
         // Contractor name  y-axis
-        ctx.font         = `${hp > 0 ? '500' : '500'} 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.font         = `${hp > 0 ? '400' : '400'} 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle    = hp > 0 ? color : AXIS_LABEL.color;
         ctx.textAlign    = 'right';
         ctx.textBaseline = 'middle';
@@ -118,8 +118,8 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
         if (localP > 0.35) {
           const fade = Math.min(1, (localP - 0.35) / 0.4);
           ctx.globalAlpha  = fade;
-          ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
-          ctx.fillStyle    = hp > 0 ? color : CC.t1;
+          ctx.font         = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+          ctx.fillStyle    = hp > 0 ? color : '#F7F9FA';
           ctx.textAlign    = 'left';
           ctx.textBaseline = 'middle';
           ctx.fillText(fmtValue(con.total ?? 0), x0 + totalW + 6, y + BAR_H / 2);
@@ -137,7 +137,7 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
       // Legend row
       const ly = dynamicH - 14;
       ctx.textBaseline = 'middle';
-      ctx.font         = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
+      ctx.font         = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
       ctx.textAlign    = 'left';
 
       // Base swatch
@@ -165,7 +165,7 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
       ctx.fillText('approved variations', PAD.left + NAME_W + 112, ly);
 
       // Portfolio total right-aligned
-      ctx.font      = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
+      ctx.font      = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
       ctx.textAlign = 'right';
       ctx.fillStyle = LEGEND_LABEL.color;
       ctx.fillText(`Portfolio: ${fmtValue(totals?.total ?? 0)}`, W - 8, ly);

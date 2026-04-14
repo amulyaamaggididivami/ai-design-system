@@ -139,20 +139,20 @@ export function MultiMetricConstellationChart({ items: rawItems = [], 'data-test
 
           if (isTop) {
             // Name sits just above the value, both above the star
-            ctx.font      = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
+            ctx.font      = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
             ctx.fillStyle = rgb(trColor, 0.5 + 0.15 * shp);
             ctx.fillText(star.short, star.x, star.y - 24);
 
-            ctx.font      = `500 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
+            ctx.font      = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
             ctx.fillStyle = rgb(trColor, 0.8 + 0.15 * shp);
             ctx.fillText(star.label, star.x, star.y - 11);
           } else {
             // Name sits just below the star, value below the name
-            ctx.font      = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
+            ctx.font      = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
             ctx.fillStyle = rgb(trColor, 0.5 + 0.15 * shp);
             ctx.fillText(star.short, star.x, star.y + 11);
 
-            ctx.font      = `500 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
+            ctx.font      = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
             ctx.fillStyle = rgb(trColor, 0.8 + 0.15 * shp);
             ctx.fillText(star.label, star.x, star.y + 24);
           }
@@ -176,7 +176,7 @@ export function MultiMetricConstellationChart({ items: rawItems = [], 'data-test
         ctx.stroke();
 
         // Contractor name below circle
-        ctx.font         = `500 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.textAlign    = 'center';
         ctx.textBaseline = 'alphabetic';
         ctx.fillStyle    = rgb(CC.t2, 0.65 + hp * 0.25);
@@ -191,7 +191,7 @@ export function MultiMetricConstellationChart({ items: rawItems = [], 'data-test
       });
 
       // Footer caption
-      ctx.font         = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
+      ctx.font         = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
       ctx.textAlign    = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillStyle    = CC.t2;
