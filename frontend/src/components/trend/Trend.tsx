@@ -134,7 +134,7 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
         ctx.lineTo(pts[0].x, pts[0].y);
         for (let i = 1; i < drawN; i++) {
           const t = drawUpTo - Math.floor(drawUpTo);
-          const isLast = i === drawN - 1 && i === Math.ceil(drawUpTo);
+          const isLast = i === drawN - 1 && i === Math.ceil(drawUpTo) && t > 0;
           const px = isLast ? pts[i - 1].x + (pts[i].x - pts[i - 1].x) * t : pts[i].x;
           const py = isLast ? pts[i - 1].y + (pts[i].y - pts[i - 1].y) * t : pts[i].y;
           ctx.lineTo(px, py);
@@ -152,7 +152,7 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
       ctx.beginPath();
       for (let i = 0; i < drawN; i++) {
         const t = drawUpTo - Math.floor(drawUpTo);
-        const isLast = i === drawN - 1 && i > 0 && i === Math.ceil(drawUpTo);
+        const isLast = i === drawN - 1 && i > 0 && i === Math.ceil(drawUpTo) && t > 0;
         const px = isLast ? pts[i - 1].x + (pts[i].x - pts[i - 1].x) * t : pts[i].x;
         const py = isLast ? pts[i - 1].y + (pts[i].y - pts[i - 1].y) * t : pts[i].y;
         i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
@@ -180,7 +180,7 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
 
         ctx.font = LABEL_FONT;
         ctx.fillStyle = AXIS_LABEL.color;
-        ctx.textAlign = 'center';
+        ctx.textAlign = i === 0 ? 'left' : i === pts.length - 1 ? 'right' : 'center';
         ctx.fillText(pt.point.week, pt.x, H - padB + 14);
       });
 

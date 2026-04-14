@@ -9,18 +9,26 @@ import type { NCEContractorRow } from '../../types';
 import type { RadialFanTreeChartProps } from './types';
 
 const W = 680;
-const H = 320;
+const MIN_H = 320;
+const PAD_V = 60;
+const MIN_LEAF_SPACING = 28;
 
 export function RadialFanTreeChart({ total = 0, items: rawByContractor = [], 'data-testid': testId }: RadialFanTreeChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
 
-  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
   const byContractor = useMemo(
     () => (rawByContractor as unknown[]).filter((c): c is NCEContractorRow => c != null && typeof c === 'object'),
     [rawByContractor],
   );
+
+  const H = useMemo(
+    () => Math.max(MIN_H, PAD_V + Math.max(0, byContractor.length - 1) * MIN_LEAF_SPACING),
+    [byContractor.length],
+  );
+
+  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -109,15 +117,19 @@ export function RadialFanTreeChart({ total = 0, items: rawByContractor = [], 'da
             color,
           });
 
-          // Name and count labels
+          // Name and count labels — single line to avoid vertical collision
           ctx.globalAlpha = leafFade;
           ctx.font = AXIS_LABEL.font;
-          ctx.fillStyle = hp > 0 ? color : rgb(CC.t2, 0.85);
           ctx.textAlign = 'left';
-          ctx.fillText(c.abbreviation ?? c.name.slice(0, 6), lpos.x + leafR + 6, lpos.y - 3);
-          ctx.font = AXIS_LABEL.font;
+          const nameText = c.abbreviation ?? c.name.slice(0, 6);
+          const countText = ` ${c.count ?? 0}`;
+          const xLabel = lpos.x + leafR + 6;
+          const yLabel = lpos.y + 4;
+          ctx.fillStyle = hp > 0 ? color : rgb(CC.t2, 0.85);
+          ctx.fillText(nameText, xLabel, yLabel);
+          const nameW = ctx.measureText(nameText).width;
           ctx.fillStyle = hp > 0 ? color : CC.t1;
-          ctx.fillText(String(c.count ?? 0), lpos.x + leafR + 6, lpos.y + 10);
+          ctx.fillText(countText, xLabel + nameW, yLabel);
           ctx.globalAlpha = 1;
         }
       });
@@ -149,10 +161,10 @@ export function RadialFanTreeChart({ total = 0, items: rawByContractor = [], 'da
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [total, byContractor]);
+  }, [total, byContractor, H]);
 
   const isEmpty = byContractor.length === 0;
-  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testId} />;
+  if (isEmpty) return <ChartEmptyState width={W} height={MIN_H} data-testid={testId} />;
 
   return (
     <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>
