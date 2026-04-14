@@ -32,13 +32,13 @@ const miniBarsRows: [string, number, string][] = [
 // ─── Group 2: Domain-specific chart mock data ─────────────────────────────────
 
 /**
- * Q1 — contract-value-orb
+ * Q1 — stacked-horizontal-bar-chart
  * Horizontal bars: base (solid) + variation (lighter) per entity.
  * ContractorRow: { id, name, abbreviation?, base?, variation?, total?, percentage? }
  * totals: { base?, variation?, total? } — shown as "Portfolio: £xM" in legend
  */
 const contractValueData = {
-  contractors: [
+  items: [
     { id: 'c1', name: 'Tata Projects',        base: 142, variation: 18.4, total: 160.4, percentage: 87 },
     { id: 'c2', name: 'L&T Construction',     base: 198, variation: 12.6, total: 210.6, percentage: 92 },
     { id: 'c3', name: 'Afcons Infra',      base: 89,  variation: 22.1, total: 111.1, percentage: 78 },
@@ -60,21 +60,21 @@ const contractValueData = {
 };
 
 /**
- * Q2 — contract-bars
+ * Q2 — multi-metric-constellation-chart
  * Triangle KPI map per entity — same ContractorRow[] shape as above.
  * Each triangle vertex = base (top), variation (lower-right), percentage (lower-left).
  */
-const contractBarsContractors = contractValueData.contractors;
+const contractBarsContractors = contractValueData.items;
 
 /**
- * Q3 — commitment-race
+ * Q3 — progress-race-chart
  * Progress race — how far each entity is toward 100% commitment.
  * Same ContractorRow[] — only percentage and abbreviation are rendered.
  */
-const commitmentRaceContractors = contractValueData.contractors;
+const commitmentRaceContractors = contractValueData.items;
 
 /**
- * Q4 — status-arc
+ * Q4 — hub-and-spoke-radial-chart
  * Arc/donut — EW status split.
  * EWStatusRow: { status: string, count: number }
  * title is optional — displayed above the arc.
@@ -86,7 +86,7 @@ const statusArcSegments = [
 ];
 
 /**
- * Q5 — ew-category
+ * Q5 — dot-matrix-chart
  * Dot columns — each dot = one EW, grouped by category.
  * EWCategoryRow: { category: string (short), fullName: string, count: number }
  */
@@ -100,7 +100,7 @@ const ewCategories = [
 ];
 
 /**
- * Q6 — contractor-rank
+ * Q6 — ranked-card-leaderboard
  * Ranked horizontal exposure bars — open count per entity.
  * EWOpenContractorRow: { id, name, abbreviation?, count? }
  */
@@ -113,7 +113,7 @@ const contractorRankContractors = [
 ];
 
 /**
- * Q7 — severity-bands
+ * Q7 — proportional-band-chart
  * Horizontal spectrum from Critical → Low.
  * EWSeverityRow: { severity: string, count: number }
  * Order matters — rendered left to right.
@@ -126,7 +126,7 @@ const severityBands = [
 ];
 
 /**
- * Q8 — nce-tree
+ * Q8 — radial-fan-tree-chart
  * Radial tree — branch thickness proportional to count per entity.
  * NCEContractorRow: { id, name, abbreviation?, count? }
  * total = sum of all counts (displayed at root).
@@ -141,11 +141,11 @@ const nceByContractorData = [
 ];
 
 /**
- * Q9 — compensation-gauge
+ * Q9 — semi-circular-gauge-chart
  * Needle gauge — pct sweeps needle, confirmed/total shown in centre.
  * pct: 0–100  |  confirmed: number of confirmed NCEs  |  total: total NCEs
  */
-const compensationGaugeData = { pct: 60, confirmed: 15, total: 25 };
+const compensationGaugeData = { value: 60, confirmed: 15, total: 25 };
 
 /**
  * Q10 — variation-split
@@ -174,8 +174,8 @@ const variationSplitContractors = [
  * The beam tilts based on value difference.
  */
 const quotationBalanceData = {
-  accepted:  { value: 28.4, count: 31, label: '£28.4M' },
-  submitted: { value: 19.8, count: 22, label: '£19.8M' },
+  left:  { value: 28.4, count: 31, label: '£28.4M' },
+  right: { value: 19.8, count: 22, label: '£19.8M' },
 };
 
 /**
@@ -204,6 +204,50 @@ const quotationTrendData = [
   { week: 'W12', count: 9, value: 8.3 },
   { week: 'W12', count: 20, value: 8.3 },
   { week: 'W12', count: 9, value: 8.3 },
+  { week: 'W10dfghjk', count: 29, value: 7.1 },
+  { week: 'W1sdfghj1', count: 5, value: 4.8 },
+  { week: 'W1sdfghj2', count: 30, value: 8.3 },
+  { week: 'W1wertyui2', count: 9, value: 8.3 },
+  { week: 'W1xcvbn2', count: 15, value: 8.3 },
+  { week: 'W12wertyuio', count: 50, value: 8.3 },
+  { week: 'W12', count: 10, value: 8.3 },
+  { week: 'W12', count: 9, value: 8.3 },
+  { week: 'W12', count: 9, value: 8.3 },
+  { week: 'W12', count: 20, value: 8.3 },
+  { week: 'W12', count: 9, value: 8.3 },
+  { week: 'W10dfghjk', count: 29, value: 7.1 },
+  { week: 'W1sdfghj1', count: 5, value: 4.8 },
+  { week: 'W1sdfghj2', count: 30, value: 8.3 },
+  { week: 'W1wertyui2', count: 9, value: 8.3 },
+  { week: 'W1xcvbn2', count: 15, value: 8.3 },
+  { week: 'W12wertyuio', count: 50, value: 8.3 },
+  { week: 'W12', count: 10, value: 8.3 },
+  { week: 'W12', count: 9, value: 8.3 },
+  { week: 'W12', count: 9, value: 8.3 },
+  { week: 'W12', count: 20, value: 8.3 },
+  { week: 'W12', count: 9, value: 8.3 },
+  { week: 'W10dfghjk', count: 29, value: 7.1 },
+  { week: 'W1sdfghj1', count: 5, value: 4.8 },
+  { week: 'W1sdfghj2', count: 30, value: 8.3 },
+  { week: 'W1wertyui2', count: 9, value: 8.3 },
+  { week: 'W1xcvbn2', count: 15, value: 8.3 },
+  { week: 'W12wertyuio', count: 50, value: 8.3 },
+  { week: 'W12', count: 10, value: 8.3 },
+  { week: 'W12', count: 9, value: 8.3 },
+  { week: 'W12', count: 9, value: 8.3 },
+  { week: 'W12', count: 20, value: 8.3 },
+  { week: 'W12', count: 9, value: 8.3 },
+  { week: 'W10dfghjk', count: 29, value: 7.1 },
+  { week: 'W1sdfghj1', count: 5, value: 4.8 },
+  { week: 'W1sdfghj2', count: 30, value: 8.3 },
+  { week: 'W1wertyui2', count: 9, value: 8.3 },
+  { week: 'W1xcvbn2', count: 15, value: 8.3 },
+  { week: 'W12wertyuio', count: 50, value: 8.3 },
+  { week: 'W12', count: 10, value: 8.3 },
+  { week: 'W12', count: 9, value: 8.3 },
+  { week: 'W12', count: 9, value: 8.3 },
+  { week: 'W12', count: 20, value: 8.3 },
+  { week: 'W12', count: 9, value: 8.3 },
 
   
 
@@ -214,7 +258,7 @@ const quotationTrendData = [
  * Sankey flow — base + variation streams per contractor converge into total commitment.
  * Same ContractorRow[] — base, variation, total, percentage.
  */
-const weeklyFlowContractors = contractValueData.contractors;
+const weeklyFlowContractors = contractValueData.items;
 
 // ─── KeyHighlights blocks for each Q ─────────────────────────────────────────
 
@@ -428,59 +472,59 @@ export function ChartGalleryPage() {
       {/* ── Group 2: Domain-specific (Project Dashboard Q1–Q13) ─────────── */}
       <h2 style={{ marginTop: 48 }}>Project Dashboard Charts</h2>
 
-      <h3>Q1 — contract-value-orb</h3>
-      <VisualizationRenderer config={{ type: 'contract-value-orb', data: contractValueData }} />
+      <h3>Q1 — stacked-horizontal-bar-chart</h3>
+      <VisualizationRenderer config={{ type: 'stacked-horizontal-bar-chart', data: contractValueData }} />
       <KeyHighlights block={HIGHLIGHTS.q1} />
 
-      <h3>Q2 — contract-bars</h3>
-      <VisualizationRenderer config={{ type: 'contract-bars', contractors: contractBarsContractors }} />
+      <h3>Q2 — multi-metric-constellation-chart</h3>
+      <VisualizationRenderer config={{ type: 'multi-metric-constellation-chart', items: contractBarsContractors }} />
       <KeyHighlights block={HIGHLIGHTS.q2} />
 
-      <h3>Q3 — commitment-race</h3>
-      <VisualizationRenderer config={{ type: 'commitment-race', contractors: commitmentRaceContractors }} />
+      <h3>Q3 — progress-race-chart</h3>
+      <VisualizationRenderer config={{ type: 'progress-race-chart', items: commitmentRaceContractors }} />
       <KeyHighlights block={HIGHLIGHTS.q3} />
 
-      <h3>Q4 — status-arc</h3>
-      <VisualizationRenderer config={{ type: 'status-arc', segments: statusArcSegments, title: 'Early Warning Status Split' }} />
+      <h3>Q4 — hub-and-spoke-radial-chart</h3>
+      <VisualizationRenderer config={{ type: 'hub-and-spoke-radial-chart', segments: statusArcSegments, title: 'Early Warning Status Split' }} />
       <KeyHighlights block={HIGHLIGHTS.q4} />
 
-      <h3>Q5 — ew-category</h3>
-      <VisualizationRenderer config={{ type: 'ew-category', categories: ewCategories, title: 'Early Warnings by Category' }} />
+      <h3>Q5 — dot-matrix-chart</h3>
+      <VisualizationRenderer config={{ type: 'dot-matrix-chart', items: ewCategories, title: 'Early Warnings by Category' }} />
       <KeyHighlights block={HIGHLIGHTS.q5} />
 
-      <h3>Q6 — contractor-rank</h3>
-      <VisualizationRenderer config={{ type: 'contractor-rank', contractors: contractorRankContractors }} />
+      <h3>Q6 — ranked-card-leaderboard</h3>
+      <VisualizationRenderer config={{ type: 'ranked-card-leaderboard', items: contractorRankContractors }} />
       <KeyHighlights block={HIGHLIGHTS.q6} />
 
-      <h3>Q7 — severity-bands</h3>
-      <VisualizationRenderer config={{ type: 'severity-bands', severities: severityBands }} />
+      <h3>Q7 — proportional-band-chart</h3>
+      <VisualizationRenderer config={{ type: 'proportional-band-chart', severities: severityBands }} />
       <KeyHighlights block={HIGHLIGHTS.q7} />
 
-      <h3>Q8 — nce-tree</h3>
-      <VisualizationRenderer config={{ type: 'nce-tree', total: nceTotal, byContractor: nceByContractorData }} />
+      <h3>Q8 — radial-fan-tree-chart</h3>
+      <VisualizationRenderer config={{ type: 'radial-fan-tree-chart', total: nceTotal, items: nceByContractorData }} />
       <KeyHighlights block={HIGHLIGHTS.q8} />
 
-      <h3>Q9 — compensation-gauge</h3>
-      <VisualizationRenderer config={{ type: 'compensation-gauge', pct: compensationGaugeData.pct, confirmed: compensationGaugeData.confirmed, total: compensationGaugeData.total }} />
+      <h3>Q9 — semi-circular-gauge-chart</h3>
+      <VisualizationRenderer config={{ type: 'semi-circular-gauge-chart', value: compensationGaugeData.value, confirmed: compensationGaugeData.confirmed, total: compensationGaugeData.total }} />
       <KeyHighlights block={HIGHLIGHTS.q9} />
 
-      <h3>Q10 — variation-split</h3>
-      <VisualizationRenderer config={{ type: 'variation-split', contractors: variationSplitContractors }} />
+      <h3>Q10 — segmented-split-bar-chart</h3>
+      <VisualizationRenderer config={{ type: 'segmented-split-bar-chart', items: variationSplitContractors }} />
       <KeyHighlights block={HIGHLIGHTS.q10} />
 
-      <h3>Q11 — quotation-balance</h3>
-      <VisualizationRenderer config={{ type: 'quotation-balance', accepted: quotationBalanceData.accepted, submitted: quotationBalanceData.submitted }} />
+      <h3>Q11 — balance-scale-chart</h3>
+      <VisualizationRenderer config={{ type: 'balance-scale-chart', left: quotationBalanceData.left, right: quotationBalanceData.right }} />
       <KeyHighlights block={HIGHLIGHTS.q11} />
 
-      <h3>Q12 — quotation-trend</h3>
-      <VisualizationRenderer config={{ type: 'quotation-trend', trend: quotationTrendData }} />
+      <h3>Q12 — area-line-chart</h3>
+      <VisualizationRenderer config={{ type: 'area-line-chart', points: quotationTrendData }} />
       <KeyHighlights block={HIGHLIGHTS.q12} />
 
       <h3>Trend (standalone)</h3>
-      <Trend trend={quotationTrendData} data-testid="gallery-trend" />
+      <Trend points={quotationTrendData} data-testid="gallery-trend" />
 
       <h3>Q13 — weekly-flow</h3>
-      <VisualizationRenderer config={{ type: 'weekly-flow', contractors: weeklyFlowContractors }} />
+      <VisualizationRenderer config={{ type: 'weekly-flow', items: weeklyFlowContractors }} />
       <KeyHighlights block={HIGHLIGHTS.q13} />
     </div>
   );

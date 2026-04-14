@@ -9,7 +9,7 @@ import type { WeeklyFlowProps } from './types';
 const W = 800;
 const H = 360;
 
-export function WeeklyFlow({ contractors = [], 'data-testid': testId }: WeeklyFlowProps) {
+export function WeeklyFlow({ items: items = [], 'data-testid': testId }: WeeklyFlowProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
@@ -32,17 +32,17 @@ export function WeeklyFlow({ contractors = [], 'data-testid': testId }: WeeklyFl
     const padB   = 26;
     const nodeGap = 6; // gap between contractor nodes
 
-    const totalBase  = contractors.reduce((s, c) => s + (c.base ?? 0), 0);
-    const totalVar   = contractors.reduce((s, c) => s + (c.variation ?? 0), 0);
-    const grandTotal = contractors.reduce((s, c) => s + (c.total ?? 0), 0);
+    const totalBase  = items.reduce((s, c) => s + (c.base ?? 0), 0);
+    const totalVar   = items.reduce((s, c) => s + (c.variation ?? 0), 0);
+    const grandTotal = items.reduce((s, c) => s + (c.total ?? 0), 0);
 
     // ── Contractor nodes — proportional heights (Sankey) ─────────────────────
     const availH      = H - padT - padB;
-    const totalGaps   = nodeGap * (contractors.length - 1);
+    const totalGaps   = nodeGap * (items.length - 1);
     const flowableH   = availH - totalGaps;
 
     let cumNodeY = padT;
-    const contNodes = contractors.map((c, i) => {
+    const contNodes = items.map((c, i) => {
       const nh   = Math.max(24, ((c.total ?? 0) / (grandTotal || 1)) * flowableH);
       const node = {
         x    : col1X - nodeW / 2,
@@ -83,9 +83,9 @@ export function WeeklyFlow({ contractors = [], 'data-testid': testId }: WeeklyFl
       hitZonesRef.current = [];
 
       // ── Contractor → mid node flows ──────────────────────────────────────
-      contractors.forEach((c, i) => {
+      items.forEach((c, i) => {
         const cn     = contNodes[i];
-        const localP = stagger(progress, i, contractors.length, easeOutCubic);
+        const localP = stagger(progress, i, items.length, easeOutCubic);
         const hp     = hoverMap.current.get(c.id) ?? 0;
         if (localP < 0.01) return;
 
@@ -102,8 +102,8 @@ export function WeeklyFlow({ contractors = [], 'data-testid': testId }: WeeklyFl
         // Destination Y: proportional slice within mid nodes
         const baseFlowH    = Math.max(2, ((c.base ?? 0)     / totalBase) * baseH);
         const varFlowH     = Math.max(2, ((c.variation ?? 0) / totalVar)  * varH);
-        const bActualEndY  = baseNode.y + contractors.slice(0, i).reduce((s, cc) => s + ((cc.base ?? 0)       / totalBase) * baseH, 0) + baseFlowH / 2;
-        const vActualEndY  = varNode.y  + contractors.slice(0, i).reduce((s, cc) => s + ((cc.variation ?? 0) / totalVar)  * varH,  0) + varFlowH  / 2;
+        const bActualEndY  = baseNode.y + items.slice(0, i).reduce((s, cc) => s + ((cc.base ?? 0)       / totalBase) * baseH, 0) + baseFlowH / 2;
+        const vActualEndY  = varNode.y  + items.slice(0, i).reduce((s, cc) => s + ((cc.variation ?? 0) / totalVar)  * varH,  0) + varFlowH  / 2;
 
         const alpha = hp * 0.2 + 0.18;
         drawBezierFlow(ctx, cn.x + nodeW, baseSourceY, col2X - nodeW / 2, bActualEndY, baseFlowH * localP, cn.color, alpha);
@@ -129,9 +129,9 @@ export function WeeklyFlow({ contractors = [], 'data-testid': testId }: WeeklyFl
       });
 
       // ── Contractor nodes ─────────────────────────────────────────────────
-      contractors.forEach((c, i) => {
+      items.forEach((c, i) => {
         const cn     = contNodes[i];
-        const localP = stagger(progress, i, contractors.length, easeOutCubic);
+        const localP = stagger(progress, i, items.length, easeOutCubic);
         const hp     = hoverMap.current.get(c.id) ?? 0;
 
         registerHitRect(hitZonesRef.current, c.id, cn.x, cn.y, nodeW, cn.h, {
@@ -245,7 +245,7 @@ export function WeeklyFlow({ contractors = [], 'data-testid': testId }: WeeklyFl
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [contractors]);
+  }, [items]);
 
   return (
     <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>

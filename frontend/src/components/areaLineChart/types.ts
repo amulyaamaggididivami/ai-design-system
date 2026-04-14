@@ -1,6 +1,6 @@
 import type { QuotationTrendPoint } from '../../types';
 
-export interface TrendProps {
+export interface AreaLineChartProps {
   points: QuotationTrendPoint[];
   'data-testid'?: string;
 }
