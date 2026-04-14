@@ -11,6 +11,13 @@ import type { ProportionalBandChartProps } from './types';
 const W = 680;
 const H = 240;
 
+function truncateToWidth(ctx: CanvasRenderingContext2D, text: string, maxW: number): string {
+  if (ctx.measureText(text).width <= maxW) return text;
+  let t = text;
+  while (t.length > 0 && ctx.measureText(`${t}…`).width > maxW) t = t.slice(0, -1);
+  return `${t}…`;
+}
+
 const SEVERITY_COLORS: Record<string, string> = {
   Critical: CC.red,
   High:     CC.orange,
@@ -137,11 +144,11 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
           const cx = runX + fullW / 2;
           ctx.globalAlpha = fade;
 
-          // Severity name — top above band
+          // Severity name — truncated above band (full name shown on hover tooltip)
           ctx.font = `bold ` + AXIS_LABEL.font;
           ctx.fillStyle = hp > 0 ? color : rgb(color, 0.9);
           ctx.textAlign = 'center';
-          ctx.fillText(sev.severity, cx, padT - 12);
+          ctx.fillText(truncateToWidth(ctx, sev.severity, fullW - 12), cx, padT - 12);
 
           // Count — inside band
           ctx.font = `bold ` + AXIS_LABEL.font;
