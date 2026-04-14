@@ -153,7 +153,7 @@ export function SegmentedSplitBarChart({ items: rawItems = [], 'data-testid': te
       // Legend below bars — centered over track
       const legendY = startY + totalH + 24;
       const trackCX = padL + trackW / 2;
-      ctx.font = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
+      ctx.font = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
       ctx.textAlign = 'right';
       ctx.fillStyle = CC.green;
       ctx.fillText('■ Implemented', trackCX - 10, legendY);

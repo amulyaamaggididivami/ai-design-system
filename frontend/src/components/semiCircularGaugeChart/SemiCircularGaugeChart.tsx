@@ -72,7 +72,7 @@ export function SemiCircularGaugeChart({ value, confirmed, total, 'data-testid':
         const lx = cx + Math.cos(angle) * (R + 46);
         const ly = cy + Math.sin(angle) * (R + 46);
         ctx.font = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
-        ctx.fillStyle = rgb(CC.t3, 0.55);
+        ctx.fillStyle = rgb(CC.t2, 0.55);
         ctx.textAlign = 'center';
         ctx.fillText(label, lx, ly + 3);
       });

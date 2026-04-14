@@ -22,11 +22,11 @@ const trendPoints: [string, number][] = [
 ];
 /** mini-bars — [label, value, color][] */
 const miniBarsRows: [string, number, string][] = [
-  ['Acme',   82, '#6366f1'],
-  ['Build',  64, '#22d3ee'],
-  ['CostCo', 47, '#f59e0b'],
-  ['Delta',  91, '#10b981'],
-  ['Edge',   73, '#e879f9'],
+  ['Acme',   82, '#4C93D9'],
+  ['Build',  64, '#5DA537'],
+  ['CostCo', 47, '#3C45D1'],
+  ['Delta',  91, '#A0B724'],
+  ['Edge',   73, '#EEBF3B'],
 ];
 
 // ─── Group 2: Domain-specific chart mock data ─────────────────────────────────
@@ -248,6 +248,18 @@ const quotationTrendData = [
   { week: 'W12', count: 9, value: 8.3 },
   { week: 'W12', count: 20, value: 8.3 },
   { week: 'W12', count: 9, value: 8.3 },
+  { week: 'W10dfghjk', count: 29, value: 7.1 },
+  { week: 'W1sdfghj1', count: 5, value: 4.8 },
+  { week: 'W1sdfghj2', count: 30, value: 8.3 },
+  { week: 'W1wertyui2', count: 9, value: 8.3 },
+  { week: 'W1xcvbn2', count: 15, value: 8.3 },
+  { week: 'W12wertyuio', count: 50, value: 8.3 },
+  { week: 'W12', count: 10, value: 8.3 },
+  { week: 'W12', count: 9, value: 8.3 },
+  { week: 'W12', count: 9, value: 8.3 },
+  { week: 'W12', count: 20, value: 8.3 },
+  { week: 'W12', count: 9, value: 8.3 },
+  { week: 'W10dfghjk', count: 29, value: 7.1 }
 
   
 
@@ -282,11 +294,11 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
     type: 'comparison-rows',
     columns: ['Base', 'Variations', 'Var %'],
     rows: [
-      { label: 'L&T',    cells: ['£198M', '£12.6M', '6%'],  color: '#22D3EE' },
-      { label: 'NCC',    cells: ['£156M', '£8.9M',  '6%'],  color: '#A78BFA' },
-      { label: 'Tata',   cells: ['£142M', '£18.4M', '13%'], color: '#3B8BF6' },
-      { label: 'Afcons', cells: ['£89M',  '£22.1M', '25%'], color: '#FBBF24' },
-      { label: 'KEC',    cells: ['£74M',  '£31.2M', '42%'], color: '#34D399' },
+      { label: 'L&T',    cells: ['£198M', '£12.6M', '6%'],  color: '#5DA537' },
+      { label: 'NCC',    cells: ['£156M', '£8.9M',  '6%'],  color: '#EEBF3B' },
+      { label: 'Tata',   cells: ['£142M', '£18.4M', '13%'], color: '#4C93D9' },
+      { label: 'Afcons', cells: ['£89M',  '£22.1M', '25%'], color: '#3C45D1' },
+      { label: 'KEC',    cells: ['£74M',  '£31.2M', '42%'], color: '#A0B724' },
     ],
     takeaway: 'KEC\'s 42% variation-to-base ratio is 7× higher than L&T and NCC — the most exposed contractor despite holding the smallest base.',
   },
@@ -318,11 +330,11 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
   q5: {
     type: 'scorecard-rows',
     items: [
-      { name: 'Ground',     value: '12 EWs', pct: 100, color: '#3B8BF6', sublabel: '30% of portfolio — dominant category' },
-      { name: 'Design',     value: '8 EWs',  pct: 67,  color: '#22D3EE', sublabel: '20% — often contractor-caused' },
-      { name: 'Employer',   value: '7 EWs',  pct: 58,  color: '#FBBF24', sublabel: '17.5% — slowest category to resolve' },
-      { name: 'Weather',    value: '6 EWs',  pct: 50,  color: '#A78BFA', sublabel: '15% — force majeure risk profile' },
-      { name: 'Regulatory', value: '5 EWs',  pct: 42,  color: '#34D399', sublabel: '12.5% — compliance-driven' },
+      { name: 'Ground',     value: '12 EWs', pct: 100, color: '#4C93D9', sublabel: '30% of portfolio — dominant category' },
+      { name: 'Design',     value: '8 EWs',  pct: 67,  color: '#5DA537', sublabel: '20% — often contractor-caused' },
+      { name: 'Employer',   value: '7 EWs',  pct: 58,  color: '#3C45D1', sublabel: '17.5% — slowest category to resolve' },
+      { name: 'Weather',    value: '6 EWs',  pct: 50,  color: '#EEBF3B', sublabel: '15% — force majeure risk profile' },
+      { name: 'Regulatory', value: '5 EWs',  pct: 42,  color: '#A0B724', sublabel: '12.5% — compliance-driven' },
     ],
     takeaway: 'Ground Conditions (30%) and Design Issues (20%) account for half of all EWs — both categories are strongly correlated with NCE escalation.',
   },
@@ -331,11 +343,11 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
   q6: {
     type: 'scorecard-rows',
     items: [
-      { name: 'Tata',   value: '7 open', pct: 100, color: '#3B8BF6', badge: 'High risk',    sublabel: '39% of all open EWs' },
-      { name: 'Afcons', value: '4 open', pct: 57,  color: '#FBBF24', badge: 'Elevated',    sublabel: '22% — combined 61%' },
-      { name: 'L&T',    value: '3 open', pct: 43,  color: '#22D3EE', badge: 'Moderate',  sublabel: '17% share' },
-      { name: 'NCC',    value: '2 open', pct: 29,  color: '#A78BFA', badge: 'Low risk',  sublabel: '11% — well managed' },
-      { name: 'KEC',    value: '2 open', pct: 29,  color: '#34D399', badge: 'Low risk',  sublabel: '11% — well managed' },
+      { name: 'Tata',   value: '7 open', pct: 100, color: '#4C93D9', badge: 'High risk',    sublabel: '39% of all open EWs' },
+      { name: 'Afcons', value: '4 open', pct: 57,  color: '#3C45D1', badge: 'Elevated',    sublabel: '22% — combined 61%' },
+      { name: 'L&T',    value: '3 open', pct: 43,  color: '#5DA537', badge: 'Moderate',  sublabel: '17% share' },
+      { name: 'NCC',    value: '2 open', pct: 29,  color: '#EEBF3B', badge: 'Low risk',  sublabel: '11% — well managed' },
+      { name: 'KEC',    value: '2 open', pct: 29,  color: '#A0B724', badge: 'Low risk',  sublabel: '11% — well managed' },
     ],
     takeaway: 'Tata holds 39% of open EWs — resolving Tata\'s backlog alone would reduce the total portfolio open count by over a third.',
   },
@@ -356,11 +368,11 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
   q8: {
     type: 'scorecard-rows',
     items: [
-      { name: 'Tata',   value: '8 NCEs', pct: 100, color: '#3B8BF6', sublabel: '32% of total — highest raiser' },
-      { name: 'Afcons', value: '6 NCEs', pct: 75,  color: '#FBBF24', sublabel: '24% — Tata + Afcons = 56%' },
-      { name: 'L&T',    value: '4 NCEs', pct: 50,  color: '#22D3EE', sublabel: '16% share' },
-      { name: 'NCC',    value: '4 NCEs', pct: 50,  color: '#A78BFA', sublabel: '16% share' },
-      { name: 'KEC',    value: '3 NCEs', pct: 38,  color: '#34D399', sublabel: '12% — fewest despite highest var ratio' },
+      { name: 'Tata',   value: '8 NCEs', pct: 100, color: '#4C93D9', sublabel: '32% of total — highest raiser' },
+      { name: 'Afcons', value: '6 NCEs', pct: 75,  color: '#3C45D1', sublabel: '24% — Tata + Afcons = 56%' },
+      { name: 'L&T',    value: '4 NCEs', pct: 50,  color: '#5DA537', sublabel: '16% share' },
+      { name: 'NCC',    value: '4 NCEs', pct: 50,  color: '#EEBF3B', sublabel: '16% share' },
+      { name: 'KEC',    value: '3 NCEs', pct: 38,  color: '#A0B724', sublabel: '12% — fewest despite highest var ratio' },
     ],
     takeaway: 'Tata\'s NCE concentration (32%) mirrors its EW exposure (39%) — both metrics converge on the same contractor as the portfolio\'s primary risk driver.',
   },
@@ -393,9 +405,9 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
     type: 'comparison-rows',
     columns: ['Value', 'Count', 'Avg deal'],
     rows: [
-      { label: 'Accepted',  cells: ['£28.4M', '31 quotes', '~£916K'], color: '#34D399' },
-      { label: 'Submitted', cells: ['£19.8M', '22 quotes', '~£900K'], color: '#FBBF24' },
-      { label: 'Gap (+)',   cells: ['+£8.6M', '+9 quotes', '—'],       color: '#3B8BF6' },
+      { label: 'Accepted',  cells: ['£28.4M', '31 quotes', '~£916K'], color: '#A0B724' },
+      { label: 'Submitted', cells: ['£19.8M', '22 quotes', '~£900K'], color: '#3C45D1' },
+      { label: 'Gap (+)',   cells: ['+£8.6M', '+9 quotes', '—'],       color: '#4C93D9' },
     ],
     takeaway: 'The £19.8M pending pipeline represents 41% of already-accepted value — resolution of submitted quotations will define the quarter\'s commercial outcome.',
   },
@@ -404,11 +416,11 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
   q12: {
     type: 'stats',
     items: [
-      { value: '57',    label: 'total submissions over the 12-week window',                    color: '#22D3EE' },
-      { value: '9',     label: 'Week 12 peak — highest single-week volume on record',          color: '#3B8BF6' },
-      { value: '4.5×',  label: 'W12 vs W1 growth factor — acceleration across 12 weeks',      color: '#FBBF24' },
-      { value: '£8.3M', label: 'Week 12 value — highest-value week in the 12-week window',    color: '#34D399' },
-      { value: '+80%',  label: 'W11→W12 final-week acceleration — sharpest single-step jump', color: '#F06060' },
+      { value: '57',    label: 'total submissions over the 12-week window',                  },
+      { value: '9',     label: 'Week 12 peak — highest single-week volume on record',         },
+      { value: '4.5×',  label: 'W12 vs W1 growth factor — acceleration across 12 weeks',     },
+      { value: '£8.3M', label: 'Week 12 value — highest-value week in the 12-week window',    },
+      { value: '+80%',  label: 'W11→W12 final-week acceleration — sharpest single-step jump',},
     ],
     takeaway: 'Week 12 alone accounts for 16% of all 12-week submissions at the highest value on record — the claim period is entering its most active phase.',
   },
@@ -416,13 +428,13 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
   // Q13 — proportion split: base 88% vs variations 12% + chips
   q13: {
     type: 'proportion',
-    leftPct: 88,   leftLabel: 'Base Value',  leftValue: '£659M',   leftColor: '#3B8BF6',
-    rightPct: 12,  rightLabel: 'Variations', rightValue: '£93.2M', rightColor: '#FBBF24',
+    leftPct: 88,   leftLabel: 'Base Value',  leftValue: '£659M',   leftColor: '#4C93D9',
+    rightPct: 12,  rightLabel: 'Variations', rightValue: '£93.2M', rightColor: '#3C45D1',
     chips: [
-      { value: 'KEC 42%',    label: 'highest variation-to-base ratio — 3× the portfolio average',            color: '#34D399' },
-      { value: 'Afcons 25%', label: 'second-highest — KEC + Afcons drive 57% of variation value',           color: '#FBBF24' },
-      { value: '£93.2M',     label: 'total approved variations — equivalent to adding a 6th mid-size contractor', color: '#22D3EE' },
-      { value: '2 of 5',     label: 'contractors above 20% variation rate — concentrated in the bottom tier', color: '#A78BFA' },
+      { value: 'KEC 42%',    label: 'highest variation-to-base ratio — 3× the portfolio average',             },
+      { value: 'Afcons 25%', label: 'second-highest — KEC + Afcons drive 57% of variation value',         },
+      { value: '£93.2M',     label: 'total approved variations — equivalent to adding a 6th mid-size contractor',  },
+      { value: '2 of 5',     label: 'contractors above 20% variation rate — concentrated in the bottom tier', },
     ],
     takeaway: 'KEC and Afcons contribute 57% of all variation value despite holding only 23% of base contract value — the portfolio\'s primary financial concentration risk.',
   },
