@@ -286,7 +286,7 @@ export function SankeySvg({
         const py = m * m * sy + 2 * m * p.prog * sy + p.prog * p.prog * ty + p.off;
 
         const al = Math.sin(p.prog * Math.PI) * 0.5;
-        const color = colors?.links ?? CC.cyan;
+        const color = colors?.links ?? CC.blue;
         ctx.beginPath();
         ctx.arc(px, py, p.sz, 0, Math.PI * 2);
         ctx.fillStyle = rgb(color, al);

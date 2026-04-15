@@ -291,7 +291,7 @@ function Proportion({ leftPct, leftLabel, leftValue, leftColor, rightPct, rightL
   chips?: KeyHighlightChip[];
 }) {
   const lColor = leftColor ?? CC.blue;
-  const rColor = rightColor ?? CC.cyan;
+  const rColor = rightColor ?? CC.blue;
   return (
     <div>
       {/* Split bar */}

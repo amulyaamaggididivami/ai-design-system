@@ -3,7 +3,7 @@ import { useRef, useEffect, useMemo } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { dampedPulse } from '../../canvas/easing';
-import { CC, AXIS_LABEL, PALETTE, rgb, drawGlow, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, CHART_VALUE, PALETTE, rgb, drawGlow, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import type { EWOpenContractorRow } from '../../types';
 import type { RankedCardLeaderboardProps } from './types';
@@ -51,6 +51,7 @@ export function RankedCardLeaderboard({ items: rawItems = [], 'data-testid': tes
       frameRef.current++;
       const T = frameRef.current;
       ctx.clearRect(0, 0, W, H);
+      ctx.letterSpacing = AXIS_LABEL.letterSpacing;
       hitZonesRef.current = [];
 
       // Tick hover map
@@ -99,7 +100,7 @@ export function RankedCardLeaderboard({ items: rawItems = [], 'data-testid': tes
         }
 
         // Rank badge top-left
-        ctx.font         = `bold ` + AXIS_LABEL.font;
+        ctx.font         = CHART_VALUE.font;
         ctx.textAlign    = 'left';
         ctx.textBaseline = 'top';
         ctx.fillStyle    = rgb(color, 0.5 + hp * 0.35);
@@ -122,14 +123,14 @@ export function RankedCardLeaderboard({ items: rawItems = [], 'data-testid': tes
         ctx.stroke();
 
         // ShortName inside circle
-        ctx.font         = `bold ` + AXIS_LABEL.font;
+        ctx.font         = CHART_VALUE.font;
         ctx.textAlign    = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle    = rgb(CC.t1, 0.9);
         ctx.fillText(contractor.abbreviation ?? contractor.name.slice(0, 6), photoX, photoY);
 
         // Open count — large
-        ctx.font         = `bold 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.font         = CHART_VALUE.font;
         ctx.textBaseline = 'alphabetic';
         ctx.fillStyle    = rgb(color, 0.9 + hp * 0.1);
         ctx.fillText(String(contractor.count ?? 0), photoX, cardY + cardH * 0.76);

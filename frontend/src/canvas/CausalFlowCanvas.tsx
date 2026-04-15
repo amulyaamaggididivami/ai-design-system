@@ -21,7 +21,7 @@ const DEFAULT_POSITIONS: ReadonlyArray<{ x: number; y: number }> = [
   { x: 0.92, y: 0.22 },
 ];
 
-const NODE_COLORS = [CC.blue, CC.cyan, CC.orange, CC.red, CC.purple, CC.green, CC.amber, CC.t2];
+const NODE_COLORS = [CC.blue, CC.orange, CC.red, CC.purple, CC.green, CC.amber, CC.t2];
 const NODE_RADII = [26, 24, 24, 26, 22, 22, 22, 22];
 
 interface BezierCurve {
@@ -230,10 +230,10 @@ export function CausalFlowCanvas({
         ctx.beginPath();
         ctx.roundRect(mid.x - tw / 2, mid.y - 11, tw, 22, 6);
         ctx.fill();
-        ctx.strokeStyle = rgb(CC.cyan, 0.25);
+        ctx.strokeStyle = rgb(CC.blue, 0.25);
         ctx.lineWidth = 1;
         ctx.stroke();
-        ctx.fillStyle = rgb(CC.cyan, 0.9);
+        ctx.fillStyle = rgb(CC.blue, 0.9);
         ctx.textAlign = 'center';
         ctx.fillText(lbl, mid.x, mid.y);
       });

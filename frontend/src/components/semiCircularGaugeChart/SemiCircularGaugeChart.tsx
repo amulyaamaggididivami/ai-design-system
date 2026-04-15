@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 
 import { setupCanvas } from '../../canvas/canvasUtils';
-import { CC, AXIS_LABEL, rgb, drawGlow } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, LEGEND_LABEL, rgb, drawGlow } from '../../canvas/canvasUtils';
 import { easeOutBack, easeOutCubic } from '../../canvas/easing';
 import type { SemiCircularGaugeChartProps } from './types';
 
@@ -34,6 +34,7 @@ export function SemiCircularGaugeChart({ value, confirmed, total, 'data-testid':
       frameRef.current++;
       const T = frameRef.current;
       ctx.clearRect(0, 0, W, H);
+      ctx.letterSpacing = AXIS_LABEL.letterSpacing;
 
       const rawP = Math.min(T / DURATION, 1);
       const progress = easeOutCubic(rawP);
@@ -71,7 +72,7 @@ export function SemiCircularGaugeChart({ value, confirmed, total, 'data-testid':
       ].forEach(({ label, angle }) => {
         const lx = cx + Math.cos(angle) * (R + 46);
         const ly = cy + Math.sin(angle) * (R + 46);
-        ctx.font = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.font = AXIS_LABEL.font;
         ctx.fillStyle = rgb(CC.t2, 0.55);
         ctx.textAlign = 'center';
         ctx.fillText(label, lx, ly + 3);
@@ -159,7 +160,7 @@ export function SemiCircularGaugeChart({ value, confirmed, total, 'data-testid':
         ctx.fillStyle = AXIS_LABEL.color;
         ctx.textAlign = 'center';
         ctx.fillText('NCEs confirmed', cx, cy + 32);
-        ctx.font = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.font = LEGEND_LABEL.font;
         ctx.fillStyle = AXIS_LABEL.color;
         ctx.fillText(`${confirmed} of ${total} NCEs are confirmed compensation events`, cx, cy + 52);
         ctx.globalAlpha = 1;
@@ -181,7 +182,7 @@ export function SemiCircularGaugeChart({ value, confirmed, total, 'data-testid':
         if (i % 5 === 0) {
           const lx = cx + Math.cos(tickAngle) * (R + 18);
           const ly = cy + Math.sin(tickAngle) * (R + 18);
-          ctx.font = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+          ctx.font = AXIS_LABEL.font;
           ctx.fillStyle = rgb(CC.t3, 0.45);
           ctx.textAlign = 'center';
           ctx.fillText(`${i * 10}%`, lx, ly + 3);

@@ -3,7 +3,7 @@ import { useRef, useMemo } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
 import { dampedPulse, tickHoverProgress } from '../../canvas/easing';
-import { CC, rgb, drawGlow, drawDust, drawScanline } from '../../canvas/canvasUtils';
+import { CC, rgb, drawGlow, drawDust, drawScanline, AXIS_LABEL, LEGEND_LABEL } from '../../canvas/canvasUtils';
 import { useCanvasLoop } from '../../canvas/useCanvasLoop';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import type { ContractorRow } from '../../types';
@@ -13,7 +13,7 @@ const W         = 780;
 const H         = 234;  // trimmed — content ends at ~220, 14px margin
 const FIXED_CY  = 130;  // explicit center Y, decoupled from H
 const FIXED_MAXR = 52;  // explicit max radius, decoupled from H
-const COLORS    = [CC.blue, CC.cyan, CC.amber, CC.purple, CC.green];
+const COLORS    = [CC.blue, CC.amber, CC.purple, CC.green];
 const KPI_NAMES = ['Base Value', 'Variations', 'Commitment'];
 const KPI_SHORT = ['Base',       'Var',        'Commit'   ];
 
@@ -143,7 +143,7 @@ export function MultiMetricConstellationChart({ items: rawItems = [], 'data-test
             ctx.fillStyle = rgb(trColor, 0.5 + 0.15 * shp);
             ctx.fillText(star.short, star.x, star.y - 24);
 
-            ctx.font      = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+            ctx.font      = AXIS_LABEL.font;
             ctx.fillStyle = rgb(trColor, 0.8 + 0.15 * shp);
             ctx.fillText(star.label, star.x, star.y - 11);
           } else {
@@ -152,7 +152,7 @@ export function MultiMetricConstellationChart({ items: rawItems = [], 'data-test
             ctx.fillStyle = rgb(trColor, 0.5 + 0.15 * shp);
             ctx.fillText(star.short, star.x, star.y + 11);
 
-            ctx.font      = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+            ctx.font      = AXIS_LABEL.font;
             ctx.fillStyle = rgb(trColor, 0.8 + 0.15 * shp);
             ctx.fillText(star.label, star.x, star.y + 24);
           }
@@ -176,10 +176,10 @@ export function MultiMetricConstellationChart({ items: rawItems = [], 'data-test
         ctx.stroke();
 
         // Contractor name below circle
-        ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.font         = AXIS_LABEL.font;
         ctx.textAlign    = 'center';
         ctx.textBaseline = 'alphabetic';
-        ctx.fillStyle    = rgb(CC.t2, 0.65 + hp * 0.25);
+        ctx.fillStyle    = hp > 0 ? con.color : AXIS_LABEL.color;
         ctx.fillText(con.abbreviation ?? con.name.slice(0, 6), con.cx, con.cy + con.baseR + 26);
 
         registerHitCircle(hitZonesRef.current, conId, con.cx, con.cy, con.baseR + 5, {
@@ -191,10 +191,10 @@ export function MultiMetricConstellationChart({ items: rawItems = [], 'data-test
       });
 
       // Footer caption
-      ctx.font         = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+      ctx.font         = LEGEND_LABEL.font;
       ctx.textAlign    = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle    = CC.t2;
+      ctx.fillStyle    = LEGEND_LABEL.color;
       ctx.fillText(
         '▲ top = Base value  ·  ▼▸ lower-right = Variations  ·  ◂▼ lower-left = Commitment %  ·  hover stars for details',
         W / 2,

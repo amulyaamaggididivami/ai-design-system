@@ -3,7 +3,7 @@ import { useRef, useEffect, useMemo } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
 import { tickHoverProgress, easeOutCubic } from '../../canvas/easing';
-import { CC, AXIS_LABEL, rgb, drawGlow, setupCanvas, drawCrosshair } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL,rgb, drawGlow, setupCanvas, drawCrosshair } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import type { QuotationTrendPoint } from '../../types';
 import type { AreaLineChartProps } from './types';
@@ -51,6 +51,7 @@ export function AreaLineChart({ points: rawTrend = [], 'data-testid': testId }: 
       frameRef.current++;
       const T = frameRef.current;
       ctx.clearRect(0, 0, W, H);
+      ctx.letterSpacing = AXIS_LABEL.letterSpacing;
 
       const rawP = Math.min(T / DURATION, 1);
       const progress = easeOutCubic(rawP);
@@ -120,8 +121,8 @@ export function AreaLineChart({ points: rawTrend = [], 'data-testid': testId }: 
         ctx.closePath();
 
         const areaGrad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
-        areaGrad.addColorStop(0, rgb(CC.cyan, 0.22));
-        areaGrad.addColorStop(1, rgb(CC.cyan, 0.02));
+        areaGrad.addColorStop(0, rgb(CC.blue, 0.22));
+        areaGrad.addColorStop(1, rgb(CC.blue, 0.02));
         ctx.fillStyle = areaGrad;
         ctx.fill();
       }
@@ -135,7 +136,7 @@ export function AreaLineChart({ points: rawTrend = [], 'data-testid': testId }: 
         const py = i === 0 || (i < drawN - 1) ? pts[i].y : pts[i - 1].y + (pts[i].y - pts[i - 1].y) * (isInterp ? t : 1);
         i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
       }
-      ctx.strokeStyle = rgb(CC.cyan, 0.85);
+      ctx.strokeStyle = rgb(CC.blue, 0.85);
       ctx.lineWidth = 2;
       ctx.stroke();
 
@@ -149,37 +150,37 @@ export function AreaLineChart({ points: rawTrend = [], 'data-testid': testId }: 
           label: pt.point.week,
           value: `${pt.point.count} quotations submitted`,
           sublabel: `£${pt.point.value}M value`,
-          color: CC.cyan,
+          color: CC.blue,
         });
 
         // Hover crosshair
         if (hp > 0) {
-          drawCrosshair(ctx, pt.x, padT, padT + chartH, rgb(CC.cyan, 0.15 * hp));
+          drawCrosshair(ctx, pt.x, padT, padT + chartH, rgb(CC.blue, 0.15 * hp));
         }
 
         // Glow on peaks or hovered
         const isPeak = pt.point.count === maxCount;
         if (hp > 0 || isPeak) {
-          drawGlow(ctx, pt.x, pt.y, 14, CC.cyan, (isPeak ? 0.3 : 0) + hp * 0.25);
+          drawGlow(ctx, pt.x, pt.y, 14, CC.blue, (isPeak ? 0.3 : 0) + hp * 0.25);
         }
 
         // Dot
         ctx.beginPath();
         ctx.arc(pt.x, pt.y, hp > 0 ? 5 : 3.5, 0, Math.PI * 2);
-        ctx.fillStyle = rgb(CC.cyan, hp > 0 ? 1 : 0.8);
+        ctx.fillStyle = rgb(CC.blue, hp > 0 ? 1 : 0.8);
         ctx.fill();
 
         // Count label above point
         if (hp > 0 || isPeak) {
-          ctx.font = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
-          ctx.fillStyle = CC.cyan;
+          ctx.font = AXIS_LABEL.font;
+          ctx.fillStyle = CC.blue;
           ctx.textAlign = 'center';
           ctx.fillText(String(pt.point.count), pt.x, pt.y - 10);
         }
 
         // Week label below axis
-        ctx.font = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
-        ctx.fillStyle = hp > 0 ? CC.cyan : AXIS_LABEL.color;
+        ctx.font = AXIS_LABEL.font;
+        ctx.fillStyle = hp > 0 ? CC.blue : AXIS_LABEL.color;
         ctx.textAlign = 'center';
         ctx.fillText(pt.point.week, pt.x, H - padB + 14);
       });

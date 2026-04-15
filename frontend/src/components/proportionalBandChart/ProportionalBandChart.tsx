@@ -3,7 +3,7 @@ import { useRef, useEffect, useMemo } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { tickHoverProgress, easeOutQuart } from '../../canvas/easing';
-import { CC, AXIS_LABEL, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, CHART_VALUE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import type { EWSeverityRow } from '../../types';
 import type { ProportionalBandChartProps } from './types';
@@ -59,6 +59,7 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
       frameRef.current++;
       const T = frameRef.current;
       ctx.clearRect(0, 0, W, H);
+      ctx.letterSpacing = AXIS_LABEL.letterSpacing;
 
       const rawP = Math.min(T / DURATION, 1);
       const progress = easeOutQuart(rawP);
@@ -151,7 +152,7 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
           ctx.fillText(truncateToWidth(ctx, sev.severity, fullW - 12), cx, padT - 12);
 
           // Count — inside band
-          ctx.font = `bold ` + AXIS_LABEL.font;
+          ctx.font = CHART_VALUE.font;
           ctx.fillStyle = hp > 0 ? CC.t1 : rgb(CC.t1, 0.85);
           ctx.fillText(String(sev.count), cx, padT + bandH / 2 + 6);
 
