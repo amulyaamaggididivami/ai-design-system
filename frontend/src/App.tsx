@@ -2,6 +2,7 @@ import './App.css';
 import { WorkspacePage } from './pages/workspace/WorkspacePage';
 import { ProjectDashboardPage } from './pages/projectDashboard';
 import { ChartGalleryPage } from './pages/chartGallery/ChartGalleryPage';
+import { EnterpriseChatPage } from './pages/enterpriseChat/EnterpriseChatPage';
 
 const page = new URLSearchParams(window.location.search).get('page');
 
@@ -11,6 +12,9 @@ export default function App() {
   }
   if (page === 'chart-gallery') {
     return <ChartGalleryPage />;
+  }
+  if (page === 'enterprise-chat') {
+    return <EnterpriseChatPage />;
   }
   return <WorkspacePage />;
 }

@@ -23,7 +23,18 @@
       "Bash(powershell -Command \"Stop-Process -Id 22884,29092,29664,53048 -Force -ErrorAction SilentlyContinue\")",
       "Bash(powershell -Command \"\\(Get-Process -Name 'node' -ErrorAction SilentlyContinue\\).Count\")",
       "Bash(wmic process:*)",
-      "Bash(grep -v \"^$\")"
+      "Bash(grep -v \"^$\")",
+      "Read(//Users/rajashekar/ai_poc/repositories/ai-enterprise-brain/frontend/src/components/layout/**)",
+      "Read(//Users/rajashekar/ai_poc/repositories/ai-enterprise-brain/frontend/src/components/workspace/**)",
+      "Read(//Users/rajashekar/ai_poc/repositories/ai-enterprise-brain/frontend/src/**)",
+      "Read(//Users/rajashekar/ai_poc/repositories/ai-enterprise-brain/frontend/src/components/thread/**)",
+      "Read(//Users/rajashekar/ai_poc/repositories/ai-enterprise-brain/frontend/src/components/panels/**)",
+      "Read(//Users/rajashekar/ai_poc/repositories/ai-enterprise-brain/frontend/public/**)",
+      "Bash(mkdir -p /Users/rajashekar/ai_poc/repositories/ai-design-system/frontend/src/assets/icons)",
+      "Bash(cp /Users/rajashekar/ai_poc/repositories/ai-enterprise-brain/frontend/src/assets/icons/plus.svg /Users/rajashekar/ai_poc/repositories/ai-design-system/frontend/src/assets/icons/plus.svg)",
+      "Bash(cp /Users/rajashekar/ai_poc/repositories/ai-enterprise-brain/frontend/src/assets/icons/clock-rewind.svg /Users/rajashekar/ai_poc/repositories/ai-design-system/frontend/src/assets/icons/clock-rewind.svg)",
+      "Bash(cp /Users/rajashekar/ai_poc/repositories/ai-enterprise-brain/frontend/src/assets/icons/chat-screen.svg /Users/rajashekar/ai_poc/repositories/ai-design-system/frontend/src/assets/icons/chat-screen.svg)",
+      "Bash(mkdir -p /Users/rajashekar/ai_poc/repositories/ai-design-system/frontend/public/fonts)"
     ]
   }
 }

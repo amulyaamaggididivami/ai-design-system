@@ -1,6 +1,9 @@
 import { useEffect } from 'react';
 
 import { KeyHighlights } from '../../components/keyHighlights/KeyHighlights';
+import { InteractiveContractEWWidget } from '../../components/interactiveContractEWWidget';
+import { InteractiveRaceTrendWidget } from '../../components/interactiveRaceTrendWidget';
+import type { ContractorWithTrend } from '../../components/interactiveRaceTrendWidget';
 import { Trend } from '../../components/trend/Trend';
 import { VisualizationRenderer } from '../../components/visualizationRenderer/VisualizationRenderer';
 import type { KeyHighlightBlock } from '../../types';
@@ -428,6 +431,135 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
   },
 };
 
+// ─── Interactive Contract × EW Widget data ───────────────────────────────────
+
+/**
+ * Each contractor row is enriched with an ewStatus array (Open/Submitted/Closed).
+ * Totals: Open=18, Submitted=10, Closed=12 → 40 EWs across portfolio.
+ */
+const interactiveContractors = [
+  {
+    id: 'c1', name: 'Tata Projects',     abbreviation: 'Tata',   base: 142, variation: 18.4, total: 160.4, percentage: 87,
+    ewStatus: [{ status: 'Open', count: 7 }, { status: 'Submitted', count: 2 }, { status: 'Closed', count: 3 }],
+  },
+  {
+    id: 'c2', name: 'L&T Construction',  abbreviation: 'L&T',    base: 198, variation: 12.6, total: 210.6, percentage: 92,
+    ewStatus: [{ status: 'Open', count: 3 }, { status: 'Submitted', count: 3 }, { status: 'Closed', count: 5 }],
+  },
+  {
+    id: 'c3', name: 'Afcons Infra',      abbreviation: 'Afcons', base: 89,  variation: 22.1, total: 111.1, percentage: 78,
+    ewStatus: [{ status: 'Open', count: 4 }, { status: 'Submitted', count: 2 }, { status: 'Closed', count: 2 }],
+  },
+  {
+    id: 'c4', name: 'NCC Ltd',           abbreviation: 'NCC',    base: 156, variation: 8.9,  total: 164.9, percentage: 95,
+    ewStatus: [{ status: 'Open', count: 2 }, { status: 'Submitted', count: 1 }, { status: 'Closed', count: 1 }],
+  },
+  {
+    id: 'c5', name: 'KEC International', abbreviation: 'KEC',    base: 74,  variation: 31.2, total: 105.2, percentage: 69,
+    ewStatus: [{ status: 'Open', count: 2 }, { status: 'Submitted', count: 2 }, { status: 'Closed', count: 1 }],
+  },
+];
+
+/** Portfolio-level aggregate (shown when no bar is selected) */
+const portfolioEWStatus = [
+  { status: 'Open',      count: 18 },
+  { status: 'Submitted', count: 10 },
+  { status: 'Closed',    count: 12 },
+];
+
+const interactiveTotals = { base: 659, variation: 93.2, total: 752.2 };
+
+// ─── Interactive Race × Trend Widget data ────────────────────────────────────
+
+/**
+ * Q3 × Trend — each contractor has a weekly submission trend.
+ * Clicking a lane in the race chart injects that contractor's trend below.
+ */
+const raceTrendContractors: ContractorWithTrend[] = [
+  {
+    id: 'rt1', name: 'Tata Projects', abbreviation: 'Tata',
+    base: 142, variation: 18.4, total: 160.4, percentage: 87,
+    trend: [
+      { week: 'W1', count: 3,  value: 2.1 },
+      { week: 'W2', count: 5,  value: 3.8 },
+      { week: 'W3', count: 4,  value: 3.2 },
+      { week: 'W4', count: 7,  value: 5.6 },
+      { week: 'W5', count: 6,  value: 4.9 },
+      { week: 'W6', count: 9,  value: 7.2 },
+      { week: 'W7', count: 8,  value: 6.4 },
+      { week: 'W8', count: 11, value: 8.8 },
+    ],
+  },
+  {
+    id: 'rt2', name: 'L&T Construction', abbreviation: 'L&T',
+    base: 198, variation: 12.6, total: 210.6, percentage: 92,
+    trend: [
+      { week: 'W1', count: 5,  value: 4.0 },
+      { week: 'W2', count: 4,  value: 3.2 },
+      { week: 'W3', count: 8,  value: 6.4 },
+      { week: 'W4', count: 6,  value: 4.8 },
+      { week: 'W5', count: 9,  value: 7.2 },
+      { week: 'W6', count: 7,  value: 5.6 },
+      { week: 'W7', count: 12, value: 9.6 },
+      { week: 'W8', count: 10, value: 8.0 },
+    ],
+  },
+  {
+    id: 'rt3', name: 'Afcons Infra', abbreviation: 'Afcons',
+    base: 89, variation: 22.1, total: 111.1, percentage: 78,
+    trend: [
+      { week: 'W1', count: 2, value: 1.6 },
+      { week: 'W2', count: 3, value: 2.4 },
+      { week: 'W3', count: 2, value: 1.6 },
+      { week: 'W4', count: 5, value: 4.0 },
+      { week: 'W5', count: 4, value: 3.2 },
+      { week: 'W6', count: 6, value: 4.8 },
+      { week: 'W7', count: 5, value: 4.0 },
+      { week: 'W8', count: 8, value: 6.4 },
+    ],
+  },
+  {
+    id: 'rt4', name: 'NCC Ltd', abbreviation: 'NCC',
+    base: 156, variation: 8.9, total: 164.9, percentage: 95,
+    trend: [
+      { week: 'W1', count: 4,  value: 3.2  },
+      { week: 'W2', count: 6,  value: 4.8  },
+      { week: 'W3', count: 5,  value: 4.0  },
+      { week: 'W4', count: 8,  value: 6.4  },
+      { week: 'W5', count: 7,  value: 5.6  },
+      { week: 'W6', count: 10, value: 8.0  },
+      { week: 'W7', count: 9,  value: 7.2  },
+      { week: 'W8', count: 13, value: 10.4 },
+    ],
+  },
+  {
+    id: 'rt5', name: 'KEC International', abbreviation: 'KEC',
+    base: 74, variation: 31.2, total: 105.2, percentage: 69,
+    trend: [
+      { week: 'W1', count: 1, value: 0.8 },
+      { week: 'W2', count: 2, value: 1.6 },
+      { week: 'W3', count: 3, value: 2.4 },
+      { week: 'W4', count: 2, value: 1.6 },
+      { week: 'W5', count: 4, value: 3.2 },
+      { week: 'W6', count: 3, value: 2.4 },
+      { week: 'W7', count: 5, value: 4.0 },
+      { week: 'W8', count: 4, value: 3.2 },
+    ],
+  },
+];
+
+/** Portfolio aggregate — sum of all contractor counts/values per week */
+const raceTrendPortfolioTrend = [
+  { week: 'W1', count: 15, value: 11.7 },
+  { week: 'W2', count: 20, value: 15.8 },
+  { week: 'W3', count: 22, value: 17.6 },
+  { week: 'W4', count: 28, value: 22.4 },
+  { week: 'W5', count: 30, value: 24.1 },
+  { week: 'W6', count: 35, value: 28.0 },
+  { week: 'W7', count: 39, value: 31.2 },
+  { week: 'W8', count: 46, value: 36.8 },
+];
+
 export function ChartGalleryPage() {
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -526,6 +658,32 @@ export function ChartGalleryPage() {
       <h3>Q13 — weekly-flow</h3>
       <VisualizationRenderer config={{ type: 'weekly-flow', items: weeklyFlowContractors }} />
       <KeyHighlights block={HIGHLIGHTS.q13} />
+
+      {/* ── Interactive Widgets ───────────────────────────────────────────── */}
+      <h2 style={{ marginTop: 48 }}>Interactive Widgets</h2>
+
+      <h3>Q1 × Q4 — Contract Value × EW Status (Interactive)</h3>
+      <p style={{ fontSize: 13, color: '#94979C', marginTop: -8, marginBottom: 12, fontFamily: "'Satoshi Variable', 'DM Sans', sans-serif" }}>
+        Click any contractor bar to drill into that contractor's Early Warning status breakdown.
+        Click again to deselect and return to the portfolio view.
+      </p>
+      <InteractiveContractEWWidget
+        contractors={interactiveContractors}
+        totals={interactiveTotals}
+        portfolioEWStatus={portfolioEWStatus}
+        data-testid="gallery-interactive-contract-ew"
+      />
+
+      <h3 style={{ marginTop: 40 }}>Q3 × Trend — Commitment Race × Submission Trend (Interactive)</h3>
+      <p style={{ fontSize: 13, color: '#94979C', marginTop: -8, marginBottom: 12, fontFamily: "'Satoshi Variable', 'DM Sans', sans-serif" }}>
+        Click any contractor lane to drill into their weekly submission trend below.
+        Click again to deselect and return to the portfolio view.
+      </p>
+      <InteractiveRaceTrendWidget
+        contractors={raceTrendContractors}
+        portfolioTrend={raceTrendPortfolioTrend}
+        data-testid="gallery-interactive-race-trend"
+      />
     </div>
   );
 }
