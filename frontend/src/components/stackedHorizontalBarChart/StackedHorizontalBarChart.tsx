@@ -18,13 +18,6 @@ const PAD      = { left: 8, right: 80, top: 16, bottom: 38 };
 const NAME_W   = 88;
 const BAR_H    = 18;
 
-function fmtValue(v: number): string {
-  const abs  = Math.abs(v);
-  const sign = v < 0 ? '-' : '';
-  if (abs >= 1_000_000) return `${sign}£${(abs / 1_000_000).toFixed(1)}M`;
-  if (abs >= 1_000)     return `${sign}£${(abs / 1_000).toFixed(1)}K`;
-  return `${sign}£${abs.toFixed(0)}`;
-}
 
 export function StackedHorizontalBarChart({ data, 'data-testid': testId }: StackedHorizontalBarChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -122,14 +115,14 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
           ctx.fillStyle    = hp > 0 ? color : '#F7F9FA';
           ctx.textAlign    = 'left';
           ctx.textBaseline = 'middle';
-          ctx.fillText(fmtValue(con.total ?? 0), x0 + totalW + 6, y + BAR_H / 2);
+          ctx.fillText(con.totalLabel ?? String(con.total ?? 0), x0 + totalW + 6, y + BAR_H / 2);
           ctx.globalAlpha = 1;
         }
 
         registerHitRect(hitZonesRef.current, con.id, x0, y, Math.max(totalW, 1), BAR_H, {
           label   : con.name,
-          value   : `${fmtValue(con.total ?? 0)} total`,
-          sublabel: `Base ${fmtValue(con.base ?? 0)} + Var ${fmtValue(con.variation ?? 0)} · ${con.percentage ?? 0}% committed`,
+          value   : `${con.totalLabel ?? String(con.total ?? 0)} total`,
+          sublabel: `Base ${con.baseLabel ?? String(con.base ?? 0)} + Var ${con.variationLabel ?? String(con.variation ?? 0)} · ${con.percentage ?? 0}% committed`,
           color,
         });
       });
@@ -168,7 +161,7 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
       ctx.font      = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
       ctx.textAlign = 'right';
       ctx.fillStyle = LEGEND_LABEL.color;
-      ctx.fillText(`Portfolio: ${fmtValue(totals?.total ?? 0)}`, W - 8, ly);
+      ctx.fillText(`Portfolio: ${String(totals?.total ?? 0)}`, W - 8, ly);
     },
     true,
     { easing: easeOutQuart },

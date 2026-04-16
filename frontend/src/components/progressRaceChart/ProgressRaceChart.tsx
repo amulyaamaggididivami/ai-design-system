@@ -18,13 +18,6 @@ const MAX_ITEMS  = 8;
 
 const RACE_COLORS = [CC.green, CC.blue, CC.cyan, CC.amber, CC.red];
 
-function fmtValue(v: number): string {
-  const abs  = Math.abs(v);
-  const sign = v < 0 ? '-' : '';
-  if (abs >= 1_000_000) return `${sign}£${(abs / 1_000_000).toFixed(1)}M`;
-  if (abs >= 1_000)     return `${sign}£${(abs / 1_000).toFixed(1)}K`;
-  return `${sign}£${abs.toFixed(0)}`;
-}
 
 export function ProgressRaceChart({ items: rawItems = [], 'data-testid': testId }: ProgressRaceChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -132,7 +125,7 @@ export function ProgressRaceChart({ items: rawItems = [], 'data-testid': testId 
         const hitData = {
           label   : contractor.name,
           value   : `${contractor.percentage ?? 0}% commitment`,
-          sublabel: `Base: ${fmtValue(contractor.base ?? 0)} · Variations: ${fmtValue(contractor.variation ?? 0)}`,
+          sublabel: `Base: ${contractor.baseLabel ?? String(contractor.base ?? 0)} · Variations: ${contractor.variationLabel ?? String(contractor.variation ?? 0)}`,
           color,
         };
         // Register hit on runner dot

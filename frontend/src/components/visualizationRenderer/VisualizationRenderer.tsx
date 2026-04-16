@@ -39,7 +39,7 @@ export function VisualizationRenderer({ config, className }: VisualizationRender
   if (config.type === 'dot-matrix-chart') return <DotMatrixChart items={config.items} />;
   if (config.type === 'ranked-card-leaderboard') return <RankedCardLeaderboard items={config.items} />;
   if (config.type === 'proportional-band-chart') return <ProportionalBandChart severities={config.severities} />;
-  if (config.type === 'radial-fan-tree-chart') return <RadialFanTreeChart total={config.total} items={config.items} />;
+  if (config.type === 'radial-fan-tree-chart') return <RadialFanTreeChart total={config.total} totalLabel={config.totalLabel} items={config.items} />;
   if (config.type === 'semi-circular-gauge-chart') return <SemiCircularGaugeChart value={config.value} confirmed={config.confirmed} total={config.total} />;
   if (config.type === 'segmented-split-bar-chart') return <SegmentedSplitBarChart items={config.items} />;
   if (config.type === 'balance-scale-chart') return <BalanceScaleChart left={config.left} right={config.right} />;

@@ -3,7 +3,7 @@ import { useRef, useEffect } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { stagger, tickHoverProgress, easeOutCubic } from '../../canvas/easing';
-import { CC, PALETTE, AXIS_LABEL, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, PALETTE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
 import type { WeeklyFlowProps } from './types';
 
 const W = 800;
@@ -136,8 +136,8 @@ export function WeeklyFlow({ items: items = [], 'data-testid': testId }: WeeklyF
 
         registerHitRect(hitZonesRef.current, c.id, cn.x, cn.y, nodeW, cn.h, {
           label   : c.name,
-          value   : `£${c.total ?? 0}M total commitment`,
-          sublabel: `Base £${c.base ?? 0}M  +  Variations £${c.variation ?? 0}M`,
+          value   : `${c.totalLabel ?? String(c.total ?? 0)} total commitment`,
+          sublabel: `Base ${c.baseLabel ?? String(c.base ?? 0)}  +  Variations ${c.variationLabel ?? String(c.variation ?? 0)}`,
           color   : cn.color,
         });
 
@@ -162,7 +162,7 @@ export function WeeklyFlow({ items: items = [], 'data-testid': testId }: WeeklyF
           if (cn.h >= 36) {
             ctx.font      = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
             ctx.fillStyle = rgb(CC.t3, 0.8);
-            ctx.fillText(`£${c.total ?? 0}M`, cn.x + nodeW / 2, cn.cy + 7);
+            ctx.fillText(c.totalLabel ?? String(c.total ?? 0), cn.x + nodeW / 2, cn.cy + 7);
           }
           ctx.globalAlpha  = 1;
           ctx.textBaseline = 'alphabetic';
@@ -190,7 +190,7 @@ export function WeeklyFlow({ items: items = [], 'data-testid': testId }: WeeklyF
         ctx.fillText('Base Value', col2X, baseNode.cy - 6);
         ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle    = CC.t1;
-        ctx.fillText(`£${totalBase}M`, col2X, baseNode.cy + 8);
+        ctx.fillText(String(totalBase), col2X, baseNode.cy + 8);
         ctx.globalAlpha  = 1;
         ctx.textBaseline = 'alphabetic';
 
@@ -210,7 +210,7 @@ export function WeeklyFlow({ items: items = [], 'data-testid': testId }: WeeklyF
         ctx.fillText('Variations', col2X, varNode.cy - 4);
         ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle    = CC.t1;
-        ctx.fillText(`£${totalVar}M`, col2X, varNode.cy + 8);
+        ctx.fillText(String(totalVar), col2X, varNode.cy + 8);
         ctx.globalAlpha  = 1;
         ctx.textBaseline = 'alphabetic';
       }
@@ -235,7 +235,7 @@ export function WeeklyFlow({ items: items = [], 'data-testid': testId }: WeeklyF
         ctx.fillText('Total Commitment', col3X, totalNode.cy - 12);
         ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle    = CC.cyan;
-        ctx.fillText(`£${grandTotal}M`, col3X, totalNode.cy + 6);
+        ctx.fillText(String(grandTotal), col3X, totalNode.cy + 6);
         ctx.globalAlpha  = 1;
         ctx.textBaseline = 'alphabetic';
       }

@@ -129,15 +129,18 @@ export function RankedCardLeaderboard({ items: rawItems = [], 'data-testid': tes
         ctx.fillText(contractor.abbreviation ?? contractor.name.slice(0, 6), photoX, photoY);
 
         // Open count — large
+        const displayVal = contractor.label ?? String(contractor.count ?? 0);
         ctx.font         = `bold 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.textBaseline = 'alphabetic';
         ctx.fillStyle    = rgb(color, 0.9 + hp * 0.1);
-        ctx.fillText(String(contractor.count ?? 0), photoX, cardY + cardH * 0.76);
+        ctx.fillText(displayVal, photoX, cardY + cardH * 0.76);
 
-        // "open EWs" label
-        ctx.font      = AXIS_LABEL.font;
-        ctx.fillStyle = AXIS_LABEL.color;
-        ctx.fillText('open EWs', photoX, cardY + cardH * 0.88);
+        // "open EWs" label — only shown when no pre-formatted label
+        if (!contractor.label) {
+          ctx.font      = AXIS_LABEL.font;
+          ctx.fillStyle = AXIS_LABEL.color;
+          ctx.fillText('open EWs', photoX, cardY + cardH * 0.88);
+        }
 
         // Tooltip with rank, %, risk level
         const pct       = Math.round(((contractor.count ?? 0) / (total || 1)) * 100);
@@ -152,7 +155,7 @@ export function RankedCardLeaderboard({ items: rawItems = [], 'data-testid': tes
           cardH,
           {
             label   : contractor.name,
-            value   : `${contractor.count ?? 0} open · ${pct}% of total`,
+            value   : `${displayVal} open · ${pct}% of total`,
             sublabel: `Rank #${i + 1} · ${riskLabel}`,
             color,
           },

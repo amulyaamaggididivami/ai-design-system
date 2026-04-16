@@ -13,7 +13,7 @@ const MIN_H = 320;
 const PAD_V = 60;
 const MIN_LEAF_SPACING = 28;
 
-export function RadialFanTreeChart({ total = 0, items: rawByContractor = [], 'data-testid': testId }: RadialFanTreeChartProps) {
+export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContractor = [], 'data-testid': testId }: RadialFanTreeChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
@@ -110,9 +110,10 @@ export function RadialFanTreeChart({ total = 0, items: rawByContractor = [], 'da
           ctx.fillStyle = rgb(color, (0.7 + hp * 0.2) * leafFade);
           ctx.fill();
 
+          const displayVal = c.label ?? String(c.count ?? 0);
           registerHitCircle(hitZonesRef.current, c.id, lpos.x, lpos.y, leafR + 8, {
             label: c.name,
-            value: `${c.count ?? 0} NCEs raised`,
+            value: `${displayVal} NCEs raised`,
             sublabel: `${Math.round(((c.count ?? 0) / total) * 100)}% of all NCEs`,
             color,
           });
@@ -122,7 +123,7 @@ export function RadialFanTreeChart({ total = 0, items: rawByContractor = [], 'da
           ctx.font = AXIS_LABEL.font;
           ctx.textAlign = 'left';
           const nameText = c.abbreviation ?? c.name.slice(0, 6);
-          const countText = ` ${c.count ?? 0}`;
+          const countText = ` ${displayVal}`;
           const xLabel = lpos.x + leafR + 6;
           const yLabel = lpos.y + 4;
           ctx.fillStyle = hp > 0 ? color : rgb(CC.t2, 0.85);
@@ -149,7 +150,7 @@ export function RadialFanTreeChart({ total = 0, items: rawByContractor = [], 'da
         ctx.font = `500 24px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle = CC.t1;
         ctx.textAlign = 'center';
-        ctx.fillText(String(total), rootX, rootY + 5);
+        ctx.fillText(totalLabel ?? String(total), rootX, rootY + 5);
         ctx.font = AXIS_LABEL.font;
         ctx.fillStyle = AXIS_LABEL.color;
         ctx.fillText('NCEs', rootX, rootY + 18);
@@ -161,7 +162,7 @@ export function RadialFanTreeChart({ total = 0, items: rawByContractor = [], 'da
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [total, byContractor, H]);
+  }, [total, totalLabel, byContractor, H]);
 
   const isEmpty = byContractor.length === 0;
   if (isEmpty) return <ChartEmptyState width={W} height={MIN_H} data-testid={testId} />;

@@ -147,7 +147,7 @@ export type BaseVisualizationConfig =
   | { type: 'dot-matrix-chart'; items: EWCategoryRow[]; title?: string }
   | { type: 'ranked-card-leaderboard'; items: EWOpenContractorRow[]; title?: string }
   | { type: 'proportional-band-chart'; severities: EWSeverityRow[]; title?: string }
-  | { type: 'radial-fan-tree-chart'; total: number; items: NCEContractorRow[] }
+  | { type: 'radial-fan-tree-chart'; total: number; totalLabel?: string; items: NCEContractorRow[] }
   | { type: 'semi-circular-gauge-chart'; value: number; confirmed: number; total: number }
   | { type: 'segmented-split-bar-chart'; items: VariationRow[] }
   | { type: 'balance-scale-chart'; left: QuotationSide; right: QuotationSide }
@@ -170,6 +170,9 @@ export type ContractorRow = {
   variation?: number;
   total?: number;
   percentage?: number;
+  baseLabel?: string;
+  variationLabel?: string;
+  totalLabel?: string;
 };
 
 export type ContractData = {
@@ -180,9 +183,9 @@ export type ContractData = {
 export type EWStatusRow = { status: string; count: number };
 export type EWCategoryRow = { category: string; fullName: string; count: number };
 export type EWSeverityRow = { severity: string; count: number };
-export type EWOpenContractorRow = { id: string; name: string; abbreviation?: string; count?: number };
+export type EWOpenContractorRow = { id: string; name: string; abbreviation?: string; count?: number; label?: string };
 
-export type NCEContractorRow = { id: string; name: string; abbreviation?: string; count?: number };
+export type NCEContractorRow = { id: string; name: string; abbreviation?: string; count?: number; label?: string };
 export type NCECompensationData = { total: number; confirmed: number; pctConfirmed: number };
 
 export type VariationRow = {
