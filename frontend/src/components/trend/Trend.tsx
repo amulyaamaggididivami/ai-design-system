@@ -70,8 +70,6 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
     if (yCtx) {
       yCtx.clearRect(0, 0, PAD_L, H);
       yCtx.letterSpacing = AXIS_LABEL.letterSpacing;
-      yCtx.fillStyle = CC.bg;
-      yCtx.fillRect(0, 0, PAD_L, H);
       [0.25, 0.5, 0.75, 1.0].forEach(frac => {
         const y = padT + chartH - frac * chartH;
         yCtx.font = AXIS_LABEL.font;

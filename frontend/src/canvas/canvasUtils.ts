@@ -47,7 +47,7 @@ export const AXIS_LABEL = {
 
 export const CHART_VALUE = {
   font:          "500 14px 'Satoshi Variable', 'DM Sans', sans-serif",
-  color:         '#F7F9FA',
+  color:         '#F7F7F7',
 } as const;
 
 /**
