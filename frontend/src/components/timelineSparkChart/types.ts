@@ -8,5 +8,7 @@ export interface TimelineImpactData {
 
 export interface TimelineSparkChartProps {
   impact: TimelineImpactData;
+  /** Width in CSS pixels. Defaults to 680. */
+  width?: number;
   'data-testid'?: string;
 }

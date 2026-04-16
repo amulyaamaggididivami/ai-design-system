@@ -3,11 +3,10 @@ import { useRef } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { easeOutCubic, easeOutQuart } from '../../canvas/easing';
-import { CC, rgb, drawGlow } from '../../canvas/canvasUtils';
+import { CC, rgb } from '../../canvas/canvasUtils';
 import { useCanvasLoop } from '../../canvas/useCanvasLoop';
 import type { BudgetImpactChartProps } from './types';
 
-const W = 680;
 const H = 100;
 const RED = '#F06060';
 const GREEN = '#34D399';
@@ -22,7 +21,7 @@ function formatVal(v: number, unit: string): string {
   return `${v} ${unit}`;
 }
 
-export function BudgetImpactChart({ impact, 'data-testid': testId }: BudgetImpactChartProps) {
+export function BudgetImpactChart({ impact, width: W = 680, 'data-testid': testId }: BudgetImpactChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const { tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });

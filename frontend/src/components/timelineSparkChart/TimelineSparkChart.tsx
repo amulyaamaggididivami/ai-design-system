@@ -7,7 +7,6 @@ import { CC, rgb, drawGlow } from '../../canvas/canvasUtils';
 import { useCanvasLoop } from '../../canvas/useCanvasLoop';
 import type { TimelineSparkChartProps } from './types';
 
-const W = 680;
 const H = 120;
 const AMBER = '#FBBF24';
 const FONT_SANS = "'Satoshi Variable', 'DM Sans', sans-serif";
@@ -18,7 +17,7 @@ function formatVal(v: number): string {
   return `\u00A3${v}K`;
 }
 
-export function TimelineSparkChart({ impact, 'data-testid': testId }: TimelineSparkChartProps) {
+export function TimelineSparkChart({ impact, width: W = 680, 'data-testid': testId }: TimelineSparkChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
