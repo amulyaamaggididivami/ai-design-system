@@ -230,6 +230,15 @@ export type KeyHighlightBlock =
   | { type: 'flags-list';      items: FlagsListRow[]; takeaway?: string }
   | { type: 'comparison-rows'; columns: string[]; rows: ComparisonRow[]; takeaway?: string };
 
+// ─── Dual-Segment Horizontal Bar Chart Types ─────────────────────────────────
+
+export type DualSegmentBarRow = {
+  id: string;
+  name: string;
+  primaryValue?: number;    // First segment value (optional — row is skipped if missing/invalid)
+  secondaryValue?: number;  // Second segment value (optional)
+};
+
 // ─── Narrative Chain Types ──────────────────────────────────────────────────
 
 export type NarrativeStep = {

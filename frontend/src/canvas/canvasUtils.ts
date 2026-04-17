@@ -10,20 +10,20 @@ export const CC = {
   bgL:    '#0C1420',
   sf:     '#13161B',
   bd:     '#22262F',
-  blue:   '#2970FF',
+  blue:   '#4C93D9',
   cyan:   '#36BFFA',
-  orange: '#EF6820',
-  red:    '#EF6820',
-  green:  '#71B941',
-  purple: '#7A5AF8',
-  amber:  '#FAC515',
-  t1:     '#F7F7F7',
-  t2:     '#C2C2C2',
+  orange: '#EC772A',
+  red:    '#EC772A',
+  green:  '#5DA537',
+  purple: '#818FF8',
+  amber:  '#EEBF3B',
+  t1:     '#F7F9FA',
+  t2:     '#B3B5B6',
   t3:     '#94979C',
   t4:     '#334155',
 } as const;
 
-export const PALETTE = [CC.blue, CC.cyan, CC.amber, CC.purple, CC.green, CC.red];
+export const PALETTE = [CC.blue, CC.amber, CC.purple, CC.green, CC.red];
 
 
 // --- Typography tokens ---
@@ -31,30 +31,38 @@ export const PALETTE = [CC.blue, CC.cyan, CC.amber, CC.purple, CC.green, CC.red]
 /**
  * Axis label style — applied to all x-axis and y-axis tick labels, titles, and legends.
  * Change once here to update every chart.
- *   color:       #94979C  (CC.t2)
- *   font-family: Satoshi Variable, DM Sans (SANS fallback)
- *   font-size:   12px
- *   font-weight: 400
- *   line-height: 18px (informational — not applicable in canvas ctx.font)
+ *   font-family:     Satoshi Variable, DM Sans (sans-serif fallback)
+ *   font-weight:     400 (Regular)
+ *   font-size:       14px
+ *   line-height:     100%  (informational — not applicable in canvas ctx.font)
+ *   letter-spacing:  0%    (set ctx.letterSpacing = AXIS_LABEL.letterSpacing at the draw site)
+ *   text-align:      Right for y-axis ticks; Center for x-axis ticks (set at each draw site)
  */
 export const AXIS_LABEL = {
-  font:  "400 14px 'Satoshi Variable', 'DM Sans', sans-serif",
-  color: '#C2C2C2',   // #94979C
+  font:          "400 16px 'Satoshi Variable', 'DM Sans', sans-serif",
+  color:         '#F7F7F7',
+  letterSpacing: '0px',
+} as const;
+
+
+export const CHART_VALUE = {
+  font:          "500 16px 'Satoshi Variable', 'DM Sans', sans-serif",
+  color:         '#F7F7F7',
 } as const;
 
 /**
  * Legend label style — applied to all chart legend items (swatches, keys, footers).
  * Change once here to update every chart legend.
- *   color:       #94979C  (CC.t2)
- *   font-family: Satoshi Variable, DM Sans (SANS fallback)
- *   font-size:   12px
- *   font-weight: 400
- *   line-height: 18px (informational — not applicable in canvas ctx.font)
- *   text-align:  center  (set ctx.textAlign = 'center' at the draw call site)
+ *   font-family:     Satoshi Variable, DM Sans (sans-serif fallback)
+ *   font-weight:     400 (Regular)
+ *   font-size:       18px
+ *   letter-spacing:  0%    (set ctx.letterSpacing = LEGEND_LABEL.letterSpacing at the draw site)
+ *   text-align:      center (set ctx.textAlign = 'center' at the draw call site)
  */
 export const LEGEND_LABEL = {
-  font:  "400 14px 'Satoshi Variable', 'DM Sans', sans-serif",
-  color: '#C2C2C2',   // #94979C
+  font:          "400 18px 'Satoshi Variable', 'DM Sans', sans-serif",
+  color:         '#B3B5B6',
+  letterSpacing: '0px',
 } as const;
 
 // --- Color helpers ---

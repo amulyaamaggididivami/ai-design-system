@@ -2,7 +2,7 @@ import { useRef, useEffect, useMemo } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
-import { CC, AXIS_LABEL, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, CHART_VALUE, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import type { EWStatusRow } from '../../types';
 import type { HubAndSpokeRadialChartProps } from './types';
@@ -45,6 +45,7 @@ export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, 'dat
       frameRef.current++;
       const T = frameRef.current;
       ctx.clearRect(0, 0, W, H);
+      ctx.letterSpacing = AXIS_LABEL.letterSpacing;
       hitZonesRef.current = [];
 
       // Tick hover map
@@ -101,7 +102,7 @@ export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, 'dat
         // Count label at midpoint
         const midX = (cxCenter + sx) / 2;
         const midY = (cyCenter + sy) / 2;
-        ctx.font = `bold ` + AXIS_LABEL.font;
+        ctx.font = CHART_VALUE.font;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = rgb(color, 0.85);
@@ -130,7 +131,7 @@ export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, 'dat
         ctx.fill();
 
         // Label inside
-        ctx.font = `bold ` + AXIS_LABEL.font;
+        ctx.font = `bold ` + AXIS_LABEL.font ;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = rgb(CC.t1, 0.9);
@@ -153,16 +154,16 @@ export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, 'dat
 
       // Central node
       const centerHp = hoverMap.current.get('center') ?? 0;
-      drawGlow(ctx, cxCenter, cyCenter, 36, CC.t3, 0.2 + centerHp * 0.15);
+      drawGlow(ctx, cxCenter, cyCenter, 36, CC.t2, 0.2 + centerHp * 0.15);
       const centerGrad = ctx.createRadialGradient(cxCenter, cyCenter - 4, 0, cxCenter, cyCenter, 22);
       centerGrad.addColorStop(0, rgb(CC.t2, 0.9));
-      centerGrad.addColorStop(1, rgb(CC.t3, 0.5));
+      centerGrad.addColorStop(1, rgb(CC.t2, 0.5));
       ctx.beginPath();
       ctx.arc(cxCenter, cyCenter, 22, 0, Math.PI * 2);
       ctx.fillStyle = centerGrad;
       ctx.fill();
 
-      ctx.font = AXIS_LABEL.font;
+      ctx.font = CHART_VALUE.font;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillStyle = rgb(CC.t1, 0.9);
@@ -174,7 +175,7 @@ export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, 'dat
       registerHitCircle(hitZonesRef.current, 'center', cxCenter, cyCenter, 28, {
         label: 'Total EW Status',
         value: `${total} Early Warnings`,
-        color: CC.t3,
+        color: CC.t2,
       });
 
       drawScanline(ctx, W, H, T, 0.015);

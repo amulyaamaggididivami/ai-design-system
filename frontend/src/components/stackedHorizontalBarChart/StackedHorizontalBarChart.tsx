@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { easeOutQuart, stagger, tickHoverProgress } from '../../canvas/easing';
-import { CC, AXIS_LABEL, LEGEND_LABEL, rgb, drawGlow } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, CHART_VALUE, LEGEND_LABEL, rgb, drawGlow } from '../../canvas/canvasUtils';
 import { useCanvasLoop } from '../../canvas/useCanvasLoop';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import { ToggleButton } from '../common/ToggleButton';
@@ -13,7 +13,7 @@ import type { StackedHorizontalBarChartProps } from './types';
 const W        = 680;
 const MIN_H    = 220;
 const MAX_ITEMS = 8;
-const COLORS   = [CC.blue, CC.cyan, CC.amber, CC.purple, CC.green];
+const COLORS   = [CC.blue, CC.amber, CC.purple, CC.green];
 const PAD      = { left: 8, right: 80, top: 16, bottom: 38 };
 const NAME_W   = 88;
 const BAR_H    = 18;
@@ -60,7 +60,7 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
         const varW   = totalW - baseW;
 
         // Contractor name  y-axis
-        ctx.font         = `${hp > 0 ? '400' : '400'} 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.font         = AXIS_LABEL.font;
         ctx.fillStyle    = hp > 0 ? color : AXIS_LABEL.color;
         ctx.textAlign    = 'right';
         ctx.textBaseline = 'middle';
@@ -111,8 +111,8 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
         if (localP > 0.35) {
           const fade = Math.min(1, (localP - 0.35) / 0.4);
           ctx.globalAlpha  = fade;
-          ctx.font         = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
-          ctx.fillStyle    = hp > 0 ? color : '#F7F9FA';
+          ctx.font         = CHART_VALUE.font;
+          ctx.fillStyle    = hp > 0 ? color : CHART_VALUE.color;
           ctx.textAlign    = 'left';
           ctx.textBaseline = 'middle';
           ctx.fillText(con.totalLabel ?? String(con.total ?? 0), x0 + totalW + 6, y + BAR_H / 2);
@@ -130,11 +130,11 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
       // Legend row
       const ly = dynamicH - 14;
       ctx.textBaseline = 'middle';
-      ctx.font         = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+      ctx.font         = LEGEND_LABEL.font;
       ctx.textAlign    = 'left';
 
       // Base swatch
-      ctx.fillStyle = rgb(CC.cyan, 0.5);
+      ctx.fillStyle = rgb(CC.blue, 0.5);
       ctx.beginPath();
       ctx.roundRect(PAD.left + NAME_W, ly - 3, 14, 6, 2);
       ctx.fill();
@@ -142,12 +142,12 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
       ctx.fillText('base value', PAD.left + NAME_W + 18, ly);
 
       // Variation swatch
-      ctx.fillStyle = rgb(CC.cyan, 0.22);
+      ctx.fillStyle = rgb(CC.blue, 0.22);
       ctx.beginPath();
       ctx.roundRect(PAD.left + NAME_W + 94, ly - 3, 14, 6, 2);
       ctx.fill();
       ctx.setLineDash([2, 3]);
-      ctx.strokeStyle = rgb(CC.cyan, 0.5);
+      ctx.strokeStyle = rgb(CC.blue, 0.5);
       ctx.lineWidth   = 0.5;
       ctx.beginPath();
       ctx.moveTo(PAD.left + NAME_W + 101, ly - 3);
@@ -158,7 +158,7 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
       ctx.fillText('approved variations', PAD.left + NAME_W + 112, ly);
 
       // Portfolio total right-aligned
-      ctx.font      = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+      ctx.font      = LEGEND_LABEL.font;
       ctx.textAlign = 'right';
       ctx.fillStyle = LEGEND_LABEL.color;
       ctx.fillText(`Portfolio: ${String(totals?.total ?? 0)}`, W - 8, ly);

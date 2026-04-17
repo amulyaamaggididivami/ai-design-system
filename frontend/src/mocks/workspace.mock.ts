@@ -612,9 +612,23 @@ export const quotationTrend = [
   { week: 'W12', count: 9, value: 8.3 },
 ];
 
-// ─── Narrative Chain (Dashboard Questions → Chat Flow) ──────────────────────
+// ─── Dual-Segment Horizontal Bar Chart Data ──────────────────────────────────
 
-import type { NarrativeStep } from '../types';
+import type { DualSegmentBarRow, NarrativeStep } from '../types';
+
+export const dualSegmentBarRows: DualSegmentBarRow[] = [
+  { id: 'c1', name: 'Tata Projects',     primaryValue: 186.4, secondaryValue: 18.2 },
+  { id: 'c2', name: 'L&T Construction',  primaryValue: 220.4, secondaryValue: 22.3 },
+  { id: 'c3', name: 'Afcons Infra',      primaryValue: 140.1, secondaryValue: 16.8 },
+  { id: 'c4', name: 'NCC Ltd',           primaryValue: 190.4, secondaryValue: 16.3 },
+  { id: 'c5', name: 'KEC International', primaryValue: 181.1, secondaryValue: 12.9 },
+  { id: 'c5', name: 'KEC International', primaryValue: 181.1, secondaryValue: 12.9 },
+  { id: 'c5', name: 'KEC International', primaryValue: 181.1, secondaryValue: 12.9 },
+  { id: 'c5', name: 'KEC International', primaryValue: 181.1, secondaryValue: 12.9 },
+  { id: 'c5', name: 'KEC International', primaryValue: 181.1, secondaryValue: 12.9 },
+];
+
+// ─── Narrative Chain (Dashboard Questions → Chat Flow) ──────────────────────
 
 export const NARRATIVE_CHAIN: NarrativeStep[] = [
   {

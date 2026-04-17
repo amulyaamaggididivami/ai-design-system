@@ -3,7 +3,7 @@ import { useRef, useEffect, useMemo } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
 import { easeOutCubic } from '../../canvas/easing';
-import { CC, AXIS_LABEL, rgb, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL,rgb, setupCanvas } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import type { QuotationTrendPoint } from '../../types';
 import type { TrendProps } from './types';
@@ -14,7 +14,7 @@ const H = 280;
 const PAD_L = 54;
 const PAD_R = 28;
 const MIN_STEP = 64;
-const LABEL_FONT = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+const LABEL_FONT = AXIS_LABEL.font;
 const LABEL_PAD = 12;
 
 export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendProps) {
@@ -37,8 +37,9 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
     return Math.max(MIN_STEP, maxLabelW + LABEL_PAD);
   }, [points]);
 
+  const padLC = Math.round(minStep / 2); // left offset so first point isn't flush with the edge
   // chartCanvasW excludes the Y-axis panel — scroll starts right after the Y-axis
-  const chartCanvasW = Math.max(MIN_W - PAD_L, PAD_R + Math.max(0, points.length - 1) * minStep);
+  const chartCanvasW = Math.max(MIN_W - PAD_L, PAD_R + padLC + Math.max(0, points.length - 1) * minStep);
 
   const { tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: chartCanvasW, height: H });
 
@@ -58,10 +59,10 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
     const chartH = H - padT - padB;
     const maxCount = Math.max(...points.map(p => p.count), 1);
     const n = points.length;
-    const stepX = n > 1 ? Math.max(chartW / (n - 1), minStep) : chartW;
+    const stepX = n > 1 ? Math.max((chartW - padLC) / (n - 1), minStep) : chartW - padLC;
 
     const pts = points.map((p, i) => ({
-      x: i * stepX,
+      x: padLC + i * stepX,
       y: padT + chartH - (p.count / maxCount) * chartH,
       point: p,
     }));
@@ -69,8 +70,7 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
     // Draw Y-axis once — it never changes
     if (yCtx) {
       yCtx.clearRect(0, 0, PAD_L, H);
-      yCtx.fillStyle = CC.bg;
-      yCtx.fillRect(0, 0, PAD_L, H);
+      yCtx.letterSpacing = AXIS_LABEL.letterSpacing;
       [0.25, 0.5, 0.75, 1.0].forEach(frac => {
         const y = padT + chartH - frac * chartH;
         yCtx.font = AXIS_LABEL.font;
@@ -96,6 +96,7 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
       const progress = easeOutCubic(rawP);
 
       ctx.clearRect(0, 0, chartCanvasW, H);
+      ctx.letterSpacing = AXIS_LABEL.letterSpacing;
 
       // Grid lines — start at x=0 (Y-axis is on separate fixed canvas)
       [0.25, 0.5, 0.75, 1.0].forEach(frac => {
@@ -114,13 +115,13 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
       ctx.font = AXIS_LABEL.font;
       ctx.fillStyle = AXIS_LABEL.color;
       ctx.textAlign = 'center';
-      ctx.fillText('Period', chartW / 2, H - 6);
+      ctx.fillText('Period', padLC + (chartW - padLC) / 2, H - 6);
 
       // X-axis baseline
       ctx.strokeStyle = rgb(CC.bd, 0.3);
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(0, padT + chartH);
+      ctx.moveTo(padLC, padT + chartH);
       ctx.lineTo(chartW, padT + chartH);
       ctx.stroke();
 
@@ -142,8 +143,8 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
         ctx.lineTo(pts[drawN - 1].x, padT + chartH);
         ctx.closePath();
         const areaGrad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
-        areaGrad.addColorStop(0, rgb(CC.cyan, 0.22));
-        areaGrad.addColorStop(1, rgb(CC.cyan, 0.02));
+        areaGrad.addColorStop(0, rgb(CC.blue, 0.22));
+        areaGrad.addColorStop(1, rgb(CC.blue, 0.02));
         ctx.fillStyle = areaGrad;
         ctx.fill();
       }
@@ -157,7 +158,7 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
         const py = isLast ? pts[i - 1].y + (pts[i].y - pts[i - 1].y) * t : pts[i].y;
         i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
       }
-      ctx.strokeStyle = rgb(CC.cyan, 0.85);
+      ctx.strokeStyle = rgb(CC.blue, 0.85);
       ctx.lineWidth = 2;
       ctx.stroke();
 
@@ -170,17 +171,17 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
           label: pt.point.week,
           value: `${pt.point.count} submissions`,
           sublabel: `£${pt.point.value}M value`,
-          color: CC.cyan,
+          color: CC.blue,
         });
 
         ctx.beginPath();
         ctx.arc(pt.x, pt.y, 3.5, 0, Math.PI * 2);
-        ctx.fillStyle = rgb(CC.cyan, 0.8);
+        ctx.fillStyle = rgb(CC.blue, 0.8);
         ctx.fill();
 
-        ctx.font = LABEL_FONT;
+        ctx.font      = LABEL_FONT;
         ctx.fillStyle = AXIS_LABEL.color;
-        ctx.textAlign = i === 0 ? 'left' : i === pts.length - 1 ? 'right' : 'center';
+        ctx.textAlign = 'center';
         ctx.fillText(pt.point.week, pt.x, H - padB + 14);
       });
 

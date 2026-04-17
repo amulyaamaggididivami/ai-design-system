@@ -3,7 +3,7 @@ import { useRef, useEffect, useState, useMemo } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
 import { easeOutCubic } from '../../canvas/easing';
-import { CC, AXIS_LABEL, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, CHART_VALUE, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import { ToggleButton } from '../common/ToggleButton';
 import type { ContractorRow } from '../../types';
@@ -16,7 +16,7 @@ const PAD_T      = 24;
 const PAD_B      = 24;
 const MAX_ITEMS  = 8;
 
-const RACE_COLORS = [CC.green, CC.blue, CC.cyan, CC.amber, CC.red];
+const RACE_COLORS = [CC.green, CC.blue, CC.amber, CC.red];
 
 
 export function ProgressRaceChart({ items: rawItems = [], 'data-testid': testId }: ProgressRaceChartProps) {
@@ -58,6 +58,7 @@ export function ProgressRaceChart({ items: rawItems = [], 'data-testid': testId 
       frameRef.current++;
       const T = frameRef.current;
       ctx.clearRect(0, 0, W, H);
+      ctx.letterSpacing = AXIS_LABEL.letterSpacing;
       hitZonesRef.current = [];
 
       // Tick hover map
@@ -139,7 +140,7 @@ export function ProgressRaceChart({ items: rawItems = [], 'data-testid': testId 
         );
 
         // Runner percentage label
-        ctx.font         = `bold ` + AXIS_LABEL.font;
+        ctx.font         = CHART_VALUE.font;
         ctx.fillStyle    = rgb(color, 0.9 + hp * 0.1);
         ctx.textAlign    = 'left';
         ctx.textBaseline = 'middle';
