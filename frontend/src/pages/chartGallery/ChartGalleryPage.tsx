@@ -105,7 +105,7 @@ const ewCategories = [
  * EWOpenContractorRow: { id, name, abbreviation?, count? }
  */
 const contractorRankContractors = [
-  { id: 'c1', name: 'Tata Projects',     abbreviation: 'Tata',   count: 7 },
+  { id: 'c1', name: 'Tata Projects',     abbreviation: 'Tata',   count: 50.56 },
   { id: 'c3', name: 'Afcons Infra',      abbreviation: 'Afcons', count: 4 },
   { id: 'c2', name: 'L&T Construction',  abbreviation: 'L&T',    count: 3 },
   { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 2 },
@@ -119,10 +119,26 @@ const contractorRankContractors = [
  * Order matters — rendered left to right.
  */
 const severityBands = [
-  { severity: 'Critical', count: 5  },
-  { severity: 'High',     count: 14 },
-  { severity: 'Medium',   count: 13 },
-  { severity: 'Low',      count: 8  },
+      {
+        "count": 4290585,
+        "severity": "90+ days (Tenova)"
+      },
+      {
+        "severity": "0-30 days (Churngold)",
+        "count": 1607404
+      },
+      {
+        "severity": "90+ days (ASL NG Prep)",
+        "count": 1605980
+      },
+      {
+        "severity": "31-60 days (ASL NG Prep)",
+        "count": 1269303
+      },
+      {
+        "count": 2836728,
+        "severity": "Other Buckets"
+      }
 ];
 
 /**
@@ -138,6 +154,17 @@ const nceByContractorData = [
   { id: 'c2', name: 'L&T Construction',  abbreviation: 'L&T',    count: 4 },
   { id: 'c4', name: 'NCC Ltd',           abbreviation: 'NCC',    count: 4 },
   { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
+
+
 ];
 
 /**
@@ -184,7 +211,7 @@ const quotationBalanceData = {
  * QuotationTrendPoint: { week: string, count: number, value: number }
  */
 const quotationTrendData = [
-  { week: 'W1',  count: 2, value: 1.8 },
+  { week: 'W1asdfghj',  count: 2, value: 1.8 },
   { week: 'W2',  count: 3, value: 2.4 },
   { week: 'Wsdfghjk3',  count: 1, value: 0.9 },
   { week: 'W4',  count: 4, value: 3.6 },

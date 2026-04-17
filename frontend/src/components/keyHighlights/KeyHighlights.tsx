@@ -4,8 +4,8 @@ import type { KeyHighlightBlock, KeyHighlightChip, KeyHighlightBadge, KeyHighlig
 
 // ─── Shared palette & fonts ──────────────────────────────────────────────────
 const C = {
-  bg:     CC.sf,
-  border: CC.bd,
+  bg:     'transparent',
+  border: 'transparent',
   t1:     CC.t1,
   t2:     CC.t2,
   t3:     CC.t3,
@@ -146,7 +146,7 @@ function Chips({ items = [] }: { items: KeyHighlightChip[] }) {
             width: 260, height: 120, padding: 24, gap: 8,
             flexShrink: 0,
             background: C.bg,
-            border: `1px solid ${(item.color ? item.color + '30' : C.border)}`,
+            // border: `1px solid ${(item.color ? item.color + '30' : C.border)}`,
             boxSizing: 'border-box' as const,
             // borderRadius: 7,
           }}
@@ -183,7 +183,7 @@ function Badges({ items = [] }: { items: KeyHighlightBadge[] }) {
             style={{
               display: 'flex', alignItems: 'flex-start', gap: 10,
               padding: '10px 14px',
-              background: CC.sf,
+              background: C.bg,
               border: `1px solid ${C.border}`,
             }}
           >
@@ -291,7 +291,7 @@ function Proportion({ leftPct, leftLabel, leftValue, leftColor, rightPct, rightL
   chips?: KeyHighlightChip[];
 }) {
   const lColor = leftColor ?? CC.blue;
-  const rColor = rightColor ?? CC.cyan;
+  const rColor = rightColor ?? CC.blue;
   return (
     <div>
       {/* Split bar */}
@@ -608,61 +608,21 @@ function ComparisonRows({ columns = [], rows = [] }: { columns: string[]; rows: 
   );
 }
 
-// ─── Takeaway ─────────────────────────────────────────────────────────────────
-// Synthesised insight sentence — rendered below any block that provides one
-function Takeaway({ text }: { text: string }) {
-  return (
-    <div
-      style={{
-        padding: '8px 12px',
-        border: `1px solid ${CC.bd}`,
-        borderLeft: `4px solid #71B941`,
-        borderRadius: 5,
-        background: `linear-gradient(90deg, rgba(113, 185, 65, 0.10) -48.4%, rgba(19, 22, 27, 0.10) 83.98%), ${CC.sf}`,
-      }}
-    >
-      <span
-        style={{
-          fontSize: 16, fontWeight: 500, color: CC.t1,
-          fontFamily: SANS, lineHeight: '20px',
-          marginRight: 8,
-        }}
-      >
-        Takeaway
-      </span>
-      <span style={{ ...LABEL }}>
-        {text}
-      </span>
-    </div>
-  );
-}
-
 // ─── Main export ─────────────────────────────────────────────────────────────
 export function KeyHighlights({ block }: { block?: KeyHighlightBlock }) {
   if (!block) return null;
 
-  const inner = (() => {
-    switch (block.type) {
-      case 'stats':           return <Stats items={block.items} />;
-      case 'ranked':          return <Ranked items={block.items} />;
-      case 'chips':           return <Chips items={block.items} />;
-      case 'badges':          return <Badges items={block.items} />;
-      case 'dot-strip':       return <DotStrip min={block.min} max={block.max} unit={block.unit} dots={block.dots} chips={block.chips} />;
-      case 'proportion':      return <Proportion leftPct={block.leftPct} leftLabel={block.leftLabel} leftValue={block.leftValue} leftColor={block.leftColor} rightPct={block.rightPct} rightLabel={block.rightLabel} rightValue={block.rightValue} rightColor={block.rightColor} chips={block.chips} />;
-      case 'ring':            return <Ring pct={block.pct} label={block.label} color={block.color} chips={block.chips} />;
-      case 'scorecard-rows':  return <ScorecardRows items={block.items} />;
-      case 'flags-list':      return <FlagsList items={block.items} />;
-      case 'comparison-rows': return <ComparisonRows columns={block.columns} rows={block.rows} />;
-      default:                return null;
-    }
-  })();
-
-  if (!block.takeaway) return inner;
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      {inner}
-      <Takeaway text={block.takeaway} />
-    </div>
-  );
+  switch (block.type) {
+    case 'stats':           return <Stats items={block.items} />;
+    case 'ranked':          return <Ranked items={block.items} />;
+    case 'chips':           return <Chips items={block.items} />;
+    case 'badges':          return <Badges items={block.items} />;
+    case 'dot-strip':       return <DotStrip min={block.min} max={block.max} unit={block.unit} dots={block.dots} chips={block.chips} />;
+    case 'proportion':      return <Proportion leftPct={block.leftPct} leftLabel={block.leftLabel} leftValue={block.leftValue} leftColor={block.leftColor} rightPct={block.rightPct} rightLabel={block.rightLabel} rightValue={block.rightValue} rightColor={block.rightColor} chips={block.chips} />;
+    case 'ring':            return <Ring pct={block.pct} label={block.label} color={block.color} chips={block.chips} />;
+    case 'scorecard-rows':  return <ScorecardRows items={block.items} />;
+    case 'flags-list':      return <FlagsList items={block.items} />;
+    case 'comparison-rows': return <ComparisonRows columns={block.columns} rows={block.rows} />;
+    default:                return null;
+  }
 }

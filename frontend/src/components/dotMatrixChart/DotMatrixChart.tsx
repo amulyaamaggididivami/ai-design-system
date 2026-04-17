@@ -3,7 +3,7 @@ import { useRef, useEffect, useMemo } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
 import { dampedPulse } from '../../canvas/easing';
-import { CC, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, rgb, drawGlow, drawDust, drawScanline, setupCanvas, AXIS_LABEL } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import type { EWCategoryRow } from '../../types';
 import type { DotMatrixChartProps } from './types';
@@ -64,7 +64,7 @@ export function DotMatrixChart({ items: rawCategories = [], 'data-testid': testI
 
       categories.forEach((cat, c) => {
         const isHighlight = cat.count === maxCount;
-        const color = isHighlight ? CC.cyan : CC.blue;
+        const color = isHighlight ? CC.blue : CC.blue;
         const hp = hoverMap.current.get(`${cat.category}-col`) ?? 0;
 
         // Draw dot grid for each row
@@ -119,10 +119,10 @@ export function DotMatrixChart({ items: rawCategories = [], 'data-testid': testI
 
         // Column label below grid
         const labelY = padT + rows * cellH + 16;
-        ctx.font = `${isHighlight ? 'bold ' : ''}14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.font = AXIS_LABEL.font;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'alphabetic';
-        ctx.fillStyle = isHighlight ? CC.cyan : rgb(CC.t2, 0.65);
+        ctx.fillStyle = isHighlight ? CC.blue : rgb(CC.t2, 0.65);
         ctx.fillText(cat.category, padL + c * cellW + cellW / 2, labelY);
       });
 

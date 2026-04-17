@@ -2,7 +2,7 @@ import { useRef, useEffect, useMemo } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
-import { CC, AXIS_LABEL, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, CHART_VALUE, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import type { EWStatusRow } from '../../types';
 import type { HubAndSpokeRadialChartProps } from './types';
@@ -45,6 +45,7 @@ export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, 'dat
       frameRef.current++;
       const T = frameRef.current;
       ctx.clearRect(0, 0, W, H);
+      ctx.letterSpacing = AXIS_LABEL.letterSpacing;
       hitZonesRef.current = [];
 
       // Tick hover map
@@ -101,7 +102,7 @@ export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, 'dat
         // Count label at midpoint
         const midX = (cxCenter + sx) / 2;
         const midY = (cyCenter + sy) / 2;
-        ctx.font = `bold ` + AXIS_LABEL.font;
+        ctx.font = CHART_VALUE.font;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = rgb(color, 0.85);
@@ -130,7 +131,7 @@ export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, 'dat
         ctx.fill();
 
         // Label inside
-        ctx.font = `bold ` + AXIS_LABEL.font;
+        ctx.font = `bold ` + AXIS_LABEL.font ;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = rgb(CC.t1, 0.9);
@@ -162,7 +163,7 @@ export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, 'dat
       ctx.fillStyle = centerGrad;
       ctx.fill();
 
-      ctx.font = AXIS_LABEL.font;
+      ctx.font = CHART_VALUE.font;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillStyle = rgb(CC.t1, 0.9);
