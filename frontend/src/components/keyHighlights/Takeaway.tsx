@@ -16,7 +16,7 @@ export function Takeaway({ text }: { text: string }) {
   return (
     <div
       style={{
-        padding: '8px 12px',
+        padding: '8px 0px',
         border: 'transparent',
         borderRadius: 5,
         background: 'transparent',

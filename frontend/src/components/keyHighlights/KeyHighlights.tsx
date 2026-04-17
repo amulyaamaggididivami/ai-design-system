@@ -112,7 +112,7 @@ function Ranked({ items = [] }: { items: Array<{ name: string; value: string; co
         >
           <span
             style={{
-              fontSize: 18, fontWeight: 600, color: item.color ?? C.t2,
+              fontSize: 18, fontWeight: 500, color: item.color ?? C.t2,
               background: (item.color ?? C.t2) + '22', padding: '2px 8px',
               borderRadius: 4, fontFamily: SANS, flexShrink: 0,
             }}
@@ -250,7 +250,7 @@ function DotStrip({ min, max, unit, dots = [], chips = [] }: {
                   <div style={{ fontSize: 18, color: dotColor, fontFamily: SANS, whiteSpace: 'nowrap' as const }}>
                     {dot.name}
                   </div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: dotColor, fontFamily: SANS, whiteSpace: 'nowrap' as const }}>
+                  <div style={{ fontSize: 18, fontWeight: 500, color: dotColor, fontFamily: SANS, whiteSpace: 'nowrap' as const }}>
                     {dot.val}{unit}
                   </div>
                 </div>
@@ -268,7 +268,7 @@ function DotStrip({ min, max, unit, dots = [], chips = [] }: {
                   <div style={{ fontSize: 18, color: dotColor, fontFamily: SANS, whiteSpace: 'nowrap' as const }}>
                     {dot.name}
                   </div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: dotColor, fontFamily: SANS, whiteSpace: 'nowrap' as const }}>
+                  <div style={{ fontSize: 18, fontWeight: 500, color: dotColor, fontFamily: SANS, whiteSpace: 'nowrap' as const }}>
                     {dot.val}{unit}
                   </div>
                 </div>
@@ -303,7 +303,7 @@ function Proportion({ leftPct, leftLabel, leftValue, leftColor, rightPct, rightL
             paddingRight: 12,
           }}
         >
-          <span style={{ fontSize: 18, fontWeight: 700, color: lColor, fontFamily: SANS }}>
+          <span style={{ fontSize: 18, fontWeight: 500, color: lColor, fontFamily: SANS }}>
             {leftValue}
           </span>
         </div>
@@ -315,7 +315,7 @@ function Proportion({ leftPct, leftLabel, leftValue, leftColor, rightPct, rightL
             paddingLeft: 12,
           }}
         >
-          <span style={{ fontSize: 18, fontWeight: 700, color: rColor, fontFamily: SANS }}>
+          <span style={{ fontSize: 18, fontWeight: 500, color: rColor, fontFamily: SANS }}>
             {rightValue}
           </span>
         </div>
@@ -374,7 +374,7 @@ function Ring({ pct, label, color: colorProp, chips }: {
             textAlign: 'center' as const,
           }}
         >
-          <div style={{ fontSize: 18, fontWeight: 700, color, fontFamily: SANS }}>{pct}%</div>
+          <div style={{ fontSize: 18, fontWeight: 500, color, fontFamily: SANS }}>{pct}%</div>
         </div>
       </div>
       {/* Label + chips */}
@@ -440,7 +440,7 @@ function ScorecardRows({ items = [] }: { items: ScorecardRow[] }) {
           {/* Name */}
           <span
             style={{
-              fontSize: 18, fontWeight: 600, color: item.color ?? C.t2,
+              fontSize: 18, fontWeight: 500, color: item.color ?? C.t2,
               background: (item.color ?? C.t2) + '1A', padding: '2px 7px',
               borderRadius: 4, fontFamily: SANS, flexShrink: 0, minWidth: 62,
               textAlign: 'center' as const,
@@ -463,7 +463,7 @@ function ScorecardRows({ items = [] }: { items: ScorecardRow[] }) {
           </div>
 
           {/* Value */}
-          <span style={{ fontSize: 18, fontWeight: 700, color: item.color ?? C.t1, fontFamily: SANS, flexShrink: 0, minWidth: 52, textAlign: 'right' as const }}>
+          <span style={{ fontSize: 18, fontWeight: 500, color: item.color ?? C.t1, fontFamily: SANS, flexShrink: 0, minWidth: 52, textAlign: 'right' as const }}>
             {item.value}
           </span>
 
@@ -471,7 +471,7 @@ function ScorecardRows({ items = [] }: { items: ScorecardRow[] }) {
           {item.badge && item.badgeSeverity && (
             <span
               style={{
-                fontSize: 18, fontWeight: 600,
+                fontSize: 18, fontWeight: 500,
                 color: BADGE_FG[item.badgeSeverity],
                 background: BADGE_BG[item.badgeSeverity],
                 padding: '2px 7px', borderRadius: 4,
@@ -530,7 +530,7 @@ function FlagsList({ items = [] }: { items: FlagsListRow[] }) {
             </span>
             <span
               style={{
-                fontSize: 18, fontWeight: 600, color,
+                fontSize: 18, fontWeight: 500, color,
                 background: color + '20', padding: '2px 7px',
                 borderRadius: 4, fontFamily: SANS, flexShrink: 0,
               }}
@@ -566,7 +566,7 @@ function ComparisonRows({ columns = [], rows = [] }: { columns: string[]; rows: 
           <div
             key={i}
             style={{
-              flex: 1, fontSize: 18, fontWeight: 600, color: C.t2,
+              flex: 1, fontSize: 18, fontWeight: 500, color: C.t2,
               fontFamily: SANS, textTransform: 'uppercase' as const, letterSpacing: 0.6,
             }}
           >
@@ -598,7 +598,7 @@ function ComparisonRows({ columns = [], rows = [] }: { columns: string[]; rows: 
             {row.label}
           </span>
           {row.cells.map((cell, j) => (
-            <span key={j} style={{ flex: 1, fontSize: 18, fontWeight: 700, color: row.color ?? C.t1, fontFamily: SANS }}>
+            <span key={j} style={{ flex: 1, fontSize: 18, fontWeight: 500, color: row.color ?? C.t1, fontFamily: SANS }}>
               {cell}
             </span>
           ))}

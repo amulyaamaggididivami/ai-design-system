@@ -214,8 +214,8 @@ const quotationBalanceData = {
  * QuotationTrendPoint: { week: string, count: number, value: number }
  */
 const quotationTrendData = [
-  { week: 'W1asdfghj',  count: 2, value: 1.8 },
-  { week: 'W2',  count: 3, value: 2.4 },
+  { week: 'W1asdfghsdfghjkj',  count: 2, value: 1.8 },
+  { week: 'Wsdsdfghjfghj2',  count: 3, value: 2.4 },
   { week: 'Wsdfghjk3',  count: 1, value: 0.9 },
   { week: 'W4',  count: 4, value: 3.6 },
   { week: 'W5',  count: 5, value: 4.1 },
@@ -273,26 +273,6 @@ const quotationTrendData = [
   { week: 'W1wertyui2', count: 9, value: 8.3 },
   { week: 'W1xcvbn2', count: 15, value: 8.3 },
   { week: 'W12wertyuio', count: 50, value: 8.3 },
-  { week: 'W12', count: 10, value: 8.3 },
-  { week: 'W12', count: 9, value: 8.3 },
-  { week: 'W12', count: 9, value: 8.3 },
-  { week: 'W12', count: 20, value: 8.3 },
-  { week: 'W12', count: 9, value: 8.3 },
-  { week: 'W10dfghjk', count: 29, value: 7.1 },
-  { week: 'W1sdfghj1', count: 5, value: 4.8 },
-  { week: 'W1sdfghj2', count: 30, value: 8.3 },
-  { week: 'W1wertyui2', count: 9, value: 8.3 },
-  { week: 'W1xcvbn2', count: 15, value: 8.3 },
-  { week: 'W12wertyuio', count: 50, value: 8.3 },
-  { week: 'W12', count: 10, value: 8.3 },
-  { week: 'W12', count: 9, value: 8.3 },
-  { week: 'W12', count: 9, value: 8.3 },
-  { week: 'W12', count: 20, value: 8.3 },
-  { week: 'W12', count: 9, value: 8.3 },
-  { week: 'W10dfghjk', count: 29, value: 7.1 }
-
-  
-
 ];
 
 /**

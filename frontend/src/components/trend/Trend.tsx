@@ -37,8 +37,9 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
     return Math.max(MIN_STEP, maxLabelW + LABEL_PAD);
   }, [points]);
 
+  const padLC = Math.round(minStep / 2); // left offset so first point isn't flush with the edge
   // chartCanvasW excludes the Y-axis panel — scroll starts right after the Y-axis
-  const chartCanvasW = Math.max(MIN_W - PAD_L, PAD_R + Math.max(0, points.length - 1) * minStep);
+  const chartCanvasW = Math.max(MIN_W - PAD_L, PAD_R + padLC + Math.max(0, points.length - 1) * minStep);
 
   const { tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: chartCanvasW, height: H });
 
@@ -58,10 +59,10 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
     const chartH = H - padT - padB;
     const maxCount = Math.max(...points.map(p => p.count), 1);
     const n = points.length;
-    const stepX = n > 1 ? Math.max(chartW / (n - 1), minStep) : chartW;
+    const stepX = n > 1 ? Math.max((chartW - padLC) / (n - 1), minStep) : chartW - padLC;
 
     const pts = points.map((p, i) => ({
-      x: i * stepX,
+      x: padLC + i * stepX,
       y: padT + chartH - (p.count / maxCount) * chartH,
       point: p,
     }));
@@ -114,13 +115,13 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
       ctx.font = AXIS_LABEL.font;
       ctx.fillStyle = AXIS_LABEL.color;
       ctx.textAlign = 'center';
-      ctx.fillText('Period', chartW / 2, H - 6);
+      ctx.fillText('Period', padLC + (chartW - padLC) / 2, H - 6);
 
       // X-axis baseline
       ctx.strokeStyle = rgb(CC.bd, 0.3);
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(0, padT + chartH);
+      ctx.moveTo(padLC, padT + chartH);
       ctx.lineTo(chartW, padT + chartH);
       ctx.stroke();
 
@@ -178,9 +179,9 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
         ctx.fillStyle = rgb(CC.blue, 0.8);
         ctx.fill();
 
-        ctx.font = LABEL_FONT;
+        ctx.font      = LABEL_FONT;
         ctx.fillStyle = AXIS_LABEL.color;
-        ctx.textAlign = i === 0 ? 'left' : i === pts.length - 1 ? 'right' : 'center';
+        ctx.textAlign = 'center';
         ctx.fillText(pt.point.week, pt.x, H - padB + 14);
       });
 
