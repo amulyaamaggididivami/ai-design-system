@@ -3,7 +3,7 @@ import { useRef, useEffect, useMemo } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { tickHoverProgress, easeOutQuart } from '../../canvas/easing';
-import { CC, AXIS_LABEL, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, CHART_VALUE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import type { EWSeverityRow } from '../../types';
 import type { ProportionalBandChartProps } from './types';
@@ -59,6 +59,7 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
       frameRef.current++;
       const T = frameRef.current;
       ctx.clearRect(0, 0, W, H);
+      ctx.letterSpacing = AXIS_LABEL.letterSpacing;
 
       const rawP = Math.min(T / DURATION, 1);
       const progress = easeOutQuart(rawP);
@@ -74,7 +75,7 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
       ctx.stroke();
 
       // Prism centerline
-      ctx.strokeStyle = rgb(CC.t4, 0.15);
+      ctx.strokeStyle = rgb(CC.t2, 0.15);
       ctx.lineWidth = 1;
       ctx.setLineDash([4, 4]);
       ctx.beginPath();
@@ -145,13 +146,13 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
           ctx.globalAlpha = fade;
 
           // Severity name — truncated above band (full name shown on hover tooltip)
-          ctx.font = `bold ` + AXIS_LABEL.font;
+          ctx.font = AXIS_LABEL.font;
           ctx.fillStyle = hp > 0 ? color : rgb(color, 0.9);
           ctx.textAlign = 'center';
           ctx.fillText(truncateToWidth(ctx, sev.severity, fullW - 12), cx, padT - 12);
 
           // Count — inside band
-          ctx.font = `bold ` + AXIS_LABEL.font;
+          ctx.font = CHART_VALUE.font;
           ctx.fillStyle = hp > 0 ? CC.t1 : rgb(CC.t1, 0.85);
           ctx.fillText(String(sev.count), cx, padT + bandH / 2 + 6);
 

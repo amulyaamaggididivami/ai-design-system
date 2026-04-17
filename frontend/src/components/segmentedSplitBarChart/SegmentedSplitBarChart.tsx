@@ -3,7 +3,7 @@ import { useRef, useEffect, useState, useMemo } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { stagger, tickHoverProgress, easeOutQuart } from '../../canvas/easing';
-import { CC, LEGEND_LABEL, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, LEGEND_LABEL, CHART_VALUE, rgb, drawGlow, setupCanvas, AXIS_LABEL } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import { ToggleButton } from '../common/ToggleButton';
 import type { VariationRow } from '../../types';
@@ -91,7 +91,7 @@ export function SegmentedSplitBarChart({ items: rawItems = [], 'data-testid': te
         });
 
         // Contractor name
-        ctx.font = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.font = AXIS_LABEL.font;
         ctx.fillStyle = CC.t2;
         ctx.textAlign = 'right';
         ctx.fillText(c.abbreviation ?? c.name.slice(0, 6), padL - 8, y + barH / 2 + 4);
@@ -112,7 +112,7 @@ export function SegmentedSplitBarChart({ items: rawItems = [], 'data-testid': te
 
           // Implemented count
           if (implW > 28 && localP > 0.5) {
-            ctx.font = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+            ctx.font = CHART_VALUE.font;
             ctx.fillStyle = hpImpl > 0 ? CC.green : CC.t2;
             ctx.textAlign = 'center';
             ctx.fillText(String(c.implemented ?? 0), padL + implW / 2, y + barH / 2 + 4);
@@ -132,7 +132,7 @@ export function SegmentedSplitBarChart({ items: rawItems = [], 'data-testid': te
 
           // Unimplemented count
           if (unimplW > 28 && localP > 0.5) {
-            ctx.font = `${hpUn > 0 ? '500' : '500'} 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+            ctx.font = CHART_VALUE.font;
             ctx.fillStyle = hpUn > 0 ? CC.amber : CC.t2;
             ctx.textAlign = 'center';
             ctx.fillText(String(c.unimplemented ?? 0), padL + implW + unimplW / 2, y + barH / 2 + 4);
@@ -153,7 +153,7 @@ export function SegmentedSplitBarChart({ items: rawItems = [], 'data-testid': te
       // Legend below bars — centered over track
       const legendY = startY + totalH + 24;
       const trackCX = padL + trackW / 2;
-      ctx.font = `400 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+      ctx.font = LEGEND_LABEL.font;
       ctx.textAlign = 'right';
       ctx.fillStyle = CC.green;
       ctx.fillText('■ Implemented', trackCX - 10, legendY);

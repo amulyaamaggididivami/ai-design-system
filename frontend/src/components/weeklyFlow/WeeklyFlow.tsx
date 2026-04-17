@@ -3,7 +3,7 @@ import { useRef, useEffect } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { stagger, tickHoverProgress, easeOutCubic } from '../../canvas/easing';
-import { CC, PALETTE, AXIS_LABEL, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, PALETTE, AXIS_LABEL, CHART_VALUE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
 import type { WeeklyFlowProps } from './types';
 
 const W = 800;
@@ -75,6 +75,7 @@ export function WeeklyFlow({ items: items = [], 'data-testid': testId }: WeeklyF
       frameRef.current++;
       const T = frameRef.current;
       ctx.clearRect(0, 0, W, H);
+      ctx.letterSpacing = AXIS_LABEL.letterSpacing;
 
       const rawP     = Math.min(T / DURATION, 1);
       const progress = easeOutCubic(rawP);
@@ -122,8 +123,8 @@ export function WeeklyFlow({ items: items = [], 'data-testid': testId }: WeeklyF
       // ── Column labels ────────────────────────────────────────────────────
       ['Contractors', 'Components', 'Total'].forEach((label, ci) => {
         const x = [col1X, col2X, col3X][ci];
-        ctx.font      = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
-        ctx.fillStyle = rgb(CC.t3, 0.5);
+        ctx.font      = AXIS_LABEL.font;
+        ctx.fillStyle = AXIS_LABEL.color;
         ctx.textAlign = 'center';
         ctx.fillText(label, x, H - 8);
       });
@@ -154,7 +155,7 @@ export function WeeklyFlow({ items: items = [], 'data-testid': testId }: WeeklyF
         if (localP > 0.6 && cn.h >= 24) {
           const fade = Math.min(1, (localP - 0.6) / 0.4);
           ctx.globalAlpha  = fade;
-          ctx.font         = `${hp > 0 ? '500' : '500'} 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+          ctx.font         = AXIS_LABEL.font;
           ctx.fillStyle    = hp > 0 ? cn.color : rgb(CC.t2, 0.9);
           ctx.textAlign    = 'center';
           ctx.textBaseline = 'middle';
@@ -184,12 +185,12 @@ export function WeeklyFlow({ items: items = [], 'data-testid': testId }: WeeklyF
 
         ctx.globalAlpha  = fp;
         ctx.textBaseline = 'middle';
-        ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.font         = AXIS_LABEL.font;
         ctx.fillStyle    = CC.blue;
         ctx.textAlign    = 'center';
         ctx.fillText('Base Value', col2X, baseNode.cy - 6);
-        ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
-        ctx.fillStyle    = CC.t1;
+        ctx.font         = CHART_VALUE.font;
+        ctx.fillStyle    = CHART_VALUE.color;
         ctx.fillText(`£${totalBase}M`, col2X, baseNode.cy + 8);
         ctx.globalAlpha  = 1;
         ctx.textBaseline = 'alphabetic';
@@ -204,12 +205,12 @@ export function WeeklyFlow({ items: items = [], 'data-testid': testId }: WeeklyF
 
         ctx.globalAlpha  = fp;
         ctx.textBaseline = 'middle';
-        ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.font         = AXIS_LABEL.font;
         ctx.fillStyle    = CC.amber;
         ctx.textAlign    = 'center';
         ctx.fillText('Variations', col2X, varNode.cy - 4);
-        ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
-        ctx.fillStyle    = CC.t1;
+        ctx.font         = CHART_VALUE.font;
+        ctx.fillStyle    = CHART_VALUE.color;
         ctx.fillText(`£${totalVar}M`, col2X, varNode.cy + 8);
         ctx.globalAlpha  = 1;
         ctx.textBaseline = 'alphabetic';
@@ -218,9 +219,9 @@ export function WeeklyFlow({ items: items = [], 'data-testid': testId }: WeeklyF
       // ── Total node ───────────────────────────────────────────────────────
       if (progress > 0.5) {
         const fp = Math.min(1, (progress - 0.5) / 0.5);
-        drawGlow(ctx, col3X, totalNode.cy, 44, CC.cyan, 0.2 * fp);
-        ctx.fillStyle   = rgb(CC.cyan, 0.25 * fp);
-        ctx.strokeStyle = rgb(CC.cyan, 0.6  * fp);
+        drawGlow(ctx, col3X, totalNode.cy, 44, CC.blue, 0.2 * fp);
+        ctx.fillStyle   = rgb(CC.blue, 0.25 * fp);
+        ctx.strokeStyle = rgb(CC.blue, 0.6  * fp);
         ctx.lineWidth   = 1.5;
         ctx.beginPath();
         ctx.roundRect(totalNode.x, totalNode.y, nodeW, totalNode.h * fp, 6);
@@ -229,12 +230,12 @@ export function WeeklyFlow({ items: items = [], 'data-testid': testId }: WeeklyF
 
         ctx.globalAlpha  = fp;
         ctx.textBaseline = 'middle';
-        ctx.font         = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.font         = AXIS_LABEL.font;
         ctx.fillStyle    = CC.t2;
         ctx.textAlign    = 'center';
         ctx.fillText('Total Commitment', col3X, totalNode.cy - 12);
-        ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
-        ctx.fillStyle    = CC.cyan;
+        ctx.font         = CHART_VALUE.font;
+        ctx.fillStyle    = CC.blue;
         ctx.fillText(`£${grandTotal}M`, col3X, totalNode.cy + 6);
         ctx.globalAlpha  = 1;
         ctx.textBaseline = 'alphabetic';

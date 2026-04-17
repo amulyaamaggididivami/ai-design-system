@@ -1,7 +1,6 @@
 import { useRef, useEffect } from 'react';
 
-import { setupCanvas } from '../../canvas/canvasUtils';
-import { CC, AXIS_LABEL, rgb, drawGlow } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, LEGEND_LABEL, CHART_VALUE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
 import { easeOutBack, easeOutCubic } from '../../canvas/easing';
 import type { BalanceScaleChartProps } from './types';
 
@@ -30,6 +29,7 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
       frameRef.current++;
       const T = frameRef.current;
       ctx.clearRect(0, 0, W, H);
+      ctx.letterSpacing = AXIS_LABEL.letterSpacing;
 
       const rawP = Math.min(T / DURATION, 1);
       const progress = easeOutCubic(rawP);
@@ -87,7 +87,7 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
       ctx.stroke();
 
       // Pan strings
-      ctx.strokeStyle = rgb(CC.t3, 0.35 * progress);
+      ctx.strokeStyle = rgb(CC.t2, 0.35 * progress);
       ctx.lineWidth = 1;
       [-panW / 3, panW / 3].forEach(dx => {
         ctx.beginPath();
@@ -100,7 +100,7 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
       if (progress > 0.5) {
         const fade = Math.min(1, (progress - 0.5) / 0.5);
         ctx.globalAlpha = fade;
-        ctx.font = "bold 14px 'Satoshi Variable', 'DM Sans', sans-serif";
+        ctx.font = CHART_VALUE.font;
         ctx.fillStyle = CC.green;
         ctx.textAlign = 'center';
         ctx.fillText(left.label, leftEnd.x, leftPanY + leftPanH + 18);
@@ -125,7 +125,7 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
       ctx.stroke();
 
       // Pan strings
-      ctx.strokeStyle = rgb(CC.t3, 0.35 * progress);
+      ctx.strokeStyle = rgb(CC.t2, 0.35 * progress);
       ctx.lineWidth = 1;
       [-panW / 3, panW / 3].forEach(dx => {
         ctx.beginPath();
@@ -138,7 +138,7 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
       if (progress > 0.5) {
         const fade = Math.min(1, (progress - 0.5) / 0.5);
         ctx.globalAlpha = fade;
-        ctx.font = "bold 14px 'Satoshi Variable', 'DM Sans', sans-serif";
+        ctx.font = CHART_VALUE.font;
         ctx.fillStyle = CC.amber;
         ctx.textAlign = 'center';
         ctx.fillText(right.label, rightEnd.x, rightPanY + rightPanH + 18);
@@ -153,8 +153,8 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
       if (progress > 0.85 && Math.abs(tilt) > 1) {
         const fade = Math.min(1, (progress - 0.85) / 0.15);
         ctx.globalAlpha = fade * 0.6;
-        ctx.font = AXIS_LABEL.font;
-        ctx.fillStyle = AXIS_LABEL.color;
+        ctx.font = LEGEND_LABEL.font;
+        ctx.fillStyle = LEGEND_LABEL.color;
         ctx.textAlign = 'center';
         ctx.fillText(`${Math.abs(tilt).toFixed(1)}° tilt toward accepted`, cx, H - 12);
         ctx.globalAlpha = 1;
