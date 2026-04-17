@@ -63,11 +63,11 @@ export function ContractorDrilldownTable({
   'data-testid': testId,
 }: ContractorDrilldownTableProps) {
   return (
-    <div data-testid={testId}>
+    <div data-testid={testId} style={{ width: '100%' }}>
       {/* Header row */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: '140px 80px 80px 110px 140px 150px',
+        gridTemplateColumns: '2fr 1fr 1fr 1.4fr 1.8fr 1.8fr',
         gap: 0,
         padding: '10px 12px',
         borderRadius: '12px 12px 0 0',
@@ -92,7 +92,7 @@ export function ContractorDrilldownTable({
             key={c.name}
             style={{
               display: 'grid',
-              gridTemplateColumns: '140px 80px 80px 110px 140px 150px',
+              gridTemplateColumns: '2fr 1fr 1fr 1.4fr 1.8fr 1.8fr',
               gap: 0,
               padding: '12px 12px',
               borderBottom: i < contractors.length - 1 ? `1px solid ${rgb(CC.t3, 0.12)}` : 'none',
