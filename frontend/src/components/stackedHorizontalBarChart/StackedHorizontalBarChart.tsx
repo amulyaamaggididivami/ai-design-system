@@ -82,7 +82,7 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
         // Base value segment (solid, brighter)
         if (baseW > 0) {
           if (hp > 0) drawGlow(ctx, x0 + baseW / 2, y + BAR_H / 2, baseW * 0.3, color, 0.1 * hp);
-          ctx.fillStyle = color;
+          ctx.fillStyle = rgb(color, 0.5 + hp * 0.15);
           ctx.beginPath();
           ctx.roundRect(x0, y, baseW, BAR_H, 4);
           ctx.fill();
