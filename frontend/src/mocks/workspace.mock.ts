@@ -622,6 +622,10 @@ export const dualSegmentBarRows: DualSegmentBarRow[] = [
   { id: 'c3', name: 'Afcons Infra',      primaryValue: 140.1, secondaryValue: 16.8 },
   { id: 'c4', name: 'NCC Ltd',           primaryValue: 190.4, secondaryValue: 16.3 },
   { id: 'c5', name: 'KEC International', primaryValue: 181.1, secondaryValue: 12.9 },
+  { id: 'c5', name: 'KEC International', primaryValue: 181.1, secondaryValue: 12.9 },
+  { id: 'c5', name: 'KEC International', primaryValue: 181.1, secondaryValue: 12.9 },
+  { id: 'c5', name: 'KEC International', primaryValue: 181.1, secondaryValue: 12.9 },
+  { id: 'c5', name: 'KEC International', primaryValue: 181.1, secondaryValue: 12.9 },
 ];
 
 // ─── Narrative Chain (Dashboard Questions → Chat Flow) ──────────────────────

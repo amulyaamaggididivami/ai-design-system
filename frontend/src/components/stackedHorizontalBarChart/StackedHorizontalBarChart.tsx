@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { easeOutQuart, stagger, tickHoverProgress } from '../../canvas/easing';
-import { CC, AXIS_LABEL, LEGEND_LABEL, rgb, drawGlow } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, CHART_VALUE, LEGEND_LABEL, rgb, drawGlow } from '../../canvas/canvasUtils';
 import { useCanvasLoop } from '../../canvas/useCanvasLoop';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import { ToggleButton } from '../common/ToggleButton';
@@ -67,7 +67,7 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
         const varW   = totalW - baseW;
 
         // Contractor name  y-axis
-        ctx.font         = `${hp > 0 ? '400' : '400'} 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.font         = AXIS_LABEL.font;
         ctx.fillStyle    = hp > 0 ? color : AXIS_LABEL.color;
         ctx.textAlign    = 'right';
         ctx.textBaseline = 'middle';
@@ -82,7 +82,7 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
         // Base value segment (solid, brighter)
         if (baseW > 0) {
           if (hp > 0) drawGlow(ctx, x0 + baseW / 2, y + BAR_H / 2, baseW * 0.3, color, 0.1 * hp);
-          ctx.fillStyle = rgb(color, 0.5 + hp * 0.15);
+          ctx.fillStyle = color;
           ctx.beginPath();
           ctx.roundRect(x0, y, baseW, BAR_H, 4);
           ctx.fill();
@@ -118,8 +118,8 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
         if (localP > 0.35) {
           const fade = Math.min(1, (localP - 0.35) / 0.4);
           ctx.globalAlpha  = fade;
-          ctx.font         = `500 14px 'Satoshi Variable', 'DM Sans', sans-serif`;
-          ctx.fillStyle    = hp > 0 ? color : '#F7F9FA';
+          ctx.font         = CHART_VALUE.font;
+          ctx.fillStyle    = hp > 0 ? color : CHART_VALUE.color;
           ctx.textAlign    = 'left';
           ctx.textBaseline = 'middle';
           ctx.fillText(fmtValue(con.total ?? 0), x0 + totalW + 6, y + BAR_H / 2);

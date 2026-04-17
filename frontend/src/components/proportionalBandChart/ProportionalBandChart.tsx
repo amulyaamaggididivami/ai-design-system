@@ -75,7 +75,7 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
       ctx.stroke();
 
       // Prism centerline
-      ctx.strokeStyle = rgb(CC.t4, 0.15);
+      ctx.strokeStyle = rgb(CC.t2, 0.15);
       ctx.lineWidth = 1;
       ctx.setLineDash([4, 4]);
       ctx.beginPath();
@@ -146,7 +146,7 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
           ctx.globalAlpha = fade;
 
           // Severity name — truncated above band (full name shown on hover tooltip)
-          ctx.font = `bold ` + AXIS_LABEL.font;
+          ctx.font = AXIS_LABEL.font;
           ctx.fillStyle = hp > 0 ? color : rgb(color, 0.9);
           ctx.textAlign = 'center';
           ctx.fillText(truncateToWidth(ctx, sev.severity, fullW - 12), cx, padT - 12);

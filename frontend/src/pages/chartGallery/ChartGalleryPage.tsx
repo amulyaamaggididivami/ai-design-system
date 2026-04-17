@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
 
 import { KeyHighlights } from '../../components/keyHighlights/KeyHighlights';
+import { Takeaway } from '../../components/keyHighlights/Takeaway';
+import { MultiSegmentHorizontalBarChart } from '../../components/multiSegmentHorizontalBarChart';
 import { Trend } from '../../components/trend/Trend';
 import { VisualizationRenderer } from '../../components/visualizationRenderer/VisualizationRenderer';
+import { dualSegmentBarRows } from '../../mocks/workspace.mock';
 import type { KeyHighlightBlock } from '../../types';
 
 // ─── Group 1: Generic chart mock data ────────────────────────────────────────
@@ -465,6 +468,50 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
     ],
     takeaway: 'KEC and Afcons contribute 57% of all variation value despite holding only 23% of base contract value — the portfolio\'s primary financial concentration risk.',
   },
+
+  // dot-strip — contractor commitment % on a range track
+  dotStrip: {
+    type: 'dot-strip',
+    min: 60,
+    max: 100,
+    unit: '%',
+    dots: [
+      { name: 'KEC',    val: 69,  color: '#A0B724' },
+      { name: 'Afcons', val: 78,  color: '#3C45D1' },
+      { name: 'Tata',   val: 87,  color: '#4C93D9' },
+      { name: 'L&T',    val: 92,  color: '#5DA537' },
+      { name: 'NCC',    val: 95,  color: '#EEBF3B' },
+    ],
+    takeaway: 'NCC and L&T are clustered near full close while KEC and Afcons lag — a 26-point spread across the portfolio.',
+  },
+
+  // ring — variation implementation rate
+  ring: {
+    type: 'ring',
+    pct: 59,
+    color: '#4C93D9',
+    label: 'overall portfolio variation implementation rate — 42 of 71 variations actioned across all contractors',
+    chips: [
+      { value: 'NCC 85%',    label: 'highest implementation rate — only 2 pending',   color: '#EEBF3B' },
+      { value: 'L&T 57%',    label: 'mid-tier — 6 variations still outstanding',        color: '#5DA537' },
+      { value: 'Afcons 36%', label: 'lowest rate — 9 pending, largest single backlog', color: '#3C45D1' },
+    ],
+    takeaway: 'Afcons and KEC together hold 59% of the unimplemented backlog despite representing only 23% of base contract value.',
+  },
+
+  // flags-list — active risk alerts across the portfolio
+  flagsList: {
+    type: 'flags-list',
+    items: [
+      { text: 'KEC variation-to-base ratio at 42% — 3× portfolio average, escalation risk if unresolved in Q2', severity: 'red',   tag: 'KEC',    date: '14 Apr 2026' },
+      { text: 'Tata holds 39% of all open EWs — Ground Conditions category driving concentration risk',          severity: 'red',   tag: 'Tata',   date: '12 Apr 2026' },
+      { text: '10 NCEs remain unconfirmed — 40% dispute rate exceeds 25% benchmark, adjudication likely',         severity: 'red',   tag: 'Portfolio', date: '10 Apr 2026' },
+      { text: 'Afcons implementation rate at 36% — 9 pending variations, largest single contractor backlog',       severity: 'amber', tag: 'Afcons', date: '9 Apr 2026' },
+      { text: '14 High-severity EWs at risk of escalating without active commercial intervention this quarter',     severity: 'amber', tag: 'Portfolio', date: '7 Apr 2026' },
+      { text: 'NCC and L&T commitment above 90% — on track for full close, no immediate intervention required',   severity: 'green', tag: 'NCC/L&T', date: '5 Apr 2026' },
+    ],
+    takeaway: 'Three red-flag items — KEC variation exposure, Tata EW concentration, and unconfirmed NCEs — represent the portfolio\'s highest-priority commercial actions.',
+  },
 };
 
 export function ChartGalleryPage() {
@@ -475,7 +522,7 @@ export function ChartGalleryPage() {
   }, []);
 
   return (
-    <div style={{ padding: 32 }}>
+    <div style={{ padding: 32, minHeight: '100vh' }}>
       <h1>Chart Gallery</h1>
 
       {/* ── Group 1: Generic ───────────────────────────────────────────── */}
@@ -565,6 +612,22 @@ export function ChartGalleryPage() {
       <h3>Q13 — weekly-flow</h3>
       <VisualizationRenderer config={{ type: 'weekly-flow', items: weeklyFlowContractors }} />
       <KeyHighlights block={HIGHLIGHTS.q13} />
+
+      <h3>Dot Strip</h3>
+      <KeyHighlights block={HIGHLIGHTS.dotStrip} />
+
+      <h3>Ring</h3>
+      <KeyHighlights block={HIGHLIGHTS.ring} />
+
+      <h3>Flags List</h3>
+      <KeyHighlights block={HIGHLIGHTS.flagsList} />
+
+      <h3>Multi-Segment Horizontal Bar Chart</h3>
+      <MultiSegmentHorizontalBarChart
+        rows={dualSegmentBarRows}
+        valuePrefix="$"
+        data-testid="gallery-multi-segment-bar"
+      />
     </div>
   );
 }

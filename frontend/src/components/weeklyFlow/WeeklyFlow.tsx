@@ -124,7 +124,7 @@ export function WeeklyFlow({ items: items = [], 'data-testid': testId }: WeeklyF
       ['Contractors', 'Components', 'Total'].forEach((label, ci) => {
         const x = [col1X, col2X, col3X][ci];
         ctx.font      = AXIS_LABEL.font;
-        ctx.fillStyle = rgb(CC.t3, 0.5);
+        ctx.fillStyle = AXIS_LABEL.color;
         ctx.textAlign = 'center';
         ctx.fillText(label, x, H - 8);
       });

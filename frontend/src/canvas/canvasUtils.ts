@@ -39,14 +39,14 @@ export const PALETTE = [CC.blue, CC.amber, CC.purple, CC.green, CC.red];
  *   text-align:      Right for y-axis ticks; Center for x-axis ticks (set at each draw site)
  */
 export const AXIS_LABEL = {
-  font:          "400 14px 'Satoshi Variable', 'DM Sans', sans-serif",
-  color:         '#B3B5B6',
+  font:          "400 16px 'Satoshi Variable', 'DM Sans', sans-serif",
+  color:         '#F7F7F7',
   letterSpacing: '0px',
 } as const;
 
 
 export const CHART_VALUE = {
-  font:          "500 14px 'Satoshi Variable', 'DM Sans', sans-serif",
+  font:          "500 16px 'Satoshi Variable', 'DM Sans', sans-serif",
   color:         '#F7F7F7',
 } as const;
 
@@ -55,12 +55,12 @@ export const CHART_VALUE = {
  * Change once here to update every chart legend.
  *   font-family:     Satoshi Variable, DM Sans (sans-serif fallback)
  *   font-weight:     400 (Regular)
- *   font-size:       14px
+ *   font-size:       18px
  *   letter-spacing:  0%    (set ctx.letterSpacing = LEGEND_LABEL.letterSpacing at the draw site)
  *   text-align:      center (set ctx.textAlign = 'center' at the draw call site)
  */
 export const LEGEND_LABEL = {
-  font:          "400 16px 'Satoshi Variable', 'DM Sans', sans-serif",
+  font:          "400 18px 'Satoshi Variable', 'DM Sans', sans-serif",
   color:         '#B3B5B6',
   letterSpacing: '0px',
 } as const;

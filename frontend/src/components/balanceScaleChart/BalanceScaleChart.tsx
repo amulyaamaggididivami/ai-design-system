@@ -87,7 +87,7 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
       ctx.stroke();
 
       // Pan strings
-      ctx.strokeStyle = rgb(CC.t3, 0.35 * progress);
+      ctx.strokeStyle = rgb(CC.t2, 0.35 * progress);
       ctx.lineWidth = 1;
       [-panW / 3, panW / 3].forEach(dx => {
         ctx.beginPath();
@@ -125,7 +125,7 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
       ctx.stroke();
 
       // Pan strings
-      ctx.strokeStyle = rgb(CC.t3, 0.35 * progress);
+      ctx.strokeStyle = rgb(CC.t2, 0.35 * progress);
       ctx.lineWidth = 1;
       [-panW / 3, panW / 3].forEach(dx => {
         ctx.beginPath();

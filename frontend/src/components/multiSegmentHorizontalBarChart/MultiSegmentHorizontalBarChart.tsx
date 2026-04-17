@@ -1,25 +1,28 @@
-import { useRef, useEffect, useMemo } from 'react';
+import { useRef, useEffect, useMemo, useState } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { stagger, easeOutQuart } from '../../canvas/easing';
 import { CC, AXIS_LABEL, CHART_VALUE, LEGEND_LABEL, setupCanvas } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
+import { ToggleButton } from '../common/ToggleButton';
 import type { DualSegmentBarRow } from '../../types';
 import type { MultiSegmentHorizontalBarChartProps } from './types';
 
 // ─── Layout constants (match design spec) ────────────────────────────────────
 const BAR_H   = 6;
-const TRACK_W = 478;
+const TRACK_W = 807;
 const PAD_L   = 156;   // bar left edge ≈ 155.88 px
 const RVAL_W  = 66;
 const W       = PAD_L + TRACK_W + RVAL_W;   // 700
 
 const ROW_H   = 28;   // row band height (bar is centred within it)
-const GAP     = 12;
+const GAP     = 30;
 const PAD_T   = 16;
 const LEGEND_H = 32;
 const PAD_B   = 16;
+
+const INITIAL_VISIBLE = 5;
 
 // Per-row colour for the agreed segment (cycles through palette, orange reserved for over-spent)
 const ROW_COLORS = [CC.blue, CC.amber, CC.green, CC.purple] as const;
@@ -41,6 +44,7 @@ export function MultiSegmentHorizontalBarChart({
 }: MultiSegmentHorizontalBarChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef  = useRef(0);
+  const [expanded, setExpanded] = useState(false);
 
   const rows = useMemo(
     () => (rawRows as unknown[]).filter((r): r is DualSegmentBarRow & { primaryValue: number } => {
@@ -56,8 +60,13 @@ export function MultiSegmentHorizontalBarChart({
     [rows],
   );
 
-  const H = rows.length > 0
-    ? PAD_T + rows.length * ROW_H + Math.max(0, rows.length - 1) * GAP + LEGEND_H + PAD_B
+  const visibleRows = useMemo(
+    () => expanded ? rows : rows.slice(0, INITIAL_VISIBLE),
+    [rows, expanded],
+  );
+
+  const H = visibleRows.length > 0
+    ? PAD_T + visibleRows.length * ROW_H + Math.max(0, visibleRows.length - 1) * GAP + LEGEND_H + PAD_B
     : 160;
 
   const { tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
@@ -82,10 +91,9 @@ export function MultiSegmentHorizontalBarChart({
 
       hitZonesRef.current = [];
 
-      rows.forEach((row, i) => {
-        const localP     = stagger(progress, i, rows.length, easeOutQuart);
+      visibleRows.forEach((row, i) => {
+        const localP     = stagger(progress, i, visibleRows.length, easeOutQuart);
         const rowTop     = PAD_T + i * (ROW_H + GAP);
-        const midY       = rowTop + ROW_H / 2;
         const barY       = rowTop + (ROW_H - BAR_H) / 2;
         const rowColor   = ROW_COLORS[i % ROW_COLORS.length];
         const agreedId   = `${row.id}-agreed`;
@@ -98,16 +106,12 @@ export function MultiSegmentHorizontalBarChart({
         // Animated width for agreed segment
         const agreedW = agreedFullW * localP;
 
-        // ── Row name label (right-aligned just before bar) ───────────
+        // ── Row name label (right-aligned, same baseline as bar value labels) ──
         ctx.font         = AXIS_LABEL.font;
         ctx.fillStyle    = CC.t2;
         ctx.textAlign    = 'right';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(row.name, PAD_L - 8, midY);
-
-        // ── Background track ─────────────────────────────────────────
-        ctx.fillStyle = CC.bd;
-        ctx.fillRect(PAD_L, barY, TRACK_W, BAR_H);
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(row.name, PAD_L - 20.6, barY - 3);
 
         // ── Agreed segment ───────────────────────────────────────────
         if (agreedW > 0) {
@@ -191,21 +195,32 @@ export function MultiSegmentHorizontalBarChart({
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [rows, H, maxTotal, valuePrefix]);
+  }, [visibleRows, H, maxTotal, valuePrefix]);
 
   if (rows.length === 0) {
     return <ChartEmptyState width={W} height={160} data-testid={testId} />;
   }
 
   return (
-    <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>
-      <canvas
-        ref={canvasRef}
-        role="img"
-        aria-label="Agreed vs over-spent amount per contractor"
-        style={{ width: W, height: H, display: 'block' }}
-      />
-      <CanvasTooltip {...tooltip} parentW={W} parentH={H} />
+    <div data-testid={testId} style={{ position: 'relative', width: W }}>
+      <div style={{ position: 'relative', width: W, height: H }}>
+        <canvas
+          ref={canvasRef}
+          role="img"
+          aria-label="Agreed vs over-spent amount per contractor"
+          style={{ width: W, height: H, display: 'block' }}
+        />
+        <CanvasTooltip {...tooltip} parentW={W} parentH={H} />
+      </div>
+      {rows.length > INITIAL_VISIBLE && (
+        <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: 8 }}>
+          <ToggleButton
+            expanded={expanded}
+            onToggle={() => setExpanded(prev => !prev)}
+            data-testid="multi-segment-bar-toggle"
+          />
+        </div>
+      )}
     </div>
   );
 }

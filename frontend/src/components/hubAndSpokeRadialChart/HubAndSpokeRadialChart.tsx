@@ -154,10 +154,10 @@ export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, 'dat
 
       // Central node
       const centerHp = hoverMap.current.get('center') ?? 0;
-      drawGlow(ctx, cxCenter, cyCenter, 36, CC.t3, 0.2 + centerHp * 0.15);
+      drawGlow(ctx, cxCenter, cyCenter, 36, CC.t2, 0.2 + centerHp * 0.15);
       const centerGrad = ctx.createRadialGradient(cxCenter, cyCenter - 4, 0, cxCenter, cyCenter, 22);
       centerGrad.addColorStop(0, rgb(CC.t2, 0.9));
-      centerGrad.addColorStop(1, rgb(CC.t3, 0.5));
+      centerGrad.addColorStop(1, rgb(CC.t2, 0.5));
       ctx.beginPath();
       ctx.arc(cxCenter, cyCenter, 22, 0, Math.PI * 2);
       ctx.fillStyle = centerGrad;
@@ -175,7 +175,7 @@ export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, 'dat
       registerHitCircle(hitZonesRef.current, 'center', cxCenter, cyCenter, 28, {
         label: 'Total EW Status',
         value: `${total} Early Warnings`,
-        color: CC.t3,
+        color: CC.t2,
       });
 
       drawScanline(ctx, W, H, T, 0.015);
