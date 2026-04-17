@@ -39,11 +39,15 @@ export function RankedCardLeaderboard({ items: rawItems = [], 'data-testid': tes
     const ctx = setupCanvas(canvas, W, H);
     frameRef.current = 0;
 
-    const cols  = Math.min(5, sorted.length);
-    // Fill full width: equal card widths separated by CARD_GAP, padded on both sides by CARD_PAD
-    const cardW = (W - 2 * CARD_PAD - (cols - 1) * CARD_GAP) / cols;
+    const MAX_COLS = 5;
+    const cols  = Math.min(MAX_COLS, sorted.length);
+    // Card width is always sized for 5 columns so proportions stay consistent regardless of item count
+    const cardW = (W - 2 * CARD_PAD - (MAX_COLS - 1) * CARD_GAP) / MAX_COLS;
     const cardH = H * 0.84;
     const cardY = H * 0.08;
+    // Center the group of cards in the canvas
+    const groupW  = cols * cardW + (cols - 1) * CARD_GAP;
+    const startX  = Math.round((W - groupW) / 2);
 
     let raf: number;
 
@@ -72,7 +76,7 @@ export function RankedCardLeaderboard({ items: rawItems = [], 'data-testid': tes
       sorted.forEach((contractor, i) => {
         const isTop  = i === 0;
         const color  = i === 0 ? CC.red : i === 1 ? CC.amber : PALETTE[i % PALETTE.length];
-        const baseX  = CARD_PAD + i * (cardW + CARD_GAP);
+        const baseX  = startX + i * (cardW + CARD_GAP);
         const hp     = hoverMap.current.get(contractor.id) ?? 0;
 
         // Symmetric hover expansion — expand by up to 8px (4px each side)
@@ -135,11 +139,6 @@ export function RankedCardLeaderboard({ items: rawItems = [], 'data-testid': tes
         ctx.fillStyle    = rgb(color, 0.9 + hp * 0.1);
         ctx.fillText(String(contractor.count ?? 0), photoX, cardY + cardH * 0.76);
 
-        // "open EWs" label
-        ctx.font      = AXIS_LABEL.font;
-        ctx.fillStyle = AXIS_LABEL.color;
-        ctx.fillText('open EWs', photoX, cardY + cardH * 0.88);
-
         // Tooltip with rank, %, risk level
         const pct       = Math.round(((contractor.count ?? 0) / (total || 1)) * 100);
         const riskLabel = RISK_LABELS[i] ?? 'Low exposure';
@@ -153,7 +152,7 @@ export function RankedCardLeaderboard({ items: rawItems = [], 'data-testid': tes
           cardH,
           {
             label   : contractor.name,
-            value   : `${contractor.count ?? 0} open · ${pct}% of total`,
+            value   : `${contractor.count ?? 0} · ${pct}% of total`,
             sublabel: `Rank #${i + 1} · ${riskLabel}`,
             color,
           },
@@ -177,7 +176,7 @@ export function RankedCardLeaderboard({ items: rawItems = [], 'data-testid': tes
       <canvas
         ref={canvasRef}
         role="img"
-        aria-label="Contractor rank — open EW count per contractor"
+        aria-label="Contractor rank — count per contractor"
         style={{ width: W, height: H, display: 'block', borderRadius: 8 }}
       />
       <CanvasTooltip {...tooltip} parentW={W} parentH={H} />

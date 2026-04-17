@@ -113,6 +113,7 @@ const contractorRankContractors = [
   { id: 'c2', name: 'L&T Construction',  abbreviation: 'L&T',    count: 3 },
   { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 2 },
   { id: 'c4', name: 'NCC Ltd',           abbreviation: 'NCC',    count: 2 },
+  
 ];
 
 /**
@@ -438,8 +439,8 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
   // Q13 — proportion split: base 88% vs variations 12% + chips
   q13: {
     type: 'proportion',
-    leftPct: 88,   leftLabel: 'Base Value',  leftValue: '£659M',   leftColor: '#4C93D9',
-    rightPct: 12,  rightLabel: 'Variations', rightValue: '£93.2M', rightColor: '#3C45D1',
+    leftPct: 100,   leftLabel: 'Base Value',  leftValue: '£659M',   leftColor: '#4C93D9',
+    rightPct: 0,  rightLabel: 'Variations', rightValue: '£93.2M', rightColor: '#3C45D1',
     chips: [
       { value: 'KEC 42%',    label: 'highest variation-to-base ratio — 3× the portfolio average',             },
       { value: 'Afcons 25%', label: 'second-highest — KEC + Afcons drive 57% of variation value',         },
