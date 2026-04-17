@@ -6,24 +6,64 @@
 // --- Color tokens ---
 
 export const CC = {
-  bg:     '#070B12',
+  bg:     '#0C0E12',
   bgL:    '#0C1420',
-  sf:     '#111B28',
-  bd:     '#1C2D42',
-  blue:   '#3B8BF6',
-  cyan:   '#22D3EE',
-  orange: '#F0813A',
-  red:    '#F06060',
-  green:  '#34D399',
-  purple: '#A78BFA',
-  amber:  '#FBBF24',
-  t1:     '#F1F5F9',
-  t2:     '#94A3B8',
-  t3:     '#64748B',
+  sf:     '#13161B',
+  bd:     '#22262F',
+  blue:   '#4C93D9',
+  cyan:   '#36BFFA',
+  orange: '#EC772A',
+  red:    '#EC772A',
+  green:  '#5DA537',
+  purple: '#818FF8',
+  amber:  '#EEBF3B',
+  t1:     '#F7F9FA',
+  t2:     '#B3B5B6',
+  t3:     '#94979C',
   t4:     '#334155',
 } as const;
 
-export const PALETTE = [CC.blue, CC.cyan, CC.amber, CC.purple, CC.green, CC.red];
+export const PALETTE = [CC.blue, CC.amber, CC.purple, CC.green, CC.red];
+
+
+// --- Typography tokens ---
+
+/**
+ * Axis label style — applied to all x-axis and y-axis tick labels, titles, and legends.
+ * Change once here to update every chart.
+ *   font-family:     Satoshi Variable, DM Sans (sans-serif fallback)
+ *   font-weight:     400 (Regular)
+ *   font-size:       14px
+ *   line-height:     100%  (informational — not applicable in canvas ctx.font)
+ *   letter-spacing:  0%    (set ctx.letterSpacing = AXIS_LABEL.letterSpacing at the draw site)
+ *   text-align:      Right for y-axis ticks; Center for x-axis ticks (set at each draw site)
+ */
+export const AXIS_LABEL = {
+  font:          "400 16px 'Satoshi Variable', 'DM Sans', sans-serif",
+  color:         '#F7F7F7',
+  letterSpacing: '0px',
+} as const;
+
+
+export const CHART_VALUE = {
+  font:          "500 16px 'Satoshi Variable', 'DM Sans', sans-serif",
+  color:         '#F7F7F7',
+} as const;
+
+/**
+ * Legend label style — applied to all chart legend items (swatches, keys, footers).
+ * Change once here to update every chart legend.
+ *   font-family:     Satoshi Variable, DM Sans (sans-serif fallback)
+ *   font-weight:     400 (Regular)
+ *   font-size:       18px
+ *   letter-spacing:  0%    (set ctx.letterSpacing = LEGEND_LABEL.letterSpacing at the draw site)
+ *   text-align:      center (set ctx.textAlign = 'center' at the draw call site)
+ */
+export const LEGEND_LABEL = {
+  font:          "400 18px 'Satoshi Variable', 'DM Sans', sans-serif",
+  color:         '#B3B5B6',
+  letterSpacing: '0px',
+} as const;
 
 // --- Color helpers ---
 

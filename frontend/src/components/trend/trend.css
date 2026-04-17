@@ -1,0 +1,22 @@
+.trend-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #22262F #0C0E12;
+}
+
+.trend-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.trend-scroll::-webkit-scrollbar-track {
+  background: #0C0E12;
+  border-radius: 3px;
+}
+
+.trend-scroll::-webkit-scrollbar-thumb {
+  background-color: #22262F;
+  border-radius: 3px;
+}
+
+.trend-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #334155;
+}

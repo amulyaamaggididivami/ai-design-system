@@ -1,6 +1,6 @@
 import type { ContractorRow } from '../../types';
 
 export interface WeeklyFlowProps {
-  contractors: ContractorRow[];
+  items: ContractorRow[];
   'data-testid'?: string;
 }

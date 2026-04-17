@@ -1,17 +1,17 @@
 import { useEffect } from 'react';
 
-import { ContractValueOrb }    from '../../components/contractValueOrb';
-import { ContractBars }         from '../../components/contractBars';
-import { CommitmentRace }       from '../../components/commitmentRace';
-import { StatusArc }            from '../../components/statusArc';
-import { EWCategory }           from '../../components/ewCategory';
-import { ContractorRank }       from '../../components/contractorRank';
-import { SeverityBands }        from '../../components/severityBands';
-import { NCETree }              from '../../components/nceTree';
-import { CompensationGauge }    from '../../components/compensationGauge';
-import { VariationSplit }       from '../../components/variationSplit';
-import { QuotationBalance }     from '../../components/quotationBalance';
-import { QuotationTrend }       from '../../components/quotationTrend';
+import { StackedHorizontalBarChart }    from '../../components/stackedHorizontalBarChart';
+import { MultiMetricConstellationChart } from '../../components/multiMetricConstellationChart';
+import { ProgressRaceChart }            from '../../components/progressRaceChart';
+import { HubAndSpokeRadialChart }       from '../../components/hubAndSpokeRadialChart';
+import { DotMatrixChart }               from '../../components/dotMatrixChart';
+import { RankedCardLeaderboard }        from '../../components/rankedCardLeaderboard';
+import { ProportionalBandChart }        from '../../components/proportionalBandChart';
+import { RadialFanTreeChart }           from '../../components/radialFanTreeChart';
+import { SemiCircularGaugeChart }       from '../../components/semiCircularGaugeChart';
+import { SegmentedSplitBarChart }       from '../../components/segmentedSplitBarChart';
+import { BalanceScaleChart }            from '../../components/balanceScaleChart';
+import { AreaLineChart }                from '../../components/areaLineChart';
 import { WeeklyFlow }           from '../../components/weeklyFlow';
 import { KeyHighlights }        from '../../components/keyHighlights/KeyHighlights';
 
@@ -255,7 +255,7 @@ export function ProjectDashboardPage() {
             <p style={S.qText}>{QUESTIONS[0]!.text}</p>
           </div>
           <div style={S.vizWrap}>
-            <ContractValueOrb data={contractData} data-testid="viz-contract-value-orb" />
+            <StackedHorizontalBarChart data={contractData} data-testid="viz-contract-value-orb" />
           </div>
           <div style={S.highlightsWrap}>
             <p style={S.highlightsLabel}>Key Highlights</p>
@@ -270,7 +270,7 @@ export function ProjectDashboardPage() {
             <p style={S.qText}>{QUESTIONS[1]!.text}</p>
           </div>
           <div style={S.vizWrap}>
-            <ContractBars contractors={contractData.contractors} data-testid="viz-contract-bars" />
+            <MultiMetricConstellationChart contractors={contractData.items} data-testid="viz-contract-bars" />
           </div>
           <div style={S.highlightsWrap}>
             <p style={S.highlightsLabel}>Key Highlights</p>
@@ -285,7 +285,7 @@ export function ProjectDashboardPage() {
             <p style={S.qText}>{QUESTIONS[2]!.text}</p>
           </div>
           <div style={S.vizWrap}>
-            <CommitmentRace contractors={contractData.contractors} data-testid="viz-commitment-race" />
+            <ProgressRaceChart contractors={contractData.items} data-testid="viz-commitment-race" />
           </div>
           <div style={S.highlightsWrap}>
             <p style={S.highlightsLabel}>Key Highlights</p>
@@ -300,7 +300,7 @@ export function ProjectDashboardPage() {
             <p style={S.qText}>{QUESTIONS[3]!.text}</p>
           </div>
           <div style={{ ...S.vizWrap, justifyContent: 'center' }}>
-            <StatusArc
+            <HubAndSpokeRadialChart
               segments={ewStatusData}
               title="Early Warning Status Split"
               data-testid="viz-ew-status-arc"
@@ -319,7 +319,7 @@ export function ProjectDashboardPage() {
             <p style={S.qText}>{QUESTIONS[4]!.text}</p>
           </div>
           <div style={S.vizWrap}>
-            <EWCategory categories={ewCategoryData} data-testid="viz-ew-category" />
+            <DotMatrixChart items={ewCategoryData} data-testid="viz-ew-category" />
           </div>
           <div style={S.highlightsWrap}>
             <p style={S.highlightsLabel}>Key Highlights</p>
@@ -334,7 +334,7 @@ export function ProjectDashboardPage() {
             <p style={S.qText}>{QUESTIONS[5]!.text}</p>
           </div>
           <div style={S.vizWrap}>
-            <ContractorRank contractors={ewOpenByContractor} data-testid="viz-contractor-rank" />
+            <RankedCardLeaderboard contractors={ewOpenByContractor} data-testid="viz-contractor-rank" />
           </div>
           <div style={S.highlightsWrap}>
             <p style={S.highlightsLabel}>Key Highlights</p>
@@ -349,7 +349,7 @@ export function ProjectDashboardPage() {
             <p style={S.qText}>{QUESTIONS[6]!.text}</p>
           </div>
           <div style={S.vizWrap}>
-            <SeverityBands severities={ewSeverityData} data-testid="viz-severity-bands" />
+            <ProportionalBandChart severities={ewSeverityData} data-testid="viz-severity-bands" />
           </div>
           <div style={S.highlightsWrap}>
             <p style={S.highlightsLabel}>Key Highlights</p>
@@ -364,9 +364,9 @@ export function ProjectDashboardPage() {
             <p style={S.qText}>{QUESTIONS[7]!.text}</p>
           </div>
           <div style={S.vizWrap}>
-            <NCETree
+            <RadialFanTreeChart
               total={nceCompensationData.total}
-              byContractor={nceByContractor}
+              items={nceByContractor}
               data-testid="viz-nce-tree"
             />
           </div>
@@ -383,7 +383,7 @@ export function ProjectDashboardPage() {
             <p style={S.qText}>{QUESTIONS[8]!.text}</p>
           </div>
           <div style={{ ...S.vizWrap, justifyContent: 'center' }}>
-            <CompensationGauge
+            <SemiCircularGaugeChart
               pct={nceCompensationData.pctConfirmed}
               confirmed={nceCompensationData.confirmed}
               total={nceCompensationData.total}
@@ -403,7 +403,7 @@ export function ProjectDashboardPage() {
             <p style={S.qText}>{QUESTIONS[9]!.text}</p>
           </div>
           <div style={S.vizWrap}>
-            <VariationSplit contractors={variationByContractor} data-testid="viz-variation-split" />
+            <SegmentedSplitBarChart contractors={variationByContractor} data-testid="viz-variation-split" />
           </div>
           <div style={S.highlightsWrap}>
             <p style={S.highlightsLabel}>Key Highlights</p>
@@ -418,9 +418,9 @@ export function ProjectDashboardPage() {
             <p style={S.qText}>{QUESTIONS[10]!.text}</p>
           </div>
           <div style={{ ...S.vizWrap, justifyContent: 'center' }}>
-            <QuotationBalance
-              accepted={quotationSummary.accepted}
-              submitted={quotationSummary.submitted}
+            <BalanceScaleChart
+              left={quotationSummary.left}
+              right={quotationSummary.right}
               data-testid="viz-quotation-balance"
             />
           </div>
@@ -437,7 +437,7 @@ export function ProjectDashboardPage() {
             <p style={S.qText}>{QUESTIONS[11]!.text}</p>
           </div>
           <div style={S.vizWrap}>
-            <QuotationTrend trend={quotationTrend} data-testid="viz-quotation-trend" />
+            <AreaLineChart points={quotationTrend} data-testid="viz-quotation-trend" />
           </div>
           <div style={S.highlightsWrap}>
             <p style={S.highlightsLabel}>Key Highlights</p>
@@ -452,7 +452,7 @@ export function ProjectDashboardPage() {
             <p style={S.qText}>{QUESTIONS[12]!.text}</p>
           </div>
           <div style={S.vizWrap}>
-            <WeeklyFlow contractors={contractData.contractors} data-testid="viz-weekly-flow" />
+            <WeeklyFlow contractors={contractData.items} data-testid="viz-weekly-flow" />
           </div>
           <div style={S.highlightsWrap}>
             <p style={S.highlightsLabel}>Key Highlights</p>

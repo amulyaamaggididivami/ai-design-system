@@ -1,6 +1,7 @@
 import type { SankeyLinkData, SankeyNodeData } from '../types';
 
-export const palette = ['#6bbcff', '#5fe6dd', '#d7bc6d', '#95a9ff', '#7fb58a', '#ee8a8a'];
+// export const palette = ['#6bbcff', '#5fe6dd', '#d7bc6d', '#95a9ff', '#7fb58a', '#ee8a8a'];
+export const palette = ['#4C93D9', '#5DA537', '#F3862C', '#4F72C6', '#A0B724', '#EEBF3B', '#3C45D1'];
 
 export const flowGraph: {
   nodes: SankeyNodeData[];

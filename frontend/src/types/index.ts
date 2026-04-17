@@ -140,19 +140,20 @@ export type BaseVisualizationConfig =
       type: 'mini-bars';
       rows: MiniBarRow[];
     }
-  | { type: 'contract-value-orb'; data: ContractData }
-  | { type: 'contract-bars'; contractors: ContractorRow[] }
-  | { type: 'commitment-race'; contractors: ContractorRow[] }
-  | { type: 'status-arc'; segments: EWStatusRow[]; title?: string }
-  | { type: 'ew-category'; categories: EWCategoryRow[]; title?: string }
-  | { type: 'contractor-rank'; contractors: EWOpenContractorRow[]; title?: string }
-  | { type: 'severity-bands'; severities: EWSeverityRow[]; title?: string }
-  | { type: 'nce-tree'; total: number; byContractor: NCEContractorRow[] }
-  | { type: 'compensation-gauge'; pct: number; confirmed: number; total: number }
-  | { type: 'variation-split'; contractors: VariationRow[] }
-  | { type: 'quotation-balance'; accepted: QuotationSide; submitted: QuotationSide }
-  | { type: 'quotation-trend'; trend: QuotationTrendPoint[] }
-  | { type: 'weekly-flow'; contractors: ContractorRow[] };
+  | { type: 'stacked-horizontal-bar-chart'; data: ContractData }
+  | { type: 'multi-metric-constellation-chart'; items: ContractorRow[] }
+  | { type: 'progress-race-chart'; items: ContractorRow[] }
+  | { type: 'hub-and-spoke-radial-chart'; segments: EWStatusRow[]; title?: string }
+  | { type: 'dot-matrix-chart'; items: EWCategoryRow[]; title?: string }
+  | { type: 'ranked-card-leaderboard'; items: EWOpenContractorRow[]; title?: string }
+  | { type: 'proportional-band-chart'; severities: EWSeverityRow[]; title?: string }
+  | { type: 'radial-fan-tree-chart'; total: number; totalLabel?: string; items: NCEContractorRow[] }
+  | { type: 'semi-circular-gauge-chart'; value: number; confirmed: number; total: number }
+  | { type: 'segmented-split-bar-chart'; items: VariationRow[] }
+  | { type: 'balance-scale-chart'; left: QuotationSide; right: QuotationSide }
+  | { type: 'area-line-chart'; points: QuotationTrendPoint[] }
+  | { type: 'trend-view'; points: QuotationTrendPoint[] }
+  | { type: 'weekly-flow'; items: ContractorRow[] };
 
 export type VisualizationRendererProps = {
   config: BaseVisualizationConfig;
@@ -169,19 +170,22 @@ export type ContractorRow = {
   variation?: number;
   total?: number;
   percentage?: number;
+  baseLabel?: string;
+  variationLabel?: string;
+  totalLabel?: string;
 };
 
 export type ContractData = {
-  contractors: ContractorRow[];
-  totals?: { base?: number; variation?: number; total?: number };
+  items: (ContractorRow | number | null)[];
+  totals?: { base?: number; variation?: number; total?: number } | null;
 };
 
 export type EWStatusRow = { status: string; count: number };
 export type EWCategoryRow = { category: string; fullName: string; count: number };
 export type EWSeverityRow = { severity: string; count: number };
-export type EWOpenContractorRow = { id: string; name: string; abbreviation?: string; count?: number };
+export type EWOpenContractorRow = { id: string; name: string; abbreviation?: string; count?: number; label?: string };
 
-export type NCEContractorRow = { id: string; name: string; abbreviation?: string; count?: number };
+export type NCEContractorRow = { id: string; name: string; abbreviation?: string; count?: number; label?: string };
 export type NCECompensationData = { total: number; confirmed: number; pctConfirmed: number };
 
 export type VariationRow = {
@@ -193,14 +197,14 @@ export type VariationRow = {
 };
 
 export type QuotationSide = { value: number; count: number; label: string };
-export type QuotationSummary = { accepted: QuotationSide; submitted: QuotationSide };
+export type QuotationSummary = { left: QuotationSide; right: QuotationSide };
 export type QuotationTrendPoint = { week: string; count: number; value: number };
 
 // ─── Key Highlights Types ────────────────────────────────────────────────────
 
 export type KeyHighlightChip = { value: string; label: string; color?: string };
 export type KeyHighlightBadge = { text: string; severity: 'red' | 'amber' | 'green' };
-export type KeyHighlightDot = { val: number; color: string; name: string };
+export type KeyHighlightDot = { val: number; color?: string; name: string };
 export type FlagsListRow = { text: string; tag: string; date: string; severity: 'red' | 'amber' | 'green' };
 export type ComparisonRow = { label: string; cells: string[]; color?: string };
 
@@ -208,7 +212,7 @@ export type ScorecardRow = {
   name: string;
   value: string;
   pct: number;        // 0–100, drives the inline bar width
-  color: string;
+  color?: string;
   badge?: string;
   badgeSeverity?: 'green' | 'amber' | 'red';
   sublabel?: string;
@@ -217,14 +221,23 @@ export type ScorecardRow = {
 export type KeyHighlightBlock =
   | { type: 'stats';           items: Array<{ value: string; label: string; color?: string }>; takeaway?: string }
   | { type: 'chips';           items: KeyHighlightChip[]; takeaway?: string }
-  | { type: 'ranked';          items: Array<{ name: string; value: string; color: string; kpiLabel?: string }>; takeaway?: string }
-  | { type: 'proportion';      leftPct: number; leftLabel: string; leftValue: string; leftColor: string; rightPct: number; rightLabel: string; rightValue: string; rightColor: string; chips?: KeyHighlightChip[]; takeaway?: string }
-  | { type: 'ring';            pct: number; label: string; color: string; chips?: KeyHighlightChip[]; takeaway?: string }
+  | { type: 'ranked';          items: Array<{ name: string; value: string; color?: string; kpiLabel?: string }>; takeaway?: string }
+  | { type: 'proportion';      leftPct: number; leftLabel: string; leftValue: string; leftColor?: string; rightPct: number; rightLabel: string; rightValue: string; rightColor?: string; chips?: KeyHighlightChip[]; takeaway?: string }
+  | { type: 'ring';            pct: number; label: string; color?: string; chips?: KeyHighlightChip[]; takeaway?: string }
   | { type: 'badges';          items: KeyHighlightBadge[]; textSize?: number; takeaway?: string }
   | { type: 'dot-strip';       min: number; max: number; unit: string; dots: KeyHighlightDot[]; chips?: KeyHighlightChip[]; takeaway?: string }
   | { type: 'scorecard-rows';  items: ScorecardRow[]; takeaway?: string }
   | { type: 'flags-list';      items: FlagsListRow[]; takeaway?: string }
   | { type: 'comparison-rows'; columns: string[]; rows: ComparisonRow[]; takeaway?: string };
+
+// ─── Dual-Segment Horizontal Bar Chart Types ─────────────────────────────────
+
+export type DualSegmentBarRow = {
+  id: string;
+  name: string;
+  primaryValue?: number;    // First segment value (optional — row is skipped if missing/invalid)
+  secondaryValue?: number;  // Second segment value (optional)
+};
 
 // ─── Narrative Chain Types ──────────────────────────────────────────────────
 

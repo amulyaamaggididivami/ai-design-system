@@ -5,14 +5,14 @@ import { contractData } from '../../mocks/workspace.mock';
 describe('WeeklyFlow', () => {
   it('renders canvas', () => {
     const { container } = render(
-      <WeeklyFlow contractors={contractData.contractors} data-testid="weekly-flow" />
+      <WeeklyFlow items={contractData.items} data-testid="weekly-flow" />
     );
     expect(container.querySelector('canvas')).toBeTruthy();
   });
 
   it('forwards data-testid', () => {
     const { getByTestId } = render(
-      <WeeklyFlow contractors={contractData.contractors} data-testid="weekly-flow" />
+      <WeeklyFlow items={contractData.items} data-testid="weekly-flow" />
     );
     expect(getByTestId('weekly-flow')).toBeTruthy();
   });

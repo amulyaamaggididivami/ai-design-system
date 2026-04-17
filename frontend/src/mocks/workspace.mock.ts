@@ -534,7 +534,7 @@ export const recommendationCards = [
 // ─── Contract Management Dashboard Data ───────────────────────────────────────
 
 export const contractData = {
-  contractors: [
+  items: [
     { id: 'c1', name: 'Tata Projects',    abbreviation: 'Tata',   base: 142, variation: 18.4, total: 160.4, percentage: 87 },
     { id: 'c2', name: 'L&T Construction', abbreviation: 'L&T',    base: 198, variation: 12.6, total: 210.6, percentage: 92 },
     { id: 'c3', name: 'Afcons Infra',     abbreviation: 'Afcons', base: 89,  variation: 22.1, total: 111.1, percentage: 78 },
@@ -593,8 +593,8 @@ export const variationByContractor = [
 ];
 
 export const quotationSummary = {
-  accepted:  { value: 28.4, count: 31, label: '£28.4M' },
-  submitted: { value: 19.8, count: 22, label: '£19.8M' },
+  left:  { value: 28.4, count: 31, label: '£28.4M' },
+  right: { value: 19.8, count: 22, label: '£19.8M' },
 };
 
 export const quotationTrend = [
@@ -612,9 +612,23 @@ export const quotationTrend = [
   { week: 'W12', count: 9, value: 8.3 },
 ];
 
-// ─── Narrative Chain (Dashboard Questions → Chat Flow) ──────────────────────
+// ─── Dual-Segment Horizontal Bar Chart Data ──────────────────────────────────
 
-import type { NarrativeStep } from '../types';
+import type { DualSegmentBarRow, NarrativeStep } from '../types';
+
+export const dualSegmentBarRows: DualSegmentBarRow[] = [
+  { id: 'c1', name: 'Tata Projects',     primaryValue: 186.4, secondaryValue: 18.2 },
+  { id: 'c2', name: 'L&T Construction',  primaryValue: 220.4, secondaryValue: 22.3 },
+  { id: 'c3', name: 'Afcons Infra',      primaryValue: 140.1, secondaryValue: 16.8 },
+  { id: 'c4', name: 'NCC Ltd',           primaryValue: 190.4, secondaryValue: 16.3 },
+  { id: 'c5', name: 'KEC International', primaryValue: 181.1, secondaryValue: 12.9 },
+  { id: 'c5', name: 'KEC International', primaryValue: 181.1, secondaryValue: 12.9 },
+  { id: 'c5', name: 'KEC International', primaryValue: 181.1, secondaryValue: 12.9 },
+  { id: 'c5', name: 'KEC International', primaryValue: 181.1, secondaryValue: 12.9 },
+  { id: 'c5', name: 'KEC International', primaryValue: 181.1, secondaryValue: 12.9 },
+];
+
+// ─── Narrative Chain (Dashboard Questions → Chat Flow) ──────────────────────
 
 export const NARRATIVE_CHAIN: NarrativeStep[] = [
   {
@@ -622,7 +636,7 @@ export const NARRATIVE_CHAIN: NarrativeStep[] = [
     questionText: 'What is the total contract value across all vendors?',
     title: 'Total Contract Value',
     insight: 'Total portfolio commitment is £752.2M — £659M base value plus £93.2M in approved variations. Each bar shows one contractor\'s total; the solid segment is base value, the lighter segment is variations.',
-    vizConfigs: [{ type: 'contract-value-orb', data: contractData }],
+    vizConfigs: [{ type: 'stacked-horizontal-bar-chart', data: contractData }],
     followupIds: ['q2'],
     keyInsights: [
       'L&T Construction holds the largest share at £210.6M total commitment.',
@@ -646,7 +660,7 @@ export const NARRATIVE_CHAIN: NarrativeStep[] = [
     questionText: 'Show the contract value breakdown per vendor',
     title: 'Contract Value Breakdown',
     insight: 'Each triangle maps three KPIs per contractor — Base value (top), Variations (lower-right), Commitment % (lower-left). L&T\'s constellation is the widest at £210.6M base; KEC\'s top corner is notably shorter, reflecting its smaller base relative to peers.',
-    vizConfigs: [{ type: 'contract-bars', contractors: contractData.contractors }],
+    vizConfigs: [{ type: 'multi-metric-constellation-chart', items: contractData.items }],
     followupIds: ['q3'],
     keyInsights: [
       'L&T has the highest base value at £198M, nearly triple KEC\'s £74M.',
@@ -670,7 +684,7 @@ export const NARRATIVE_CHAIN: NarrativeStep[] = [
     questionText: 'Which vendors have the highest total commitment percentage?',
     title: 'Commitment Race',
     insight: 'NCC Ltd leads at 95% commitment, closely followed by L&T at 92%. KEC International lags at 69% — the widest gap from the finish line and the highest variation-to-base ratio in the portfolio.',
-    vizConfigs: [{ type: 'commitment-race', contractors: contractData.contractors }],
+    vizConfigs: [{ type: 'progress-race-chart', items: contractData.items }],
     followupIds: ['q4q5'],
     keyInsights: [
       'NCC and L&T are both above 90% — nearing full commitment.',
@@ -693,8 +707,8 @@ export const NARRATIVE_CHAIN: NarrativeStep[] = [
     title: 'Early Warning Overview',
     insight: '40 Early Warnings total. 18 remain Open (45%) — the largest cohort — while 12 are Closed and 10 are Submitted awaiting decision. Ground Conditions dominate with 12 EWs (30% of all warnings), followed by Design Issues at 8.',
     vizConfigs: [
-      { type: 'status-arc', segments: ewStatusData, title: 'Early Warning by split' },
-      { type: 'ew-category', categories: ewCategoryData, title: 'Early Warning by category' },
+      { type: 'hub-and-spoke-radial-chart', segments: ewStatusData, title: 'Early Warning by split' },
+      { type: 'dot-matrix-chart', items: ewCategoryData, title: 'Early Warning by category' },
     ],
     followupIds: ['q6q7'],
     keyInsights: [
@@ -719,8 +733,8 @@ export const NARRATIVE_CHAIN: NarrativeStep[] = [
     title: 'EW Contractor & Severity',
     insight: 'Tata Projects has 7 open EWs — more than the next two contractors combined. High severity is the widest band at 14 EWs (35%), with Medium close behind at 13. Only 5 are Critical — but those 5 are unresolved.',
     vizConfigs: [
-      { type: 'contractor-rank', contractors: ewOpenByContractor, title: 'Open EWs' },
-      { type: 'severity-bands', severities: ewSeverityData, title: 'Severity distribution for EWs' },
+      { type: 'ranked-card-leaderboard', items: ewOpenByContractor, title: 'Open EWs' },
+      { type: 'proportional-band-chart', severities: ewSeverityData, title: 'Severity distribution for EWs' },
     ],
     followupIds: ['q8'],
     keyInsights: [
@@ -751,7 +765,7 @@ export const NARRATIVE_CHAIN: NarrativeStep[] = [
     questionText: 'How many NCEs has each contractor raised?',
     title: 'NCE Distribution',
     insight: '25 NCEs total. Tata Projects raised 8 (32%) — the thickest branch in the tree. Branch thickness is proportional to NCE count; leaf node size reflects share of total.',
-    vizConfigs: [{ type: 'nce-tree', total: nceCompensationData.total, byContractor: nceByContractor }],
+    vizConfigs: [{ type: 'radial-fan-tree-chart', total: nceCompensationData.total, items: nceByContractor }],
     followupIds: ['q9'],
     keyInsights: [
       'Tata and Afcons together account for 56% of all NCEs.',
@@ -775,7 +789,7 @@ export const NARRATIVE_CHAIN: NarrativeStep[] = [
     questionText: 'What % of NCEs are confirmed as compensation events?',
     title: 'Compensation Confirmation',
     insight: '60% of NCEs (15 of 25) are confirmed compensation events. The needle sweeps to the amber-to-green boundary. The 10 unconfirmed NCEs remain contested and represent potential future claim value.',
-    vizConfigs: [{ type: 'compensation-gauge', pct: nceCompensationData.pctConfirmed, confirmed: nceCompensationData.confirmed, total: nceCompensationData.total }],
+    vizConfigs: [{ type: 'semi-circular-gauge-chart', value: nceCompensationData.pctConfirmed, confirmed: nceCompensationData.confirmed, total: nceCompensationData.total }],
     followupIds: ['q10'],
     keyInsights: [
       '60% confirmation rate is moderate — 40% of claims are still disputed.',
@@ -805,7 +819,7 @@ export const NARRATIVE_CHAIN: NarrativeStep[] = [
     questionText: 'Show implemented vs unimplemented variations per contractor',
     title: 'Variation Implementation',
     insight: 'NCC Ltd has the best implementation rate — 11 of 13 variations actioned. Afcons Infra is the weakest: 9 unimplemented against only 5 completed, flagging contract delivery risk.',
-    vizConfigs: [{ type: 'variation-split', contractors: variationByContractor }],
+    vizConfigs: [{ type: 'segmented-split-bar-chart', items: variationByContractor }],
     followupIds: ['q11'],
     keyInsights: [
       'NCC leads with 85% implementation rate — most disciplined contractor.',
@@ -826,8 +840,8 @@ export const NARRATIVE_CHAIN: NarrativeStep[] = [
     id: 'q11',
     questionText: 'What is the total value of accepted vs submitted quotations?',
     title: 'Quotation Balance',
-    insight: 'The balance tips toward accepted: £28.4M accepted (31 quotations) vs £19.8M submitted and pending (22 quotations). The tilt of the beam encodes the value gap — a healthy acceptance rate.',
-    vizConfigs: [{ type: 'quotation-balance', accepted: quotationSummary.accepted, submitted: quotationSummary.submitted }],
+    insight: 'The balance tips toward left: £28.4M accepted (31 quotations) vs £19.8M submitted and pending (22 quotations). The tilt of the beam encodes the value gap — a healthy acceptance rate.',
+    vizConfigs: [{ type: 'balance-scale-chart', left: quotationSummary.left, right: quotationSummary.right }],
     followupIds: ['q12'],
     keyInsights: [
       'Accepted quotations exceed submitted by £8.6M — a positive signal.',
@@ -850,7 +864,7 @@ export const NARRATIVE_CHAIN: NarrativeStep[] = [
     questionText: 'Show the trend of quotations submitted over time',
     title: 'Quotation Trend',
     insight: 'Submissions are accelerating. Week 12 hit 9 submissions — the highest in the 12-week window. The upward trend since W8 suggests contract activity is entering a peak claim period.',
-    vizConfigs: [{ type: 'quotation-trend', trend: quotationTrend }],
+    vizConfigs: [{ type: 'area-line-chart', points: quotationTrend }],
     followupIds: ['q13'],
     keyInsights: [
       'W8–W12 shows a clear acceleration in submission volume.',
@@ -874,7 +888,7 @@ export const NARRATIVE_CHAIN: NarrativeStep[] = [
     questionText: 'Show the full weekly report — base value, variations, and total commitment per contractor',
     title: 'Weekly Report',
     insight: 'The flow shows each contractor\'s base and variation contributions converging into £752.2M total commitment. L&T and NCC anchor the base column; KEC contributes a disproportionately large variation stream relative to base.',
-    vizConfigs: [{ type: 'weekly-flow', contractors: contractData.contractors }],
+    vizConfigs: [{ type: 'weekly-flow', items: contractData.items }],
     followupIds: [],
     keyInsights: [
       'L&T\'s base stream is the widest — anchoring the portfolio.',
