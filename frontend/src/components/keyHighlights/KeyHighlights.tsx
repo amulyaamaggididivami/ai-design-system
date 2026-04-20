@@ -1,5 +1,5 @@
 import type React from 'react';
-import { CC } from '../../canvas/canvasUtils';
+import { CC, CANVAS_SANS, statusColors } from '../../canvas/canvasUtils';
 import type { KeyHighlightBlock, KeyHighlightChip, KeyHighlightBadge, KeyHighlightDot, ScorecardRow, FlagsListRow, ComparisonRow } from '../../types';
 
 // ─── Shared palette & fonts ──────────────────────────────────────────────────
@@ -15,7 +15,7 @@ const C = {
   green:  CC.green,
 } as const;
 
-const SANS = "'Satoshi Variable', 'DM Sans', sans-serif";
+const SANS = CANVAS_SANS;
 
 // Typography spec — Display xs / Medium — applied to value text
 const VALUE: React.CSSProperties = {
@@ -414,14 +414,14 @@ function Ring({ pct, label, color: colorProp, chips }: {
 // Per-item rows: name chip | mini bar | value | optional badge + sublabel
 // Used for: Q3 (commitment), Q5 (EW categories), Q6 (open EWs), Q8 (NCEs), Q10 (variation implementation)
 const BADGE_BG: Record<'green' | 'amber' | 'red', string> = {
-  green: '#34D39918',
-  amber: '#FBBF2418',
-  red:   '#F0606018',
+  green: statusColors.positiveBg,
+  amber: statusColors.warningBg,
+  red:   statusColors.negativeBg,
 };
 const BADGE_FG: Record<'green' | 'amber' | 'red', string> = {
-  green: '#34D399',
-  amber: '#FBBF24',
-  red:   '#F06060',
+  green: statusColors.positive,
+  amber: statusColors.warning,
+  red:   statusColors.negative,
 };
 
 function ScorecardRows({ items = [] }: { items: ScorecardRow[] }) {

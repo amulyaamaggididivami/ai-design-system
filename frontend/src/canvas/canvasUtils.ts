@@ -1,69 +1,21 @@
 /**
  * Shared canvas drawing utilities and color helpers.
- * Ported from enterprise-brain/src/canvas/utils.js + theme/tokens.js
+ * Color tokens and typography tokens are re-exported from theme.ts — edit
+ * theme.ts to change any visual value; this file only adds canvas utilities.
  */
 
-// --- Color tokens ---
-
-export const CC = {
-  bg:     '#0C0E12',
-  bgL:    '#0C1420',
-  sf:     '#13161B',
-  bd:     '#22262F',
-  blue:   '#4C93D9',
-  cyan:   '#36BFFA',
-  orange: '#EC772A',
-  red:    '#EC772A',
-  green:  '#5DA537',
-  purple: '#818FF8',
-  amber:  '#EEBF3B',
-  t1:     '#F7F9FA',
-  t2:     '#B3B5B6',
-  t3:     '#94979C',
-  t4:     '#334155',
-} as const;
-
-export const PALETTE = [CC.blue, CC.amber, CC.purple, CC.green, CC.red];
-
-
-// --- Typography tokens ---
-
-/**
- * Axis label style — applied to all x-axis and y-axis tick labels, titles, and legends.
- * Change once here to update every chart.
- *   font-family:     Satoshi Variable, DM Sans (sans-serif fallback)
- *   font-weight:     400 (Regular)
- *   font-size:       14px
- *   line-height:     100%  (informational — not applicable in canvas ctx.font)
- *   letter-spacing:  0%    (set ctx.letterSpacing = AXIS_LABEL.letterSpacing at the draw site)
- *   text-align:      Right for y-axis ticks; Center for x-axis ticks (set at each draw site)
- */
-export const AXIS_LABEL = {
-  font:          "400 16px 'Satoshi Variable', 'DM Sans', sans-serif",
-  color:         '#F7F7F7',
-  letterSpacing: '0px',
-} as const;
-
-
-export const CHART_VALUE = {
-  font:          "500 16px 'Satoshi Variable', 'DM Sans', sans-serif",
-  color:         '#F7F7F7',
-} as const;
-
-/**
- * Legend label style — applied to all chart legend items (swatches, keys, footers).
- * Change once here to update every chart legend.
- *   font-family:     Satoshi Variable, DM Sans (sans-serif fallback)
- *   font-weight:     400 (Regular)
- *   font-size:       18px
- *   letter-spacing:  0%    (set ctx.letterSpacing = LEGEND_LABEL.letterSpacing at the draw site)
- *   text-align:      center (set ctx.textAlign = 'center' at the draw call site)
- */
-export const LEGEND_LABEL = {
-  font:          "400 18px 'Satoshi Variable', 'DM Sans', sans-serif",
-  color:         '#B3B5B6',
-  letterSpacing: '0px',
-} as const;
+import {
+  CC, PALETTE, AXIS_LABEL, CHART_VALUE, LEGEND_LABEL,
+  MONO_SM, MONO_SM_BOLD, MONO_MD, MONO_MD_BOLD, MONO_LG_BOLD,
+  DISPLAY_MD, SANS_SM, SANS_LG, CANVAS_SANS, CANVAS_MONO,
+  statusColors,
+} from '../theme';
+export {
+  CC, PALETTE, AXIS_LABEL, CHART_VALUE, LEGEND_LABEL,
+  MONO_SM, MONO_SM_BOLD, MONO_MD, MONO_MD_BOLD, MONO_LG_BOLD,
+  DISPLAY_MD, SANS_SM, SANS_LG, CANVAS_SANS, CANVAS_MONO,
+  statusColors,
+};
 
 // --- Color helpers ---
 

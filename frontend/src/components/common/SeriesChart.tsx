@@ -7,7 +7,7 @@ import {
   registerHitCircle,
 } from '../../canvas/useCanvasInteraction';
 import { dampedPulse, tickHoverProgress, easeOutExpo } from '../../canvas/easing';
-import { CC, rgb, drawGlow, drawCrosshair, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, MONO_MD, rgb, drawGlow, drawCrosshair, setupCanvas } from '../../canvas/canvasUtils';
 import type { VizRow, SeriesChartProps } from '../../types';
 
 const W = 760;
@@ -155,7 +155,7 @@ export function SeriesChart({ rows = [], variant, className, colors }: SeriesCha
         }
 
         // Vendor label
-        ctx.font = "10px 'JetBrains Mono', monospace";
+        ctx.font = MONO_MD.font;
         ctx.fillStyle = rgb(CC.t3, 0.6 + hp * 0.3);
         ctx.textAlign = 'center';
         ctx.fillText(rows[i].vendor, x, H - 14);

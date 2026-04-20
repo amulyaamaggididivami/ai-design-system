@@ -3,7 +3,7 @@ import { useEffect, useRef, useMemo } from 'react';
 import { CanvasTooltip } from './CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from './useCanvasInteraction';
 import { dampedPulse, easeOutCubic } from './easing';
-import { CC, rgb, lerpC, drawGlow, drawDust, drawScanline, setupCanvas } from './canvasUtils';
+import { CC, MONO_SM, MONO_MD, MONO_LG_BOLD, SANS_LG, rgb, lerpC, drawGlow, drawDust, drawScanline, setupCanvas } from './canvasUtils';
 import type { SankeyNodeData, SankeyLinkData } from '../types';
 
 /**
@@ -223,7 +223,7 @@ export function CausalFlowCanvas({
         // Confidence badge at midpoint
         const mid = bPt(b, 0.5);
         const lbl = `${Math.round(edge.conf * 100)}%`;
-        ctx.font = "bold 12px 'JetBrains Mono', monospace";
+        ctx.font = MONO_LG_BOLD.font;
         ctx.textBaseline = 'middle';
         const tw = ctx.measureText(lbl).width + 14;
         ctx.fillStyle = 'rgba(10,16,24,0.88)';
@@ -312,7 +312,7 @@ export function CausalFlowCanvas({
         });
 
         // Node name label below circle
-        ctx.font = `${isSelected || isHovered ? 'bold ' : ''}12px 'DM Sans', sans-serif`;
+        ctx.font = (isSelected || isHovered) ? `bold ${SANS_LG.font}` : SANS_LG.font;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'alphabetic';
         ctx.fillStyle = rgb(n.color, isSelected ? 1 : 0.9);
@@ -320,7 +320,7 @@ export function CausalFlowCanvas({
 
         // Subvalue line
         if (n.sub) {
-          ctx.font = "10px 'JetBrains Mono', monospace";
+          ctx.font = MONO_MD.font;
           ctx.fillStyle = rgb(CC.t3, 0.65);
           ctx.fillText(n.sub, n.x, n.y + r + 32);
         }
@@ -347,7 +347,7 @@ export function CausalFlowCanvas({
         ctx.fill();
 
         // Right label
-        ctx.font = "bold 12px 'JetBrains Mono', monospace";
+        ctx.font = MONO_LG_BOLD.font;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = rgb(CC.orange, 0.85);
@@ -360,7 +360,7 @@ export function CausalFlowCanvas({
         // Left formula
         const formula = iEdges.map(e => e.conf.toFixed(2)).join(' × ');
         ctx.textAlign = 'right';
-        ctx.font = "9px 'JetBrains Mono', monospace";
+        ctx.font = MONO_SM.font;
         ctx.fillStyle = rgb(CC.t4, 0.6);
         ctx.fillText(formula, barX - 6, barY + 2);
       }

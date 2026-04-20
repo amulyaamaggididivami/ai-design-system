@@ -3,7 +3,7 @@ import { useRef, useEffect, useMemo } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
 import { stagger, tickHoverProgress, easeOutCubic } from '../../canvas/easing';
-import { CC, AXIS_LABEL, CHART_VALUE, PALETTE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, CHART_VALUE, DISPLAY_MD, PALETTE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import type { NCEContractorRow } from '../../types';
 import type { RadialFanTreeChartProps } from './types';
@@ -149,7 +149,7 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
       if (progress > 0.4) {
         const fade = Math.min(1, (progress - 0.4) / 0.4);
         ctx.globalAlpha = fade;
-        ctx.font = `500 24px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.font = DISPLAY_MD.font;
         ctx.fillStyle = CC.t1;
         ctx.textAlign = 'center';
         ctx.fillText(totalLabel ?? String(total), rootX, rootY + 5);

@@ -7,7 +7,7 @@ import {
   registerHitRect,
 } from '../../canvas/useCanvasInteraction';
 import { stagger, tickHoverProgress, easeOutQuart } from '../../canvas/easing';
-import { CC, PALETTE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, PALETTE, MONO_MD_BOLD, MONO_SM, MONO_SM_BOLD, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
 import type { BarChartProps } from '../../types';
 
 const W = 760;
@@ -111,7 +111,7 @@ export function BarChart({ rows = [], className, colors }: BarChartProps) {
         // Value label above bar
         if (localP > 0.5 && barH > 0) {
           ctx.globalAlpha = Math.min(1, (localP - 0.5) * 2);
-          ctx.font = `bold 10px 'JetBrains Mono', monospace`;
+          ctx.font = MONO_MD_BOLD.font;
           ctx.fillStyle = hp > 0 ? color : rgb(valueLabelColor, 0.7);
           ctx.textAlign = 'center';
           ctx.fillText(String(row.pricing ?? ''), x + barW / 2, baseline - barH - 6);
@@ -119,7 +119,7 @@ export function BarChart({ rows = [], className, colors }: BarChartProps) {
         }
 
         // Vendor label below baseline
-        ctx.font = `${hp > 0 ? 'bold ' : ''}9px 'JetBrains Mono', monospace`;
+        ctx.font = hp > 0 ? MONO_SM_BOLD.font : MONO_SM.font;
         ctx.fillStyle = hp > 0 ? color : rgb(CC.t3, 0.6);
         ctx.textAlign = 'center';
         ctx.fillText(row.vendor, x + barW / 2, H - 14);

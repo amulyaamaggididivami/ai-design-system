@@ -1,36 +1,5 @@
-    :root {
-      --bg: #0C0E12;
-      --bg-soft: #0C1420;
-      --panel: rgba(7, 12, 23, 0.94);
-      --panel-strong: rgba(10, 16, 29, 0.98);
-      --line: rgba(109, 123, 156, 0.12);
-      --line-strong: rgba(109, 123, 156, 0.2);
-      --text: #F7F7F7;
-      --muted: #94979C;
-      --muted-soft: rgba(156, 163, 175, 0.9);
-      --blue: #5c83ff;
-      --teal: #29cfd6;
-      --teal-soft: rgba(41, 207, 214, 0.14);
-      --gold: #9eb2ff;
-      --gold-soft: rgba(158, 178, 255, 0.12);
-      --red: #95a0b8;
-      --yellow: #cfd7e6;
-      --shadow-sm: 0 12px 30px rgba(0, 0, 0, 0.24);
-      --shadow-md: 0 22px 54px rgba(0, 0, 0, 0.30);
-      --shadow-lg: 0 28px 78px rgba(0, 0, 0, 0.36);
-      --radius-xl: 28px;
-      --radius-lg: 22px;
-      --radius-md: 18px;
-      --radius-sm: 14px;
-      --sidebar-collapsed: 74px;
-      --sidebar-expanded: 232px;
-      --insights-width: min(420px, 34vw);
-      --canvas-max: 1240px;
-      --sans: "Satoshi", "Manrope", "Segoe UI", sans-serif;
-      --serif: "Satoshi", "Manrope", "Segoe UI", sans-serif;
-      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-      --ease: cubic-bezier(.22, 1, .36, 1);
-    }
+    /* CSS custom properties are injected at runtime by theme.ts → applyTheme().
+       Editing theme.ts is the single entry point for all design token changes. */
 
     .viz-view,
     .d3-mount,
@@ -47,11 +16,11 @@
     }
 
     .d3-chart {
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--chart-border);
       border-radius: 24px;
-      background: linear-gradient(180deg, rgba(9, 15, 26, 0.92), rgba(12, 20, 32, 0.88));
+      background: linear-gradient(180deg, var(--chart-bg-start), var(--chart-bg-end));
       padding: 14px;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      box-shadow: inset 0 1px 0 var(--chart-bg-inset);
     }
 
     .d3-svg,
@@ -63,48 +32,48 @@
     }
 
     .d3-axis-line {
-      stroke: rgba(148, 163, 184, 0.24);
+      stroke: var(--chart-axis-stroke);
       stroke-width: 1.5;
     }
 
     .d3-axis-line.subtle {
       stroke-width: 1;
-      stroke: rgba(148, 163, 184, 0.14);
+      stroke: var(--chart-axis-muted);
     }
 
     .d3-line-path {
       fill: none;
-      stroke: rgba(92, 131, 255, 0.96);
+      stroke: var(--chart-line-stroke);
       stroke-width: 4;
       stroke-linecap: round;
       stroke-linejoin: round;
     }
 
     .d3-line-path.trend {
-      stroke: rgba(41, 207, 214, 0.92);
+      stroke: var(--chart-trend-stroke);
       stroke-width: 3;
     }
 
     .d3-area-fill {
-      fill: rgba(41, 207, 214, 0.2);
+      fill: var(--chart-area-fill);
     }
 
     .d3-point {
-      stroke: rgba(5, 9, 20, 0.96);
+      stroke: var(--chart-point-stroke);
       stroke-width: 3;
     }
 
     .d3-point.line {
-      fill: #d7bc6d;
+      fill: var(--tone-2);
     }
 
     .d3-point.area {
-      fill: #5fe6dd;
+      fill: var(--tone-1);
     }
 
     .d3-trend-point {
-      fill: #9eb2ff;
-      stroke: rgba(5, 9, 20, 0.9);
+      fill: var(--gold);
+      stroke: var(--chart-trend-point-stroke);
       stroke-width: 2;
     }
 
@@ -119,13 +88,13 @@
     }
 
     .d3-axis-label {
-      fill: rgba(245, 247, 251, 0.72);
+      fill: var(--chart-label-fill);
       font-size: 12px;
       font-weight: 600;
     }
 
     .d3-bar-value {
-      fill: #f5f7fb;
+      fill: var(--chart-value-fill);
       font-size: 13px;
       font-weight: 700;
     }
@@ -133,43 +102,43 @@
     .d3-bar.tone-0,
     .d3-mini-fill.tone-0,
     .d3-legend-dot.tone-0 {
-      fill: #6bbcff;
-      background: #6bbcff;
+      fill: var(--tone-0);
+      background: var(--tone-0);
     }
 
     .d3-bar.tone-1,
     .d3-mini-fill.tone-1,
     .d3-legend-dot.tone-1 {
-      fill: #5fe6dd;
-      background: #5fe6dd;
+      fill: var(--tone-1);
+      background: var(--tone-1);
     }
 
     .d3-bar.tone-2,
     .d3-mini-fill.tone-2,
     .d3-legend-dot.tone-2 {
-      fill: #d7bc6d;
-      background: #d7bc6d;
+      fill: var(--tone-2);
+      background: var(--tone-2);
     }
 
     .d3-bar.tone-3,
     .d3-mini-fill.tone-3,
     .d3-legend-dot.tone-3 {
-      fill: #95a9ff;
-      background: #95a9ff;
+      fill: var(--tone-3);
+      background: var(--tone-3);
     }
 
     .d3-bar.tone-4,
     .d3-mini-fill.tone-4,
     .d3-legend-dot.tone-4 {
-      fill: #7fb58a;
-      background: #7fb58a;
+      fill: var(--tone-4);
+      background: var(--tone-4);
     }
 
     .d3-bar.tone-5,
     .d3-mini-fill.tone-5,
     .d3-legend-dot.tone-5 {
-      fill: #ee8a8a;
-      background: #ee8a8a;
+      fill: var(--tone-5);
+      background: var(--tone-5);
     }
 
     .d3-pie-frame {
@@ -207,35 +176,35 @@
 
     .d3-sankey-link {
       fill: none;
-      stroke: rgba(107, 188, 255, 0.28);
+      stroke: var(--sankey-link);
       stroke-width: 18;
       stroke-linecap: round;
       opacity: 0.72;
     }
 
     .d3-sankey-link.active {
-      stroke: rgba(95, 230, 221, 0.56);
+      stroke: var(--sankey-link-active);
       opacity: 1;
     }
 
     .d3-sankey-node {
-      fill: rgba(92, 131, 255, 0.86);
-      stroke: rgba(255, 255, 255, 0.12);
+      fill: var(--sankey-node);
+      stroke: var(--chart-border-subtle);
       stroke-width: 1.5;
     }
 
     .d3-sankey-node.active {
-      fill: rgba(95, 230, 221, 0.92);
+      fill: var(--sankey-node-active);
     }
 
     .d3-sankey-label {
-      fill: #f5f7fb;
+      fill: var(--chart-value-fill);
       font-size: 13px;
       font-weight: 700;
     }
 
     .d3-sankey-value {
-      fill: rgba(245, 247, 251, 0.68);
+      fill: var(--chart-value-dim);
       font-size: 11px;
       font-weight: 600;
     }
@@ -254,9 +223,9 @@
       min-width: 120px;
       padding: 12px 14px;
       text-align: left;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--chart-border);
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.03);
+      background: var(--chart-bg-inset);
       color: var(--text);
     }
 
@@ -301,7 +270,7 @@
     }
 
     .d3-mini-track-fill {
-      fill: rgba(255, 255, 255, 0.08);
+      fill: var(--chart-mini-track);
     }
 
     .viz-placeholder {

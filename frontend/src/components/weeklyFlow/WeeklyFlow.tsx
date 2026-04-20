@@ -11,6 +11,7 @@ import {
   PALETTE,
   AXIS_LABEL,
   CHART_VALUE,
+  SANS_SM,
   rgb,
   drawGlow,
   setupCanvas,
@@ -252,7 +253,7 @@ export function WeeklyFlow({
             cn.h >= 36 ? cn.cy - 5 : cn.cy,
           );
           if (cn.h >= 36) {
-            ctx.font = `400 12px 'Satoshi Variable', 'DM Sans', sans-serif`;
+            ctx.font = SANS_SM.font;
             ctx.fillStyle = rgb(CC.t3, 0.8);
             ctx.fillText(
               c.totalLabel ?? String(c.total ?? 0),

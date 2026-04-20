@@ -1,8 +1,8 @@
 import type React from 'react';
 
-import { CC } from '../../canvas/canvasUtils';
+import { CC, CANVAS_SANS } from '../../canvas/canvasUtils';
 
-const SANS = "'Satoshi Variable', 'DM Sans', sans-serif";
+const SANS = CANVAS_SANS;
 
 const LABEL: React.CSSProperties = {
   color:      '#C2C2C2',

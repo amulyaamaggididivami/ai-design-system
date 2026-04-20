@@ -7,7 +7,7 @@ import {
   registerHitCircle,
 } from '../../canvas/useCanvasInteraction';
 import { dampedPulse, tickHoverProgress } from '../../canvas/easing';
-import { CC, rgb, drawGlow, drawCrosshair, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, MONO_SM, rgb, drawGlow, drawCrosshair, setupCanvas } from '../../canvas/canvasUtils';
 import type { TrendChartProps } from '../../types';
 
 const W = 280;
@@ -83,7 +83,7 @@ export function TrendChart({ points = [], className, colors }: TrendChartProps) 
       ctx.stroke();
 
       // X-axis labels
-      ctx.font = "9px 'JetBrains Mono', monospace";
+      ctx.font = MONO_SM.font;
       ctx.fillStyle = rgb(CC.t4, 0.9);
       ctx.textAlign = 'center';
       parsed.forEach((p, i) => {

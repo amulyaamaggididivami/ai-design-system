@@ -8,7 +8,7 @@ import {
   registerHitCircle,
 } from '../../canvas/useCanvasInteraction';
 import { dampedPulse, tickHoverProgress } from '../../canvas/easing';
-import { CC, PALETTE, rgb, drawGlow, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, PALETTE, MONO_MD, MONO_MD_BOLD, MONO_SM, rgb, drawGlow, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
 import type { SankeyNodeData, SankeyLinkData, SankeySvgProps } from '../../types';
 
 interface NodeLayout {
@@ -252,14 +252,14 @@ export function SankeySvg({
 
         // Node name — to the right of right-column nodes, left of left-column nodes
         const labelX = pos.x + pos.w + 8;
-        ctx.font = `${isSelected || isHovered ? 'bold ' : ''}10px 'JetBrains Mono', monospace`;
+        ctx.font = (isSelected || isHovered) ? MONO_MD_BOLD.font : MONO_MD.font;
         ctx.fillStyle = rgb(isSelected ? color : CC.t2, 0.7 + hp * 0.2);
         ctx.textAlign = 'left';
         ctx.fillText(node.name, labelX, pos.y + pos.h / 2 + 4);
 
         // Value label below name
         if (node.valueLabel) {
-          ctx.font = `9px 'JetBrains Mono', monospace`;
+          ctx.font = MONO_SM.font;
           ctx.fillStyle = rgb(color, 0.5 + hp * 0.2);
           ctx.fillText(node.valueLabel, labelX, pos.y + pos.h / 2 + 17);
         }
