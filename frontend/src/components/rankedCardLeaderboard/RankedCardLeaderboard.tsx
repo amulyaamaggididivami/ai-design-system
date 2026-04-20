@@ -63,14 +63,11 @@ export function RankedCardLeaderboard({
     frameRef.current = 0;
 
     const MAX_COLS = 5;
-    const cols  = Math.min(MAX_COLS, sorted.length);
     // Card width is always sized for 5 columns so proportions stay consistent regardless of item count
     const cardW = (W - 2 * CARD_PAD - (MAX_COLS - 1) * CARD_GAP) / MAX_COLS;
     const cardH = H * 0.84;
     const cardY = H * 0.08;
-    // Center the group of cards in the canvas
-    const groupW  = cols * cardW + (cols - 1) * CARD_GAP;
-    const startX  = Math.round((W - groupW) / 2);
+    const startX  = CARD_PAD;
 
     let raf: number;
 

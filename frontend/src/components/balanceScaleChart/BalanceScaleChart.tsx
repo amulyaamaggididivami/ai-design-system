@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 
-import { CC, AXIS_LABEL, LEGEND_LABEL, CHART_VALUE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, CHART_VALUE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
 import { easeOutBack, easeOutCubic } from '../../canvas/easing';
 import type { BalanceScaleChartProps } from './types';
 
@@ -149,16 +149,6 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
         ctx.globalAlpha = 1;
       }
 
-      // Tilt angle annotation
-      if (progress > 0.85 && Math.abs(tilt) > 1) {
-        const fade = Math.min(1, (progress - 0.85) / 0.15);
-        ctx.globalAlpha = fade * 0.6;
-        ctx.font = LEGEND_LABEL.font;
-        ctx.fillStyle = LEGEND_LABEL.color;
-        ctx.textAlign = 'center';
-        ctx.fillText(`${Math.abs(tilt).toFixed(1)}° tilt toward accepted`, cx, H - 12);
-        ctx.globalAlpha = 1;
-      }
 
       raf = requestAnimationFrame(draw);
     };
