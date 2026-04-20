@@ -13,4 +13,5 @@ export default function App() {
     return <ChartGalleryPage />;
   }
   return <WorkspacePage />;
+  
 }
