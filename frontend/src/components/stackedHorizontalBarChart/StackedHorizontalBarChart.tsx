@@ -15,9 +15,23 @@ const MIN_H    = 220;
 const MAX_ITEMS = 8;
 const COLORS   = [CC.blue, CC.amber, CC.purple, CC.green];
 const PAD      = { left: 8, right: 80, top: 16, bottom: 38 };
-const NAME_W   = 88;
+const NAME_W   = 150;
 const BAR_H    = 18;
 
+function truncate(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
+  if (ctx.measureText(text).width <= maxWidth) return text;
+  let t = text;
+  while (t.length > 0 && ctx.measureText(t + '…').width > maxWidth) t = t.slice(0, -1);
+  return t + '…';
+}
+
+function fmtValue(v: number): string {
+  const abs  = Math.abs(v);
+  const sign = v < 0 ? '-' : '';
+  if (abs >= 1_000_000) return `${sign}£${(abs / 1_000_000).toFixed(1)}M`;
+  if (abs >= 1_000)     return `${sign}£${(abs / 1_000).toFixed(1)}K`;
+  return `${sign}£${abs.toFixed(0)}`;
+}
 
 export function StackedHorizontalBarChart({ data, 'data-testid': testId }: StackedHorizontalBarChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -64,7 +78,7 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
         ctx.fillStyle    = hp > 0 ? color : AXIS_LABEL.color;
         ctx.textAlign    = 'right';
         ctx.textBaseline = 'middle';
-        ctx.fillText(con.abbreviation ?? con.name.slice(0, 6), x0 - 8, y + BAR_H / 2);
+        ctx.fillText(truncate(ctx, con.name ?? '', NAME_W - 16), x0 - 8, y + BAR_H / 2);
 
         // Background track
         ctx.fillStyle = rgb(CC.bd, 0.25);
@@ -115,14 +129,14 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
           ctx.fillStyle    = hp > 0 ? color : CHART_VALUE.color;
           ctx.textAlign    = 'left';
           ctx.textBaseline = 'middle';
-          ctx.fillText(con.totalLabel ?? String(con.total ?? 0), x0 + totalW + 6, y + BAR_H / 2);
+          ctx.fillText(con.totalLabel ?? fmtValue(con.total ?? 0), x0 + totalW + 6, y + BAR_H / 2);
           ctx.globalAlpha = 1;
         }
 
         registerHitRect(hitZonesRef.current, con.id, x0, y, Math.max(totalW, 1), BAR_H, {
           label   : con.name,
-          value   : `${con.totalLabel ?? String(con.total ?? 0)} total`,
-          sublabel: `Base ${con.baseLabel ?? String(con.base ?? 0)} + Var ${con.variationLabel ?? String(con.variation ?? 0)} · ${con.percentage ?? 0}% committed`,
+          value   : `${con.totalLabel ?? fmtValue(con.total ?? 0)} total`,
+          sublabel: `Base ${con.baseLabel ?? fmtValue(con.base ?? 0)} + Var ${con.variationLabel ?? fmtValue(con.variation ?? 0)} · ${con.percentage ?? 0}% committed`,
           color,
         });
       });
@@ -161,7 +175,7 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
       ctx.font      = LEGEND_LABEL.font;
       ctx.textAlign = 'right';
       ctx.fillStyle = LEGEND_LABEL.color;
-      ctx.fillText(`Portfolio: ${String(totals?.total ?? 0)}`, W - 8, ly);
+      ctx.fillText(`Portfolio: ${fmtValue(totals?.total ?? 0)}`, W - 8, ly);
     },
     true,
     { easing: easeOutQuart },

@@ -79,8 +79,9 @@ export function SemiCircularGaugeChart({ value, confirmed, total, 'data-testid':
       });
 
       // Filled gauge arc up to value
-      const fillAngle = startAngle + (value / 100) * totalSpan * progress;
-      const gaugeColor = value >= 66 ? CC.green : value >= 33 ? CC.amber : CC.red;
+      const safeValue = value ?? 0;
+      const fillAngle = startAngle + (safeValue / 100) * totalSpan * progress;
+      const gaugeColor = safeValue >= 66 ? CC.green : safeValue >= 33 ? CC.amber : CC.red;
 
       // Glow on the fill arc tip
       const tipX = cx + Math.cos(fillAngle) * (R + innerR) / 2;
@@ -96,7 +97,7 @@ export function SemiCircularGaugeChart({ value, confirmed, total, 'data-testid':
       ctx.lineCap = 'butt';
 
       // Needle — longer, with tail stub for balance
-      const needleAngle = startAngle + (value / 100) * totalSpan * needleP;
+      const needleAngle = startAngle + (safeValue / 100) * totalSpan * needleP;
       const needleLen = innerR + 8;
       const nx = cx + Math.cos(needleAngle) * needleLen;
       const ny = cy + Math.sin(needleAngle) * needleLen;
@@ -148,7 +149,7 @@ export function SemiCircularGaugeChart({ value, confirmed, total, 'data-testid':
         ctx.font = `500 24px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle = gaugeColor;
         ctx.textAlign = 'center';
-        ctx.fillText(`${Math.round(value * needleP)}%`, cx, cy - 38);
+        ctx.fillText(`${Math.round(safeValue * needleP)}%`, cx, cy - 38);
         ctx.globalAlpha = 1;
       }
 
@@ -162,7 +163,7 @@ export function SemiCircularGaugeChart({ value, confirmed, total, 'data-testid':
         ctx.fillText('NCEs confirmed', cx, cy + 32);
         ctx.font = LEGEND_LABEL.font;
         ctx.fillStyle = LEGEND_LABEL.color;
-        ctx.fillText(`${confirmed} of ${total} NCEs are confirmed compensation events`, cx, cy + 52);
+        ctx.fillText(`${confirmed ?? 0} of ${total ?? 0} NCEs are confirmed compensation events`, cx, cy + 62);
         ctx.globalAlpha = 1;
       }
 
@@ -189,7 +190,6 @@ export function SemiCircularGaugeChart({ value, confirmed, total, 'data-testid':
         }
       }
 
-      endAngle;
       raf = requestAnimationFrame(draw);
     };
 

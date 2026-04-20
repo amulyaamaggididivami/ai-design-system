@@ -68,12 +68,12 @@ export function CanvasTooltip({ visible, x, y, content, parentW }: CanvasTooltip
       {label && (
         <div
           style={{
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: 400,
             color: CC.t2,
             marginBottom: 3,
             whiteSpace: 'nowrap',
-            lineHeight: '18px',
+            lineHeight: '20px',
           }}
         >
           {label}
@@ -81,11 +81,11 @@ export function CanvasTooltip({ visible, x, y, content, parentW }: CanvasTooltip
       )}
       <div
         style={{
-          fontSize: 14,
+          fontSize: 16,
           fontWeight: 500,
           color: CC.t1,
           whiteSpace: 'nowrap',
-          lineHeight: '20px',
+          lineHeight: '22px',
         }}
       >
         {value}
@@ -93,12 +93,12 @@ export function CanvasTooltip({ visible, x, y, content, parentW }: CanvasTooltip
       {sublabel && (
         <div
           style={{
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: 400,
             color: 'var(--tooltip-accent)',
             marginTop: 3,
             whiteSpace: 'nowrap',
-            lineHeight: '18px',
+            lineHeight: '20px',
           }}
         >
           {sublabel}

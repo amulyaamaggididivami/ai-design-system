@@ -41,8 +41,8 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
     const rootY = H / 2;
     const rootR = 32;
     const leafX = W - 80;
-    const maxCount = Math.max(...byContractor.map(c => c.count ?? 0));
-    const leafSpacing = (H - 60) / (byContractor.length - 1);
+    const maxCount = Math.max(...byContractor.map(c => c.count ?? 0), 1);
+    const leafSpacing = byContractor.length > 1 ? (H - 60) / (byContractor.length - 1) : 0;
     const leafStartY = 30;
 
     const leafPositions = byContractor.map((_, i) => ({
@@ -115,7 +115,7 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
           registerHitCircle(hitZonesRef.current, c.id, lpos.x, lpos.y, leafR + 8, {
             label: c.name,
             value: `${displayVal} NCEs raised`,
-            sublabel: `${Math.round(((c.count ?? 0) / total) * 100)}% of all NCEs`,
+            sublabel: `${Math.round(((c.count ?? 0) / (total || 1)) * 100)}% of all NCEs`,
             color,
           });
 
@@ -123,7 +123,7 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
           ctx.globalAlpha = leafFade;
           ctx.font = AXIS_LABEL.font;
           ctx.textAlign = 'left';
-          const nameText = c.abbreviation ?? c.name.slice(0, 6);
+          const nameText = c.abbreviation ?? c.name?.slice(0, 6) ?? '';
           const countText = ` ${displayVal}`;
           const xLabel = lpos.x + leafR + 6;
           const yLabel = lpos.y + 4;

@@ -62,11 +62,15 @@ export function RankedCardLeaderboard({
     const ctx = setupCanvas(canvas, W, H);
     frameRef.current = 0;
 
-    const cols = Math.min(5, sorted.length);
-    // Fill full width: equal card widths separated by CARD_GAP, padded on both sides by CARD_PAD
-    const cardW = (W - 2 * CARD_PAD - (cols - 1) * CARD_GAP) / cols;
+    const MAX_COLS = 5;
+    const cols  = Math.min(MAX_COLS, sorted.length);
+    // Card width is always sized for 5 columns so proportions stay consistent regardless of item count
+    const cardW = (W - 2 * CARD_PAD - (MAX_COLS - 1) * CARD_GAP) / MAX_COLS;
     const cardH = H * 0.84;
     const cardY = H * 0.08;
+    // Center the group of cards in the canvas
+    const groupW  = cols * cardW + (cols - 1) * CARD_GAP;
+    const startX  = Math.round((W - groupW) / 2);
 
     let raf: number;
 
@@ -93,11 +97,10 @@ export function RankedCardLeaderboard({
       }
 
       sorted.forEach((contractor, i) => {
-        const isTop = i === 0;
-        const color =
-          i === 0 ? CC.red : i === 1 ? CC.amber : PALETTE[i % PALETTE.length];
-        const baseX = CARD_PAD + i * (cardW + CARD_GAP);
-        const hp = hoverMap.current.get(contractor.id) ?? 0;
+        const isTop  = i === 0;
+        const color  = i === 0 ? CC.red : i === 1 ? CC.amber : PALETTE[i % PALETTE.length];
+        const baseX  = startX + i * (cardW + CARD_GAP);
+        const hp     = hoverMap.current.get(contractor.id) ?? 0;
 
         // Symmetric hover expansion — expand by up to 8px (4px each side)
         const expand = hp * 8;
@@ -166,7 +169,7 @@ export function RankedCardLeaderboard({
         ctx.textBaseline = "middle";
         ctx.fillStyle = rgb(CC.t1, 0.9);
         ctx.fillText(
-          contractor.abbreviation ?? contractor.name.slice(0, 6),
+          contractor.abbreviation ?? contractor.name?.slice(0, 6) ?? '',
           photoX,
           photoY,
         );
@@ -198,7 +201,7 @@ export function RankedCardLeaderboard({
           cardH,
           {
             label: contractor.name,
-            value: `${displayVal} open · ${pct}% of total`,
+            value: `${displayVal ?? 0} open · ${pct}% of total`,
             sublabel: `Rank #${i + 1} · ${riskLabel}`,
             color,
           },
