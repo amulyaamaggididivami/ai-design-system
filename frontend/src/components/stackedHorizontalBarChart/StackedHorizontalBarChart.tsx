@@ -44,9 +44,10 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
   const visibleItems = showAll ? sortedItems : sortedItems.slice(0, MAX_ITEMS);
   const n             = visibleItems.length;
   const maxCommitment = Math.max(...sortedItems.map(c => Math.abs(c.total ?? 0)), 1);
-  const dynamicH      = Math.max(MIN_H, PAD.top + PAD.bottom + n * BAR_H + Math.max(0, n - 1) * 8);
+  const BAR_GAP       = 8;
+  const contentH      = n * BAR_H + Math.max(0, n - 1) * BAR_GAP;
+  const dynamicH      = PAD.top + PAD.bottom + contentH;
   const barArea       = W - PAD.left - NAME_W - PAD.right;
-  const gap           = n > 1 ? (dynamicH - PAD.top - PAD.bottom - n * BAR_H) / (n - 1) : 0;
 
   const isEmpty = validItems.length === 0;
 
@@ -63,7 +64,7 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
       visibleItems.forEach((con, i) => {
         const color  = COLORS[i % COLORS.length];
         const localP = stagger(progress, i, n, easeOutQuart);
-        const y      = PAD.top + i * (BAR_H + gap);
+        const y      = PAD.top + i * (BAR_H + BAR_GAP);
         const x0     = PAD.left + NAME_W;
         const hp     = hoverMap.current.get(con.id) ?? 0;
         // clamp to 0 so negative-total bars don't render leftward

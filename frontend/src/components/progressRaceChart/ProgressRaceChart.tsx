@@ -18,6 +18,13 @@ const MAX_ITEMS  = 8;
 
 const RACE_COLORS = [CC.green, CC.blue, CC.amber, CC.red];
 
+function truncate(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
+  if (ctx.measureText(text).width <= maxWidth) return text;
+  let t = text;
+  while (t.length > 0 && ctx.measureText(t + '…').width > maxWidth) t = t.slice(0, -1);
+  return t + '…';
+}
+
 
 export function ProgressRaceChart({ items: rawItems = [], 'data-testid': testId }: ProgressRaceChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -150,7 +157,7 @@ export function ProgressRaceChart({ items: rawItems = [], 'data-testid': testId 
         ctx.font      = `${hp > 0 ? 'bold ' : ''}` + AXIS_LABEL.font;
         ctx.fillStyle = hp > 0 ? color : AXIS_LABEL.color;
         ctx.textAlign = 'right';
-        ctx.fillText(contractor.abbreviation ?? contractor.name?.slice(0, 6) ?? '', padL - 8, trackY + TRACK_H / 2);
+        ctx.fillText(truncate(ctx, contractor.abbreviation ?? contractor.name ?? '', padL - 16), padL - 8, trackY + TRACK_H / 2);
       });
 
       // Finish line
