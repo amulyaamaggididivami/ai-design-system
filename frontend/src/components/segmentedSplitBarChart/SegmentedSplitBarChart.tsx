@@ -9,6 +9,13 @@ import { ToggleButton } from '../common/ToggleButton';
 import type { VariationRow } from '../../types';
 import type { SegmentedSplitBarChartProps } from './types';
 
+function truncate(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
+  if (ctx.measureText(text).width <= maxWidth) return text;
+  let t = text;
+  while (t.length > 0 && ctx.measureText(t + '…').width > maxWidth) t = t.slice(0, -1);
+  return t + '…';
+}
+
 const W         = 680;
 const MAX_ITEMS = 8;
 const BAR_H     = 26;
@@ -94,7 +101,7 @@ export function SegmentedSplitBarChart({ items: rawItems = [], 'data-testid': te
         ctx.font = AXIS_LABEL.font;
         ctx.fillStyle = CC.t2;
         ctx.textAlign = 'right';
-        ctx.fillText(c.abbreviation ?? c.name?.slice(0, 6) ?? '', padL - 8, y + barH / 2 + 4);
+        ctx.fillText(truncate(ctx, c.abbreviation ?? c.name ?? '', padL - 16), padL - 8, y + barH / 2 + 4);
 
         // Track
         ctx.fillStyle = rgb(CC.bd, 0.15);

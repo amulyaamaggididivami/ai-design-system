@@ -44,7 +44,7 @@ function ChipRow({ chips = [] }: { chips: KeyHighlightChip[] }) {
           key={i}
           style={{
             width: 260, height: 120, display: 'flex', alignItems: 'baseline', gap: 8,
-            padding: '8px 12px',
+            padding: '8px 0px',
             background: C.bg,
             border: `1px solid ${C.border}`,
             borderRadius: 5,
@@ -75,7 +75,7 @@ function Stats({ items = [] }: { items: Array<{ value: string; label: string; co
           style={{
             display: 'flex', flexDirection: 'column' as const,
             justifyContent: 'center', alignItems: 'flex-start',
-            width: 260, height: 120, padding: 24, gap: 8,
+            width: 260, height: 120, padding: '24px 0', gap: 8,
             flexShrink: 0,
             border: `1px solid ${C.border}`,
             background: C.bg,
@@ -105,7 +105,7 @@ function Ranked({ items = [] }: { items: Array<{ name: string; value: string; co
           key={i}
           style={{
             display: 'flex', alignItems: 'center', gap: 12,
-            padding: '9px 14px',
+            padding: '9px 0px',
             background: C.bg,
             border: `1px solid ${C.border}`,
           }}
@@ -143,7 +143,7 @@ function Chips({ items = [] }: { items: KeyHighlightChip[] }) {
           style={{
             display: 'flex', flexDirection: 'column' as const,
             justifyContent: 'center', alignItems: 'flex-start',
-            width: 260, height: 120, padding: 24, gap: 8,
+            width: 260, height: 120, padding: '24px 0', gap: 8,
             flexShrink: 0,
             background: C.bg,
             // border: `1px solid ${(item.color ? item.color + '30' : C.border)}`,
@@ -182,7 +182,7 @@ function Badges({ items = [] }: { items: KeyHighlightBadge[] }) {
             key={i}
             style={{
               display: 'flex', alignItems: 'flex-start', gap: 10,
-              padding: '10px 14px',
+              padding: '10px 0px',
               background: C.bg,
               border: `1px solid ${C.border}`,
             }}
@@ -432,7 +432,7 @@ function ScorecardRows({ items = [] }: { items: ScorecardRow[] }) {
           key={i}
           style={{
             display: 'flex', alignItems: 'center', gap: 10,
-            padding: '8px 12px',
+            padding: '8px 0px',
             background: C.bg,
             border: `1px solid ${C.border}`,
           }}
@@ -557,7 +557,7 @@ function ComparisonRows({ columns = [], rows = [] }: { columns: string[]; rows: 
       <div
         style={{
           display: 'flex', alignItems: 'center', gap: 10,
-          padding: '0 12px 6px',
+          padding: '0 0px 6px',
           borderBottom: `1px solid ${C.border}`,
         }}
       >
@@ -580,7 +580,7 @@ function ComparisonRows({ columns = [], rows = [] }: { columns: string[]; rows: 
           key={i}
           style={{
             display: 'flex', alignItems: 'center', gap: 10,
-            padding: '8px 12px',
+            padding: '8px 0px',
             background: C.bg,
             border: `1px solid ${C.border}`,
           }}

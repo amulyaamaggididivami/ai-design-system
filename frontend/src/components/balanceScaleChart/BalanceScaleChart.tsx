@@ -106,8 +106,8 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
         ctx.fillText(left.label, leftEnd.x, leftPanY + leftPanH + 18);
         ctx.font = AXIS_LABEL.font;
         ctx.fillStyle = AXIS_LABEL.color;
-        ctx.fillText('Accepted', leftEnd.x, leftPanY + leftPanH + 32);
-        ctx.fillText(`${left.count} quotations`, leftEnd.x, leftPanY + leftPanH + 44);
+        ctx.fillText('Accepted', leftEnd.x, leftPanY + leftPanH + 38);
+        ctx.fillText(`${left.count} quotations`, leftEnd.x, leftPanY + leftPanH + 58);
         ctx.globalAlpha = 1;
       }
 
@@ -144,8 +144,8 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
         ctx.fillText(right.label, rightEnd.x, rightPanY + rightPanH + 18);
         ctx.font = AXIS_LABEL.font;
         ctx.fillStyle = AXIS_LABEL.color;
-        ctx.fillText('Submitted', rightEnd.x, rightPanY + rightPanH + 32);
-        ctx.fillText(`${right.count} quotations`, rightEnd.x, rightPanY + rightPanH + 44);
+        ctx.fillText('Submitted', rightEnd.x, rightPanY + rightPanH + 38);
+        ctx.fillText(`${right.count} quotations`, rightEnd.x, rightPanY + rightPanH + 58);
         ctx.globalAlpha = 1;
       }
 
