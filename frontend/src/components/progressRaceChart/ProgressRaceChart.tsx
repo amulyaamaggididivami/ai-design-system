@@ -1,7 +1,8 @@
-import { useRef, useEffect, useState, useMemo } from 'react';
+import { useRef, useEffect, useState, useMemo, useCallback } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
+import type { TooltipContent } from '../../canvas/useCanvasInteraction';
 import { easeOutCubic } from '../../canvas/easing';
 import { CC, AXIS_LABEL, CHART_VALUE, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
@@ -18,12 +19,26 @@ const MAX_ITEMS  = 8;
 
 const RACE_COLORS = [CC.green, CC.blue, CC.amber, CC.red];
 
+function fmtValue(v: number): string {
+  const abs  = Math.abs(v);
+  const sign = v < 0 ? '-' : '';
+  if (abs >= 1_000_000) return `${sign}£${(abs / 1_000_000).toFixed(1)}M`;
+  if (abs >= 1_000)     return `${sign}£${(abs / 1_000).toFixed(1)}K`;
+  return `${sign}£${abs.toFixed(0)}`;
+}
 
-export function ProgressRaceChart({ items: rawItems = [], 'data-testid': testId }: ProgressRaceChartProps) {
+export function ProgressRaceChart({ items: rawItems = [], 'data-testid': testId, onItemClick, selectedIds }: ProgressRaceChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef  = useRef(0);
   const hoverMap  = useRef<Map<string, number>>(new Map());
+  const selectedIdsRef = useRef<string[] | undefined>(selectedIds);
+  selectedIdsRef.current = selectedIds;
   const [showAll, setShowAll] = useState(false);
+
+  const handleClick = useCallback((id: string, data: TooltipContent | string) => {
+    const label = typeof data === 'object' ? (data.label ?? id) : id;
+    onItemClick?.(id, label);
+  }, [onItemClick]);
 
   const items = useMemo(
     () => (rawItems as unknown[]).filter((c): c is ContractorRow => c != null && typeof c === 'object'),
@@ -40,7 +55,7 @@ export function ProgressRaceChart({ items: rawItems = [], 'data-testid': testId 
   const n       = visible.length;
   const H       = PAD_T + PAD_B + n * TRACK_H + Math.max(0, n - 1) * TRACK_GAP;
 
-  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
+  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H, onClick: onItemClick ? handleClick : undefined });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -82,15 +97,17 @@ export function ProgressRaceChart({ items: rawItems = [], 'data-testid': testId 
         const color  = RACE_COLORS[i % RACE_COLORS.length];
         const hp     = hoverMap.current.get(contractor.id) ?? 0;
         const trackY = PAD_T + i * (TRACK_H + TRACK_GAP);
+        const selIds = selectedIdsRef.current;
+        const dimFactor = selIds && selIds.length > 0 && !selIds.includes(contractor.id) ? 0.18 : 1.0;
 
         // Lane fill
-        ctx.fillStyle = rgb(color, 0.04 + hp * 0.04);
+        ctx.fillStyle = rgb(color, (0.04 + hp * 0.04) * dimFactor);
         ctx.beginPath();
         ctx.roundRect(padL, trackY, trackW, TRACK_H, 3);
         ctx.fill();
 
         // Dashed center line
-        ctx.strokeStyle = rgb(color, 0.08);
+        ctx.strokeStyle = rgb(color, 0.08 * dimFactor);
         ctx.lineWidth   = 1;
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
@@ -107,8 +124,8 @@ export function ProgressRaceChart({ items: rawItems = [], 'data-testid': testId 
         // Gradient trail
         if (runnerX > padL + 4) {
           const trailGrad = ctx.createLinearGradient(padL, 0, runnerX, 0);
-          trailGrad.addColorStop(0, rgb(color, 0.02));
-          trailGrad.addColorStop(1, rgb(color, 0.25 + hp * 0.15));
+          trailGrad.addColorStop(0, rgb(color, 0.02 * dimFactor));
+          trailGrad.addColorStop(1, rgb(color, (0.25 + hp * 0.15) * dimFactor));
           ctx.fillStyle = trailGrad;
           ctx.beginPath();
           ctx.roundRect(padL, trackY + 2, runnerX - padL, TRACK_H - 4, 2);
@@ -116,10 +133,12 @@ export function ProgressRaceChart({ items: rawItems = [], 'data-testid': testId 
         }
 
         // Runner dot glow
-        drawGlow(ctx, runnerX, trackY + TRACK_H / 2, 18 + hp * 8, color, 0.3 + hp * 0.2);
+        if (dimFactor > 0.5) {
+          drawGlow(ctx, runnerX, trackY + TRACK_H / 2, 18 + hp * 8, color, 0.3 + hp * 0.2);
+        }
         ctx.beginPath();
         ctx.arc(runnerX, trackY + TRACK_H / 2, 5 + hp * 2, 0, Math.PI * 2);
-        ctx.fillStyle = rgb(color, 0.9);
+        ctx.fillStyle = rgb(color, 0.9 * dimFactor);
         ctx.fill();
 
         // Register hit on runner dot + percentage label text
@@ -148,7 +167,7 @@ export function ProgressRaceChart({ items: rawItems = [], 'data-testid': testId 
 
         // Left label: contractor abbreviation
         ctx.font      = `${hp > 0 ? 'bold ' : ''}` + AXIS_LABEL.font;
-        ctx.fillStyle = hp > 0 ? color : AXIS_LABEL.color;
+        ctx.fillStyle = hp > 0 ? rgb(color, dimFactor) : rgb(AXIS_LABEL.color, dimFactor);
         ctx.textAlign = 'right';
         ctx.fillText(contractor.abbreviation ?? contractor.name.slice(0, 6), padL - 8, trackY + TRACK_H / 2);
       });

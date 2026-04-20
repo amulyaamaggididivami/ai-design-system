@@ -31,6 +31,13 @@ export function useCanvasLoop(
   const frameRef = useRef(0);
   const { easing = easeOutCubic, durationFrames = 48 } = opts;
 
+  // Always keep a ref to the latest drawFn — the effect reads from the ref so
+  // it never needs drawFn in its dependency array.  This mirrors the onClickRef
+  // pattern in useCanvasInteraction: the loop is long-lived and must never be
+  // torn down just because the caller's closure changed identity.
+  const drawFnRef = useRef(drawFn);
+  drawFnRef.current = drawFn;
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || !width || !height) return;
@@ -53,7 +60,7 @@ export function useCanvasLoop(
       const rawProgress = animate ? Math.min(T / durationFrames, 1) : 1;
       const progress = easing(rawProgress);
 
-      drawFn(ctx, progress, T);
+      drawFnRef.current(ctx, progress, T);
 
       if (rawProgress < 1) {
         raf = requestAnimationFrame(draw);
@@ -61,7 +68,7 @@ export function useCanvasLoop(
         const drawStatic = () => {
           frameRef.current++;
           ctx.clearRect(0, 0, width, height);
-          drawFn(ctx, 1, frameRef.current);
+          drawFnRef.current(ctx, 1, frameRef.current);
           raf = requestAnimationFrame(drawStatic);
         };
         raf = requestAnimationFrame(drawStatic);
@@ -70,5 +77,8 @@ export function useCanvasLoop(
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [width, height, animate]);
+    // drawFn intentionally omitted — it is read via drawFnRef so the loop
+    // never restarts just because the caller's closure changed identity.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canvasRef, width, height, animate]);
 }

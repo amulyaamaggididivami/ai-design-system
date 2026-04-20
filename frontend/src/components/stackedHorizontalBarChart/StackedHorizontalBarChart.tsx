@@ -1,7 +1,8 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useCallback } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
+import type { TooltipContent } from '../../canvas/useCanvasInteraction';
 import { easeOutQuart, stagger, tickHoverProgress } from '../../canvas/easing';
 import { CC, AXIS_LABEL, CHART_VALUE, LEGEND_LABEL, rgb, drawGlow } from '../../canvas/canvasUtils';
 import { useCanvasLoop } from '../../canvas/useCanvasLoop';
@@ -19,7 +20,7 @@ const NAME_W   = 88;
 const BAR_H    = 18;
 
 
-export function StackedHorizontalBarChart({ data, 'data-testid': testId }: StackedHorizontalBarChartProps) {
+export function StackedHorizontalBarChart({ data, onItemClick, 'data-testid': testId }: StackedHorizontalBarChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap  = useRef<Map<string, number>>(new Map());
   const [showAll, setShowAll] = useState(false);
@@ -36,7 +37,11 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
 
   const isEmpty = validItems.length === 0;
 
-  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: dynamicH });
+  const handleClick = useCallback((id: string, data: TooltipContent | string) => {
+    onItemClick?.(id, (data as TooltipContent).label ?? id);
+  }, [onItemClick]);
+
+  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: dynamicH, onClick: onItemClick ? handleClick : undefined });
 
   useCanvasLoop(
     canvasRef,

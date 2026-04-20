@@ -1,24 +1,12 @@
-import { useRef, useEffect, useMemo } from "react";
+import { useRef, useEffect, useMemo } from 'react';
 
-import { CanvasTooltip } from "../../canvas/CanvasTooltip";
-import {
-  useCanvasInteraction,
-  registerHitRect,
-} from "../../canvas/useCanvasInteraction";
-import { dampedPulse } from "../../canvas/easing";
-import {
-  CC,
-  AXIS_LABEL,
-  CHART_VALUE,
-  PALETTE,
-  rgb,
-  drawGlow,
-  drawScanline,
-  setupCanvas,
-} from "../../canvas/canvasUtils";
-import { ChartEmptyState } from "../common/ChartEmptyState";
-import type { EWOpenContractorRow } from "../../types";
-import type { RankedCardLeaderboardProps } from "./types";
+import { CanvasTooltip } from '../../canvas/CanvasTooltip';
+import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
+import { dampedPulse } from '../../canvas/easing';
+import { CC, AXIS_LABEL, PALETTE, rgb, drawGlow, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
+import { ChartEmptyState } from '../common/ChartEmptyState';
+import type { EWOpenContractorRow } from '../../types';
+import type { RankedCardLeaderboardProps } from './types';
 
 const W = 780;
 const H = 240;
@@ -32,18 +20,12 @@ const RISK_LABELS = [
   "Low exposure",
 ];
 
-export function RankedCardLeaderboard({
-  items: rawItems = [],
-  "data-testid": testId,
-}: RankedCardLeaderboardProps) {
+export function RankedCardLeaderboard({ items: rawItems = [], 'data-testid': testId }: RankedCardLeaderboardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const frameRef = useRef(0);
-  const hoverMap = useRef<Map<string, number>>(new Map());
+  const frameRef  = useRef(0);
+  const hoverMap  = useRef<Map<string, number>>(new Map());
 
-  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, {
-    width: W,
-    height: H,
-  });
+  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
   const items = useMemo(
     () =>
       (rawItems as unknown[]).filter(
@@ -93,48 +75,41 @@ export function RankedCardLeaderboard({
       }
 
       sorted.forEach((contractor, i) => {
-        const isTop = i === 0;
-        const color =
-          i === 0 ? CC.red : i === 1 ? CC.amber : PALETTE[i % PALETTE.length];
-        const baseX = CARD_PAD + i * (cardW + CARD_GAP);
-        const hp = hoverMap.current.get(contractor.id) ?? 0;
+        const isTop  = i === 0;
+        const color  = i === 0 ? CC.red : i === 1 ? CC.amber : PALETTE[i % PALETTE.length];
+        const baseX     = CARD_PAD + i * (cardW + CARD_GAP);
+        const hp        = hoverMap.current.get(contractor.id) ?? 0;
+        const dimFactor = 1.0; // no selection state in this version
 
         // Symmetric hover expansion — expand by up to 8px (4px each side)
         const expand = hp * 8;
-        const x = baseX - expand / 2;
-        const w = cardW + expand;
+        const x      = baseX - expand / 2;
+        const w      = cardW + expand;
 
         // Ambient pulsing glow intensity for top card (NOT width — width is hover-driven only)
-        const pulse = isTop ? dampedPulse(T, 0.04, 0.0003) * 0.06 + 0.06 : 0;
+        const pulse = isTop && dimFactor > 0.5 ? dampedPulse(T, 0.04, 0.0003) * 0.06 + 0.06 : 0;
 
         // Card background
-        ctx.fillStyle = rgb(color, 0.08 + hp * 0.07);
+        ctx.fillStyle = rgb(color, (0.08 + hp * 0.07) * dimFactor);
         ctx.beginPath();
         ctx.roundRect(x, cardY, w, cardH, 6);
         ctx.fill();
 
         // Card border
         ctx.strokeStyle = rgb(color, 0.2 + hp * 0.4 + pulse);
-        ctx.lineWidth = isTop ? 1.5 : 1;
+        ctx.lineWidth   = isTop ? 1.5 : 1;
         ctx.stroke();
 
         // Glow — all cards on hover, top card has ambient glow
         if (hp > 0.01 || isTop) {
-          drawGlow(
-            ctx,
-            x + w / 2,
-            cardY + cardH / 2,
-            w * 0.55,
-            color,
-            pulse + hp * 0.14,
-          );
+          drawGlow(ctx, x + w / 2, cardY + cardH / 2, w * 0.55, color, pulse + hp * 0.14);
         }
 
         // Rank badge top-left
-        ctx.font = CHART_VALUE.font;
-        ctx.textAlign = "left";
-        ctx.textBaseline = "top";
-        ctx.fillStyle = rgb(color, 0.5 + hp * 0.35);
+        ctx.font         = `bold ` + AXIS_LABEL.font;
+        ctx.textAlign    = 'left';
+        ctx.textBaseline = 'top';
+        ctx.fillStyle    = rgb(color, 0.5 + hp * 0.35);
         ctx.fillText(`#${i + 1}`, x + 7, cardY + 6);
 
         // Circular avatar — cap radius so circle never overflows the card
@@ -142,14 +117,7 @@ export function RankedCardLeaderboard({
         const photoX = x + w / 2;
         const photoY = cardY + cardH * 0.38;
 
-        const photoGrad = ctx.createRadialGradient(
-          photoX,
-          photoY - photoR * 0.2,
-          0,
-          photoX,
-          photoY,
-          photoR,
-        );
+        const photoGrad = ctx.createRadialGradient(photoX, photoY - photoR * 0.2, 0, photoX, photoY, photoR);
         photoGrad.addColorStop(0, rgb(color, 0.5 + hp * 0.2));
         photoGrad.addColorStop(1, rgb(color, 0.2 + hp * 0.1));
         ctx.beginPath();
@@ -157,19 +125,15 @@ export function RankedCardLeaderboard({
         ctx.fillStyle = photoGrad;
         ctx.fill();
         ctx.strokeStyle = rgb(color, 0.4 + hp * 0.3);
-        ctx.lineWidth = 1;
+        ctx.lineWidth   = 1;
         ctx.stroke();
 
         // ShortName inside circle
-        ctx.font = CHART_VALUE.font;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = rgb(CC.t1, 0.9);
-        ctx.fillText(
-          contractor.abbreviation ?? contractor.name.slice(0, 6),
-          photoX,
-          photoY,
-        );
+        ctx.font         = `bold ` + AXIS_LABEL.font;
+        ctx.textAlign    = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle    = rgb(CC.t1, 0.9);
+        ctx.fillText(contractor.abbreviation ?? contractor.name.slice(0, 6), photoX, photoY);
 
         // Open count — large
         const displayVal = contractor.label ?? String(contractor.count ?? 0);

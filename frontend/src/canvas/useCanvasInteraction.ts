@@ -46,6 +46,11 @@ interface UseCanvasInteractionReturn {
  * Canvas interaction hook — mouse tracking, hit-testing, tooltip, click.
  * Uses refs (not state) for mouse position to avoid 60 re-renders/sec.
  * Ported from enterprise-brain/src/hooks/useCanvasInteraction.js
+ *
+ * onClick is stored in a ref so the effect never needs to re-run when the
+ * callback changes identity (e.g. because a parent bus/context re-renders).
+ * This prevents the event listener stack from being torn down and rebuilt on
+ * every click, which was causing the "second click doesn't register" bug.
  */
 export function useCanvasInteraction(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
@@ -55,6 +60,11 @@ export function useCanvasInteraction(
   const hoveredRef = useRef<string | null>(null);
   const hitZonesRef = useRef<HitZone[]>([]);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Always keep a ref to the latest onClick — the effect reads from the ref
+  // so it never needs onClick in its dependency array.
+  const onClickRef = useRef(onClick);
+  onClickRef.current = onClick;
 
   const [tooltip, setTooltip] = useState<TooltipState>({
     visible: false,
@@ -124,10 +134,13 @@ export function useCanvasInteraction(
       }
     };
 
+    // Reads onClickRef.current at call time — always the latest callback,
+    // no matter how many times the parent has re-rendered since mount.
     const handleClick = () => {
-      if (hoveredRef.current && onClick) {
+      const cb = onClickRef.current;
+      if (hoveredRef.current && cb) {
         const zone = hitZonesRef.current.find(z => z.id === hoveredRef.current);
-        if (zone) onClick(zone.id, zone.data);
+        if (zone) cb(zone.id, zone.data);
       }
     };
 
@@ -141,7 +154,10 @@ export function useCanvasInteraction(
       canvas.removeEventListener('click', handleClick);
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [canvasRef, width, height, enabled, onClick, showTooltip, hideTooltip]);
+    // onClick intentionally omitted — it is read via onClickRef so the effect
+    // never needs to rebuild just because the callback identity changed.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canvasRef, width, height, enabled]);
 
   return { mouseRef, hoveredRef, tooltip, showTooltip, hideTooltip, hitZonesRef };
 }

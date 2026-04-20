@@ -59,6 +59,8 @@ export type SankeyChartColors = {
 export type BarChartProps = {
   rows?: VizRow[];
   colors?: BarChartColors;
+  onItemClick?: (id: string, label: string) => void;
+  selectedIds?: string[];
 } & VisualizationFrameProps;
 
 export type LineChartProps = {
@@ -75,6 +77,8 @@ export type PieChartProps = {
   rows?: VizRow[];
   variant: 'pie' | 'donut';
   colors?: PieChartColors;
+  onItemClick?: (id: string, label: string) => void;
+  selectedIds?: string[];
 } & VisualizationFrameProps;
 
 export type DonutChartProps = {
@@ -152,12 +156,15 @@ export type BaseVisualizationConfig =
   | { type: 'segmented-split-bar-chart'; items: VariationRow[] }
   | { type: 'balance-scale-chart'; left: QuotationSide; right: QuotationSide }
   | { type: 'area-line-chart'; points: QuotationTrendPoint[] }
-  | { type: 'trend-view'; points: QuotationTrendPoint[] }
+  | { type: 'trend-view'; points: QuotationTrendPoint[]; seriesByEntity?: Record<string, QuotationTrendPoint[]> }
   | { type: 'weekly-flow'; items: ContractorRow[] };
 
 export type VisualizationRendererProps = {
   config: BaseVisualizationConfig;
   className?: string;
+  onItemClick?: (id: string, label: string) => void;
+  selectedIds?: string[];
+  selectedId?: string;
 };
 
 // ─── Contract Management Dashboard Types ─────────────────────────────────────

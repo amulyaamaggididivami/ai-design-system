@@ -7,4 +7,6 @@ export interface HubAndSpokeRadialChartProps {
   segments: StatusSegment[];
   title?: string;
   'data-testid'?: string;
+  onItemClick?: (id: string, label: string) => void;
+  selectedIds?: string[];
 }

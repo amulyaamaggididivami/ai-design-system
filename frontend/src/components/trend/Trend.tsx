@@ -17,14 +17,18 @@ const MIN_STEP = 64;
 const LABEL_FONT = AXIS_LABEL.font;
 const LABEL_PAD = 12;
 
-export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendProps) {
+export function Trend({ points: rawPoints = [], selectedId, seriesByEntity, 'data-testid': testId }: TrendProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const yAxisRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
 
+  // Switch to the selected entity's series when in filter/drill-down mode
+  const selectedEntitySeries = selectedId ? seriesByEntity?.[selectedId] : undefined;
+  const activeRaw = (selectedId && selectedEntitySeries) ? selectedEntitySeries : rawPoints;
+
   const points = useMemo(
-    () => (rawPoints as unknown[]).filter((p): p is QuotationTrendPoint => p != null && typeof p === 'object'),
-    [rawPoints],
+    () => (activeRaw as unknown[]).filter((p): p is QuotationTrendPoint => p != null && typeof p === 'object'),
+    [activeRaw],
   );
 
   const minStep = useMemo(() => {
@@ -174,13 +178,30 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
           color: CC.blue,
         });
 
+        const isSelected = selectedId != null && pt.point.week === selectedId;
+
+        if (isSelected) {
+          // Outer glow ring
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, 10, 0, Math.PI * 2);
+          ctx.strokeStyle = rgb(CC.blue, 0.3);
+          ctx.lineWidth = 3;
+          ctx.stroke();
+          // Inner selection ring
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, 7, 0, Math.PI * 2);
+          ctx.strokeStyle = rgb(CC.blue, 0.85);
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+
         ctx.beginPath();
-        ctx.arc(pt.x, pt.y, 3.5, 0, Math.PI * 2);
-        ctx.fillStyle = rgb(CC.blue, 0.8);
+        ctx.arc(pt.x, pt.y, isSelected ? 5 : 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = rgb(CC.blue, isSelected ? 1 : 0.8);
         ctx.fill();
 
         ctx.font      = LABEL_FONT;
-        ctx.fillStyle = AXIS_LABEL.color;
+        ctx.fillStyle = isSelected ? rgb(CC.blue, 1) : AXIS_LABEL.color;
         ctx.textAlign = 'center';
         ctx.fillText(pt.point.week, pt.x, H - padB + 14);
       });
@@ -192,10 +213,21 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [points, chartCanvasW, minStep, hitZonesRef]);
+  }, [points, chartCanvasW, minStep, hitZonesRef, selectedId]);
 
   const isEmpty = points.length < 2;
-  if (isEmpty) return <ChartEmptyState width={MIN_W} height={H} data-testid={testId} />;
+  if (isEmpty) {
+    // Determine the most helpful message based on context
+    let emptyMessage = 'No trend data available';
+    if (selectedId) {
+      // A bar was clicked but the series has < 2 points — data agent didn't run the secondary query
+      emptyMessage = 'Monthly breakdown not available — ask again mentioning "show monthly trend" to fetch per-period data';
+    } else if (seriesByEntity != null) {
+      // Filter mode is ready but nothing selected yet
+      emptyMessage = 'Click a bar above to see this contractor\'s monthly trend';
+    }
+    return <ChartEmptyState width={MIN_W} height={H} message={emptyMessage} data-testid={testId} />;
+  }
 
   return (
     <div data-testid={testId} style={{ position: 'relative', width: '100%', display: 'flex' }}>
