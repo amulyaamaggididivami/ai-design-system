@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 
 import { setupCanvas } from '../../canvas/canvasUtils';
-import { CC, AXIS_LABEL, LEGEND_LABEL, rgb, drawGlow } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, LEGEND_LABEL, DISPLAY_MD, rgb, drawGlow } from '../../canvas/canvasUtils';
 import { easeOutBack, easeOutCubic } from '../../canvas/easing';
 import type { SemiCircularGaugeChartProps } from './types';
 
@@ -146,7 +146,7 @@ export function SemiCircularGaugeChart({ value, confirmed, total, 'data-testid':
       if (progress > 0.5) {
         const fade = Math.min(1, (progress - 0.5) / 0.5);
         ctx.globalAlpha = fade;
-        ctx.font = `500 24px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.font = DISPLAY_MD.font;
         ctx.fillStyle = gaugeColor;
         ctx.textAlign = 'center';
         ctx.fillText(`${Math.round(safeValue * needleP)}%`, cx, cy - 38);

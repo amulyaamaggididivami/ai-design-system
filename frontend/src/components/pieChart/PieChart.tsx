@@ -7,7 +7,7 @@ import {
   registerHitCircle,
 } from '../../canvas/useCanvasInteraction';
 import { dampedPulse, tickHoverProgress } from '../../canvas/easing';
-import { CC, PALETTE, lerpC, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, PALETTE, MONO_SM, MONO_SM_BOLD, lerpC, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
 import type { PieChartProps } from '../../types';
 
 const SIZE = 192;
@@ -132,13 +132,13 @@ export function PieChart({ rows = [], variant, className, colors }: PieChartProp
         ctx.fill();
 
         // Vendor name
-        ctx.font = `9px 'JetBrains Mono', monospace`;
+        ctx.font = MONO_SM.font;
         ctx.fillStyle = rgb(CC.t2, 0.7 + hp * 0.2);
         ctx.textAlign = 'left';
         ctx.fillText(row.vendor, dotR * 2 + 10, y + 3.5);
 
         // Value
-        ctx.font = `bold 9px 'JetBrains Mono', monospace`;
+        ctx.font = MONO_SM_BOLD.font;
         const blend = lerpC(CC.t3, color, hp);
         ctx.fillStyle = blend;
         ctx.textAlign = 'right';

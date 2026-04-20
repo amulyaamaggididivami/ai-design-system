@@ -1,3 +1,5 @@
+import { CANVAS_SANS, statusColors } from '../../canvas/canvasUtils';
+
 export interface ToggleButtonProps {
   expanded: boolean;
   onToggle: () => void;
@@ -28,9 +30,9 @@ export function ToggleButton({
         boxSizing: 'border-box',
         border: 'none',
         borderRadius: 6,
-        color: '#71B941',
+        color: statusColors.toggleActive,
         fontSize: 14,
-        fontFamily: "'Satoshi Variable', 'DM Sans', sans-serif",
+        fontFamily: CANVAS_SANS,
         fontStyle: 'normal',
         fontWeight: 400,
         lineHeight: '19.5px',

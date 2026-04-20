@@ -1,3 +1,5 @@
+import { CANVAS_SANS } from '../../canvas/canvasUtils';
+
 interface ChartEmptyStateProps {
   width: number;
   height: number;
@@ -24,7 +26,7 @@ export function ChartEmptyState({
         background: 'rgba(255,255,255,0.03)',
         color: 'rgba(255,255,255,0.35)',
         fontSize: 14,
-        fontFamily: "'Satoshi Variable', 'DM Sans', sans-serif",
+        fontFamily: CANVAS_SANS,
       }}
     >
       {message}
