@@ -153,7 +153,20 @@ export type BaseVisualizationConfig =
   | { type: 'balance-scale-chart'; left: QuotationSide; right: QuotationSide }
   | { type: 'area-line-chart'; points: QuotationTrendPoint[] }
   | { type: 'trend-view'; points: QuotationTrendPoint[] }
-  | { type: 'weekly-flow'; items: ContractorRow[] };
+  | { type: 'weekly-flow'; items: ContractorRow[] }
+  | { type: 'nce-quotation-story'; finance: NCEQuotationFinance; procurement: NCEQuotationProcurement; defaultPerspective?: 'finance' | 'procurement' };
+
+export interface NCEQuotationFinance {
+  beat1: import('../components/financeBeat1HiddenLeakage/types').FinanceBeat1HiddenLeakageProps;
+  beat2: import('../components/financeBeat2BufferFlow/types').FinanceBeat2BufferFlowProps;
+  beat3: import('../components/financeBeat3Verdict/types').FinanceBeat3VerdictProps;
+}
+
+export interface NCEQuotationProcurement {
+  beat1: import('../components/procurementBeat1FilterSix/types').ProcurementBeat1FilterSixProps;
+  beat2: import('../components/procurementBeat2Materials/types').ProcurementBeat2MaterialsProps;
+  beat3: import('../components/procurementBeat3DayRunway/types').ProcurementBeat3DayRunwayProps;
+}
 
 export type VisualizationRendererProps = {
   config: BaseVisualizationConfig;

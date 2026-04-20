@@ -19,6 +19,7 @@ import { HubAndSpokeRadialChart } from '../hubAndSpokeRadialChart';
 import { TrendChart } from '../trendChart/TrendChart';
 import { SegmentedSplitBarChart } from '../segmentedSplitBarChart';
 import { WeeklyFlow } from '../weeklyFlow';
+import { NCEQuotationStory } from '../nceQuotationStory';
 import type { VisualizationRendererProps } from '../../types';
 
 export function VisualizationRenderer({ config, className }: VisualizationRendererProps) {
@@ -46,6 +47,15 @@ export function VisualizationRenderer({ config, className }: VisualizationRender
   if (config.type === 'area-line-chart') return <AreaLineChart points={config.points} />;
   if (config.type === 'trend-view') return <Trend points={config.points} />;
   if (config.type === 'weekly-flow') return <WeeklyFlow items={config.items} />;
+  if (config.type === 'nce-quotation-story') {
+    return (
+      <NCEQuotationStory
+        finance={config.finance}
+        procurement={config.procurement}
+        defaultPerspective={config.defaultPerspective}
+      />
+    );
+  }
 
   return <div className="viz-empty">Visualization unavailable</div>;
 }
