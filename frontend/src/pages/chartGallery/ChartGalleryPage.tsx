@@ -151,22 +151,22 @@ const severityBands = [
  * NCEContractorRow: { id, name, abbreviation?, count? }
  * total = sum of all counts (displayed at root).
  */
-const nceTotal = 25;
+const nceTotal = 25777777;
 const nceByContractorData = [
-  { id: 'c1', name: 'Tata Projects',     abbreviation: 'Tata',   count: 8 },
-  { id: 'c3', name: 'Afcons Infra',      abbreviation: 'Afcons', count: 6 },
-  { id: 'c2', name: 'L&T Construction',  abbreviation: 'L&T',    count: 4 },
-  { id: 'c4', name: 'NCC Ltd',           abbreviation: 'NCC',    count: 4 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3 },
+  { id: 'c1', name: 'Tata Projects',     abbreviation: 'Tata',   count: 88888 },
+  { id: 'c3', name: 'Afcons Infra',      abbreviation: 'Afcons', count: 6999 },
+  { id: 'c2', name: 'L&T Construction',  abbreviation: 'L&T',    count: 49999 },
+  { id: 'c4', name: 'NCC Ltd',           abbreviation: 'NCC',    count: 49999 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 30000 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3000 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3000 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3000 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3000 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3000 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3000 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3000},
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3000 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3000 },
 
 
 ];
