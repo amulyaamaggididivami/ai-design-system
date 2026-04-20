@@ -15,8 +15,15 @@ const MIN_H    = 220;
 const MAX_ITEMS = 8;
 const COLORS   = [CC.blue, CC.amber, CC.purple, CC.green];
 const PAD      = { left: 8, right: 80, top: 16, bottom: 38 };
-const NAME_W   = 88;
+const NAME_W   = 150;
 const BAR_H    = 18;
+
+function truncate(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
+  if (ctx.measureText(text).width <= maxWidth) return text;
+  let t = text;
+  while (t.length > 0 && ctx.measureText(t + '…').width > maxWidth) t = t.slice(0, -1);
+  return t + '…';
+}
 
 function fmtValue(v: number): string {
   const abs  = Math.abs(v);
@@ -71,7 +78,7 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
         ctx.fillStyle    = hp > 0 ? color : AXIS_LABEL.color;
         ctx.textAlign    = 'right';
         ctx.textBaseline = 'middle';
-        ctx.fillText(con.abbreviation ?? con.name.slice(0, 6), x0 - 8, y + BAR_H / 2);
+        ctx.fillText(truncate(ctx, con.name, NAME_W - 16), x0 - 8, y + BAR_H / 2);
 
         // Background track
         ctx.fillStyle = rgb(CC.bd, 0.25);

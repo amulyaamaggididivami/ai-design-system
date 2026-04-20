@@ -16,6 +16,14 @@ const PAD_R = 28;
 const MIN_STEP = 64;
 const LABEL_FONT = AXIS_LABEL.font;
 const LABEL_PAD = 12;
+const PI2 = Math.PI * 2;
+
+// Animation shortens as datasets grow — keeps the entry snappy without blocking the thread
+const DURATION_BASE = 72;
+const MAX_SAMPLE = 20; // max points to measureText for minStep calculation
+// Hard cap on canvas pixel width — prevents GPU memory allocation stalls.
+// At DPR=2 a 5 000px canvas uses ~22 MB; beyond that allocation blocks the main thread.
+const MAX_CANVAS_W = 5000;
 
 export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -33,13 +41,17 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
     const tmpCtx = tmpCanvas.getContext('2d');
     if (!tmpCtx) return MIN_STEP;
     tmpCtx.font = LABEL_FONT;
-    const maxLabelW = Math.max(...points.map(p => tmpCtx.measureText(p.week).width));
+    // Sample at most MAX_SAMPLE evenly-spaced points — avoids O(n) measureText for large datasets
+    const stride = Math.max(1, Math.ceil(points.length / MAX_SAMPLE));
+    const maxLabelW = Math.max(...points.filter((_, i) => i % stride === 0).map(p => tmpCtx.measureText(p.week).width));
     return Math.max(MIN_STEP, maxLabelW + LABEL_PAD);
   }, [points]);
 
-  const padLC = Math.round(minStep / 2); // left offset so first point isn't flush with the edge
-  // chartCanvasW excludes the Y-axis panel — scroll starts right after the Y-axis
-  const chartCanvasW = Math.max(MIN_W - PAD_L, PAD_R + padLC + Math.max(0, points.length - 1) * minStep);
+  const padLC = Math.round(minStep / 2);
+  // Natural width gives every point its full minStep; cap at MAX_CANVAS_W to avoid
+  // multi-hundred-MB GPU allocations that block the main thread for large datasets.
+  const naturalW = PAD_R + padLC + Math.max(0, points.length - 1) * minStep;
+  const chartCanvasW = Math.max(MIN_W - PAD_L, Math.min(naturalW, MAX_CANVAS_W));
 
   const { tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: chartCanvasW, height: H });
 
@@ -49,17 +61,24 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
     const ctx = setupCanvas(canvas, chartCanvasW, H);
     const yCtx = yAxisRef.current ? setupCanvas(yAxisRef.current, PAD_L, H) : null;
     frameRef.current = 0;
-    const DURATION = 72;
+
+    // Scale animation duration down for large datasets so each frame stays cheap
+    const DURATION = points.length <= DURATION_BASE
+      ? DURATION_BASE
+      : Math.max(24, Math.round(DURATION_BASE * (DURATION_BASE / points.length)));
 
     const padR = PAD_R;
     const padT = 30;
     const padB = 54;
-    // Chart canvas starts at x=0 — Y-axis lives on its own fixed canvas to the left
     const chartW = chartCanvasW - padR;
     const chartH = H - padT - padB;
     const maxCount = Math.max(...points.map(p => p.count), 1);
     const n = points.length;
-    const stepX = n > 1 ? Math.max((chartW - padLC) / (n - 1), minStep) : chartW - padLC;
+    // When the canvas is capped, stepX may be smaller than minStep — that is intentional.
+    // Enforcing minStep would require a wider canvas and re-introduce the GPU stall.
+    const stepX = n > 1 ? (chartW - padLC) / (n - 1) : chartW - padLC;
+    // Show a label only every labelStride-th point so text never overlaps when compressed.
+    const labelStride = Math.max(1, Math.ceil(minStep / stepX));
 
     const pts = points.map((p, i) => ({
       x: padLC + i * stepX,
@@ -88,17 +107,34 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
       yCtx.restore();
     }
 
+    // Cache the area gradient once — creating it inside draw() was doing this every frame
+    const areaGrad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
+    areaGrad.addColorStop(0, rgb(CC.blue, 0.22));
+    areaGrad.addColorStop(1, rgb(CC.blue, 0.02));
+
+    let prevDrawN = 0;
     let raf: number;
+
+    const drawLabels = (upTo: number) => {
+      ctx.font = LABEL_FONT;
+      ctx.fillStyle = AXIS_LABEL.color;
+      ctx.textAlign = 'center';
+      for (let i = 0; i < upTo; i++) {
+        if (i % labelStride !== 0) continue;
+        ctx.fillText(pts[i].point.week, pts[i].x, H - padB + 14);
+      }
+    };
 
     const draw = () => {
       frameRef.current++;
       const rawP = Math.min(frameRef.current / DURATION, 1);
       const progress = easeOutCubic(rawP);
+      const isLastFrame = rawP >= 1;
 
       ctx.clearRect(0, 0, chartCanvasW, H);
       ctx.letterSpacing = AXIS_LABEL.letterSpacing;
 
-      // Grid lines — start at x=0 (Y-axis is on separate fixed canvas)
+      // Grid lines
       [0.25, 0.5, 0.75, 1.0].forEach(frac => {
         const y = padT + chartH - frac * chartH;
         ctx.strokeStyle = rgb(CC.bd, 0.18);
@@ -111,13 +147,12 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
         ctx.setLineDash([]);
       });
 
-      // X-axis label
+      // X-axis label + baseline
       ctx.font = AXIS_LABEL.font;
       ctx.fillStyle = AXIS_LABEL.color;
       ctx.textAlign = 'center';
       ctx.fillText('Period', padLC + (chartW - padLC) / 2, H - 6);
 
-      // X-axis baseline
       ctx.strokeStyle = rgb(CC.bd, 0.3);
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -128,7 +163,7 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
       const drawUpTo = progress * (n - 1);
       const drawN = Math.floor(drawUpTo) + 1;
 
-      // Area fill
+      // Area fill — reuses cached gradient
       if (drawN >= 2) {
         ctx.beginPath();
         ctx.moveTo(pts[0].x, padT + chartH);
@@ -142,9 +177,6 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
         }
         ctx.lineTo(pts[drawN - 1].x, padT + chartH);
         ctx.closePath();
-        const areaGrad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
-        areaGrad.addColorStop(0, rgb(CC.blue, 0.22));
-        areaGrad.addColorStop(1, rgb(CC.blue, 0.02));
         ctx.fillStyle = areaGrad;
         ctx.fill();
       }
@@ -162,30 +194,36 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Dots, labels, hit zones
-      hitZonesRef.current = [];
-      pts.forEach((pt, i) => {
-        if (i >= drawN) return;
+      // Dots — batched into one path+fill instead of N individual arc+fill calls
+      ctx.fillStyle = rgb(CC.blue, 0.8);
+      ctx.beginPath();
+      for (let i = 0; i < drawN; i++) {
+        ctx.moveTo(pts[i].x + 3.5, pts[i].y);
+        ctx.arc(pts[i].x, pts[i].y, 3.5, 0, PI2);
+      }
+      ctx.fill();
 
-        registerHitCircle(hitZonesRef.current, `pt-${i}`, pt.x, pt.y, 10, {
-          label: pt.point.week,
-          value: `${pt.point.count} submissions`,
-          sublabel: `£${pt.point.value}M value`,
-          color: CC.blue,
-        });
+      // Hit zones — only rebuild when new points become visible, not every frame
+      if (drawN > prevDrawN) {
+        hitZonesRef.current = [];
+        for (let i = 0; i < drawN; i++) {
+          registerHitCircle(hitZonesRef.current, `pt-${i}`, pts[i].x, pts[i].y, 10, {
+            label: pts[i].point.week,
+            value: `${pts[i].point.count} submissions`,
+            sublabel: `£${pts[i].point.value}M value`,
+            color: CC.blue,
+          });
+        }
+        prevDrawN = drawN;
+      }
 
-        ctx.beginPath();
-        ctx.arc(pt.x, pt.y, 3.5, 0, Math.PI * 2);
-        ctx.fillStyle = rgb(CC.blue, 0.8);
-        ctx.fill();
+      // Labels (fillText) — deferred to the last frame only to avoid per-frame text rendering
+      // on large datasets (500 fillText calls × 60fps is the primary source of lag)
+      if (isLastFrame) {
+        drawLabels(n);
+      }
 
-        ctx.font      = LABEL_FONT;
-        ctx.fillStyle = AXIS_LABEL.color;
-        ctx.textAlign = 'center';
-        ctx.fillText(pt.point.week, pt.x, H - padB + 14);
-      });
-
-      if (rawP < 1) {
+      if (!isLastFrame) {
         raf = requestAnimationFrame(draw);
       }
     };
