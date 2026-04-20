@@ -3,8 +3,9 @@ import { useRef, useEffect, useMemo } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
 import { easeOutCubic } from '../../canvas/easing';
-import { CC, AXIS_LABEL,rgb, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, rgb, setupCanvas } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
+import { formatNumber } from '../../utils/numberFormat';
 import type { QuotationTrendPoint } from '../../types';
 import type { TrendProps } from './types';
 import './trend.css';
@@ -12,7 +13,7 @@ import './trend.css';
 const MIN_W = 680;
 const H = 280;
 const PAD_L = 54;
-const PAD_R = 28;
+const PAD_R = 48; // Increased from 28 to provide adequate space for last point
 const MIN_STEP = 64;
 const LABEL_FONT = AXIS_LABEL.font;
 const LABEL_PAD = 12;
@@ -68,11 +69,17 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
       : Math.max(24, Math.round(DURATION_BASE * (DURATION_BASE / points.length)));
 
     const padR = PAD_R;
-    const padT = 30;
+    const padT = 42; // Increased from 30 to provide space for 16px font at top
     const padB = 54;
     const chartW = chartCanvasW - padR;
     const chartH = H - padT - padB;
-    const maxCount = Math.max(...points.map(p => p.count), 1);
+
+    // Calculate proper min/max range to handle negative values
+    const counts = points.map(p => p.count);
+    const minCount = Math.min(...counts);
+    const maxCount = Math.max(...counts);
+    const countRange = maxCount - minCount || 1; // Avoid division by zero
+
     const n = points.length;
     // When the canvas is capped, stepX may be smaller than minStep — that is intentional.
     // Enforcing minStep would require a wider canvas and re-introduce the GPU stall.
@@ -80,9 +87,13 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
     // Show a label only every labelStride-th point so text never overlaps when compressed.
     const labelStride = Math.max(1, Math.ceil(minStep / stepX));
 
+    // Calculate zero line position for proper baseline when there are negative values
+    const hasNegativeValues = minCount < 0;
+    const zeroY = hasNegativeValues ? padT + chartH - (-minCount / countRange) * chartH : padT + chartH;
+
     const pts = points.map((p, i) => ({
       x: padLC + i * stepX,
-      y: padT + chartH - (p.count / maxCount) * chartH,
+      y: padT + chartH - ((p.count - minCount) / countRange) * chartH,
       point: p,
     }));
 
@@ -90,13 +101,21 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
     if (yCtx) {
       yCtx.clearRect(0, 0, PAD_L, H);
       yCtx.letterSpacing = AXIS_LABEL.letterSpacing;
-      [0.25, 0.5, 0.75, 1.0].forEach(frac => {
+
+      // Generate Y-axis labels with proper value formatting
+      const labelValues = hasNegativeValues
+        ? [minCount, minCount + countRange * 0.25, minCount + countRange * 0.5, minCount + countRange * 0.75, maxCount]
+        : [0, maxCount * 0.25, maxCount * 0.5, maxCount * 0.75, maxCount];
+
+      labelValues.forEach((value, index) => {
+        const frac = index / (labelValues.length - 1);
         const y = padT + chartH - frac * chartH;
         yCtx.font = AXIS_LABEL.font;
         yCtx.fillStyle = AXIS_LABEL.color;
         yCtx.textAlign = 'right';
-        yCtx.fillText(String(Math.round(maxCount * frac)), PAD_L - 6, y + 3);
+        yCtx.fillText(formatNumber(value), PAD_L - 6, y + 3);
       });
+
       yCtx.save();
       yCtx.translate(12, padT + chartH / 2);
       yCtx.rotate(-Math.PI / 2);
@@ -134,8 +153,12 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
       ctx.clearRect(0, 0, chartCanvasW, H);
       ctx.letterSpacing = AXIS_LABEL.letterSpacing;
 
-      // Grid lines
-      [0.25, 0.5, 0.75, 1.0].forEach(frac => {
+      // Grid lines - update to match Y-axis labels
+      const gridFractions = hasNegativeValues
+        ? [0, 0.25, 0.5, 0.75, 1.0]
+        : [0.25, 0.5, 0.75, 1.0];
+
+      gridFractions.forEach(frac => {
         const y = padT + chartH - frac * chartH;
         ctx.strokeStyle = rgb(CC.bd, 0.18);
         ctx.lineWidth = 1;
@@ -153,20 +176,22 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
       ctx.textAlign = 'center';
       ctx.fillText('Period', padLC + (chartW - padLC) / 2, H - 6);
 
-      ctx.strokeStyle = rgb(CC.bd, 0.3);
-      ctx.lineWidth = 1;
+      // Draw baseline - use zero line if there are negative values, otherwise bottom
+      ctx.strokeStyle = rgb(CC.bd, hasNegativeValues ? 0.5 : 0.3);
+      ctx.lineWidth = hasNegativeValues ? 2 : 1;
       ctx.beginPath();
-      ctx.moveTo(padLC, padT + chartH);
-      ctx.lineTo(chartW, padT + chartH);
+      ctx.moveTo(padLC, hasNegativeValues ? zeroY : padT + chartH);
+      ctx.lineTo(chartW, hasNegativeValues ? zeroY : padT + chartH);
       ctx.stroke();
 
       const drawUpTo = progress * (n - 1);
       const drawN = Math.floor(drawUpTo) + 1;
 
-      // Area fill — reuses cached gradient
+      // Area fill — reuses cached gradient, fill to zero line instead of bottom when negative values exist
       if (drawN >= 2) {
+        const fillBaseline = hasNegativeValues ? zeroY : padT + chartH;
         ctx.beginPath();
-        ctx.moveTo(pts[0].x, padT + chartH);
+        ctx.moveTo(pts[0].x, fillBaseline);
         ctx.lineTo(pts[0].x, pts[0].y);
         for (let i = 1; i < drawN; i++) {
           const t = drawUpTo - Math.floor(drawUpTo);
@@ -175,7 +200,7 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
           const py = isLast ? pts[i - 1].y + (pts[i].y - pts[i - 1].y) * t : pts[i].y;
           ctx.lineTo(px, py);
         }
-        ctx.lineTo(pts[drawN - 1].x, padT + chartH);
+        ctx.lineTo(pts[drawN - 1].x, fillBaseline);
         ctx.closePath();
         ctx.fillStyle = areaGrad;
         ctx.fill();
