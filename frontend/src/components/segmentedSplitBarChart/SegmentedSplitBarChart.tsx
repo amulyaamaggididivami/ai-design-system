@@ -49,7 +49,7 @@ export function SegmentedSplitBarChart({ items: rawItems = [], 'data-testid': te
     const barH = BAR_H;
     const gap = GAP;
     const trackW = W - padL - padR;
-    const maxTotal = Math.max(...visible.map(c => (c.implemented ?? 0) + (c.unimplemented ?? 0)));
+    const maxTotal = Math.max(...visible.map(c => (c.implemented ?? 0) + (c.unimplemented ?? 0)), 1);
     const totalH = visible.length * (barH + gap) - gap;
     const startY = padT + (H - padT - padB - totalH) / 2;
 
@@ -94,7 +94,7 @@ export function SegmentedSplitBarChart({ items: rawItems = [], 'data-testid': te
         ctx.font = AXIS_LABEL.font;
         ctx.fillStyle = CC.t2;
         ctx.textAlign = 'right';
-        ctx.fillText(c.abbreviation ?? c.name.slice(0, 6), padL - 8, y + barH / 2 + 4);
+        ctx.fillText(c.abbreviation ?? c.name?.slice(0, 6) ?? '', padL - 8, y + barH / 2 + 4);
 
         // Track
         ctx.fillStyle = rgb(CC.bd, 0.15);

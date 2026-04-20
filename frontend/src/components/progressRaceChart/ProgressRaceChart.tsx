@@ -150,7 +150,7 @@ export function ProgressRaceChart({ items: rawItems = [], 'data-testid': testId 
         ctx.font      = `${hp > 0 ? 'bold ' : ''}` + AXIS_LABEL.font;
         ctx.fillStyle = hp > 0 ? color : AXIS_LABEL.color;
         ctx.textAlign = 'right';
-        ctx.fillText(contractor.abbreviation ?? contractor.name.slice(0, 6), padL - 8, trackY + TRACK_H / 2);
+        ctx.fillText(contractor.abbreviation ?? contractor.name?.slice(0, 6) ?? '', padL - 8, trackY + TRACK_H / 2);
       });
 
       // Finish line

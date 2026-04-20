@@ -36,8 +36,8 @@ export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, 'dat
     const cxCenter = W * 0.5;
     const cyCenter = H * 0.54;
     const nodeR = W * 0.22; // orbital radius
-    const total = segments.reduce((s, seg) => s + seg.count, 0);
-    const maxCount = Math.max(...segments.map(s => s.count), 1);
+    const total = segments.reduce((s, seg) => s + (seg.count ?? 0), 0);
+    const maxCount = Math.max(...segments.map(s => s.count ?? 0), 1);
 
     let raf: number;
 
@@ -146,7 +146,7 @@ export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, 'dat
           {
             label: seg.status,
             value: `${seg.count} Early Warnings`,
-            sublabel: `${Math.round((seg.count / total) * 100)}%`,
+            sublabel: `${Math.round(((seg.count ?? 0) / (total || 1)) * 100)}%`,
             color,
           },
         );

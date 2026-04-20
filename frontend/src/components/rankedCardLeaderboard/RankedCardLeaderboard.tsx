@@ -169,7 +169,7 @@ export function RankedCardLeaderboard({
         ctx.textBaseline = "middle";
         ctx.fillStyle = rgb(CC.t1, 0.9);
         ctx.fillText(
-          contractor.abbreviation ?? contractor.name.slice(0, 6),
+          contractor.abbreviation ?? contractor.name?.slice(0, 6) ?? '',
           photoX,
           photoY,
         );
@@ -201,7 +201,7 @@ export function RankedCardLeaderboard({
           cardH,
           {
             label: contractor.name,
-            value: `${displayVal} open · ${pct}% of total`,
+            value: `${displayVal ?? 0} open · ${pct}% of total`,
             sublabel: `Rank #${i + 1} · ${riskLabel}`,
             color,
           },

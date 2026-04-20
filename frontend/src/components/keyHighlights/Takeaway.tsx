@@ -9,7 +9,7 @@ const LABEL: React.CSSProperties = {
   fontFamily: SANS,
   fontSize:   18,
   fontWeight: 400,
-  lineHeight: '20px',
+  lineHeight: 1.65,
 };
 
 export function Takeaway({ text }: { text: string }) {
@@ -25,7 +25,7 @@ export function Takeaway({ text }: { text: string }) {
       <span
         style={{
           fontSize: 18, fontWeight: 500, color: CC.t1,
-          fontFamily: SANS, lineHeight: '20px',
+          fontFamily: SANS, lineHeight: 1.65,
           marginRight: 8,
         }}
       >

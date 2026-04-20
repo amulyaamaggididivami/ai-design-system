@@ -20,7 +20,7 @@ export function TrendChart({ points = [], className, colors }: TrendChartProps) 
 
   const parsed = useMemo(
     () =>
-      points.map(([label, rawValue]) => {
+      points.filter(Array.isArray).map(([label, rawValue]) => {
         const match = String(rawValue).match(/-?\d+(\.\d+)?/);
         return { label, value: match ? Number(match[0]) : 0 };
       }),

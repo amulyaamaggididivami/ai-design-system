@@ -43,7 +43,7 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
     frameRef.current = 0;
     const DURATION = 60;
 
-    const total = severities.reduce((s, s2) => s + s2.count, 0);
+    const total = severities.reduce((s, s2) => s + (s2.count ?? 0), 0);
     const padL = 28;
     const padR = 28;
     const padT = 50;
@@ -52,7 +52,7 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
     const bandH = H - padT - padB;
 
     // Prism: narrower at top, wider at bottom per severity band
-    const segWidths = severities.map(s => (s.count / total) * trackW);
+    const segWidths = severities.map(s => ((s.count ?? 0) / (total || 1)) * trackW);
     let raf: number;
 
     const draw = () => {
@@ -89,14 +89,12 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
       severities.forEach((sev, i) => {
         const color = SEVERITY_COLORS[sev.severity] ?? CC.blue;
         const fullW = segWidths[i];
-        const drawW = fullW * progress;
         const hp = hoverMap.current.get(sev.severity) ?? 0;
 
         // Prism-style trapezoid — each band narrows toward top-center
         const taper = 0.15; // how much narrower at top
         const midX = runX + fullW / 2;
         const topW = fullW * (1 - taper);
-        const topX = midX - topW / 2;
 
         // Drawn width (animated)
         const drawnFullW = fullW * progress;
@@ -135,7 +133,7 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
         registerHitRect(hitZonesRef.current, sev.severity, runX, padT, fullW, bandH, {
           label: sev.severity,
           value: `${sev.count} Early Warnings`,
-          sublabel: `${Math.round((sev.count / total) * 100)}% of all EWs`,
+          sublabel: `${Math.round(((sev.count ?? 0) / (total || 1)) * 100)}% of all EWs`,
           color,
         });
 
@@ -159,7 +157,7 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
           // Pct below band
           ctx.font = AXIS_LABEL.font;
           ctx.fillStyle = hp > 0 ? color : AXIS_LABEL.color;
-          ctx.fillText(`${Math.round((sev.count / total) * 100)}%`, cx, padT + bandH + 18);
+          ctx.fillText(`${Math.round(((sev.count ?? 0) / (total || 1)) * 100)}%`, cx, padT + bandH + 18);
           ctx.globalAlpha = 1;
         }
 
