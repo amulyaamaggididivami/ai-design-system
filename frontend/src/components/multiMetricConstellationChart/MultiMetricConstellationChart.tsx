@@ -44,8 +44,8 @@ export function MultiMetricConstellationChart({ items: rawItems = [], 'data-test
         con.percentage ?? 0,
       ];
       const kpiLabels = [
-        `£${con.base ?? 0}M`,
-        `£${con.variation ?? 0}M`,
+        con.baseLabel ?? String(con.base ?? 0),
+        con.variationLabel ?? String(con.variation ?? 0),
         `${con.percentage ?? 0}%`,
       ];
 
@@ -184,7 +184,7 @@ export function MultiMetricConstellationChart({ items: rawItems = [], 'data-test
 
         registerHitCircle(hitZonesRef.current, conId, con.cx, con.cy, con.baseR + 5, {
           label   : con.name,
-          value   : `£${con.total ?? 0}M total`,
+          value   : `${con.totalLabel ?? String(con.total ?? 0)} total`,
           sublabel: `${con.percentage ?? 0}% committed · scatter ${con.scatter.toFixed(1)}`,
           color   : trColor,
         });
