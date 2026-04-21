@@ -17,13 +17,17 @@ import {
   setupCanvas,
 } from "../../canvas/canvasUtils";
 import { ChartEmptyState } from "../common/ChartEmptyState";
+import { formatNumber } from "../../utils/numberFormat";
 import type { EWOpenContractorRow } from "../../types";
 import type { RankedCardLeaderboardProps } from "./types";
 
-const W = 780;
+const MAX_W = 780;
 const H = 240;
 const CARD_PAD = 12;
 const CARD_GAP = 10;
+const MAX_COLS = 5;
+// Card width fixed at MAX_W proportions so card size stays consistent regardless of item count
+const CARD_W = (MAX_W - 2 * CARD_PAD - (MAX_COLS - 1) * CARD_GAP) / MAX_COLS;
 const RISK_LABELS = [
   "Highest exposure",
   "Elevated risk",
@@ -40,10 +44,6 @@ export function RankedCardLeaderboard({
   const frameRef = useRef(0);
   const hoverMap = useRef<Map<string, number>>(new Map());
 
-  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, {
-    width: W,
-    height: H,
-  });
   const items = useMemo(
     () =>
       (rawItems as unknown[]).filter(
@@ -56,15 +56,21 @@ export function RankedCardLeaderboard({
     .slice(0, 5);
   const total = sorted.reduce((s, c) => s + (c.count ?? 0), 0);
 
+  const cols = Math.min(MAX_COLS, sorted.length);
+  const dynamicW = cols > 0 ? 2 * CARD_PAD + cols * CARD_W + (cols - 1) * CARD_GAP : MAX_W;
+
+  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, {
+    width: dynamicW,
+    height: H,
+  });
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = setupCanvas(canvas, W, H);
+    const ctx = setupCanvas(canvas, dynamicW, H);
     frameRef.current = 0;
 
-    const MAX_COLS = 5;
-    // Card width is always sized for 5 columns so proportions stay consistent regardless of item count
-    const cardW = (W - 2 * CARD_PAD - (MAX_COLS - 1) * CARD_GAP) / MAX_COLS;
+    const cardW = CARD_W;
     const cardH = H * 0.84;
     const cardY = H * 0.08;
     const startX  = CARD_PAD;
@@ -74,7 +80,7 @@ export function RankedCardLeaderboard({
     const draw = () => {
       frameRef.current++;
       const T = frameRef.current;
-      ctx.clearRect(0, 0, W, H);
+      ctx.clearRect(0, 0, dynamicW, H);
       ctx.letterSpacing = AXIS_LABEL.letterSpacing;
       hitZonesRef.current = [];
 
@@ -160,30 +166,41 @@ export function RankedCardLeaderboard({
         ctx.lineWidth = 1;
         ctx.stroke();
 
-        // ShortName inside circle
+        // ShortName inside circle — truncate to fit, show full name in tooltip
         ctx.font = CHART_VALUE.font;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = rgb(CC.t1, 0.9);
-        ctx.fillText(
-          contractor.abbreviation ?? contractor.name?.slice(0, 6) ?? '',
-          photoX,
-          photoY,
-        );
+        const fullCircleText = contractor.abbreviation ?? contractor.name ?? '';
+        const maxCircleW = photoR * 1.7;
+        let circleText = fullCircleText;
+        while (ctx.measureText(circleText).width > maxCircleW && circleText.length > 1) {
+          circleText = circleText.slice(0, -1);
+        }
+        if (circleText !== fullCircleText) circleText = circleText.slice(0, -1) + '…';
+        ctx.fillText(circleText, photoX, photoY);
 
-        // Open count — large
-        const displayVal = contractor.label ?? String(contractor.count ?? 0);
+        // Open count — large value line
+        const formattedCount = formatNumber(contractor.count ?? 0);
+        const fullVal = contractor.label ?? formattedCount;
         ctx.font = CHART_VALUE.font;
         ctx.textBaseline = "alphabetic";
         ctx.fillStyle = rgb(color, 0.9 + hp * 0.1);
-        ctx.fillText(displayVal, photoX, cardY + cardH * 0.76);
-
-        // "open EWs" label — only shown when no pre-formatted label
-        if (!contractor.label) {
-          ctx.font = AXIS_LABEL.font;
-          ctx.fillStyle = AXIS_LABEL.color;
-          ctx.fillText("open EWs", photoX, cardY + cardH * 0.88);
+        const maxValW = w - 16;
+        let displayVal = fullVal;
+        while (ctx.measureText(displayVal).width > maxValW && displayVal.length > 1) {
+          displayVal = displayVal.slice(0, -1);
         }
+        if (displayVal !== fullVal) displayVal = displayVal.slice(0, -1) + '…';
+        ctx.fillText(displayVal, photoX, cardY + cardH * 0.74);
+
+        // Count line below — only when label is also shown
+        if (contractor.label) {
+          ctx.font = AXIS_LABEL.font;
+          ctx.fillStyle = rgb(color, 0.7 + hp * 0.2);
+          ctx.fillText(formattedCount, photoX, cardY + cardH * 0.88);
+        }
+
 
         // Tooltip with rank, %, risk level
         const pct = Math.round(((contractor.count ?? 0) / (total || 1)) * 100);
@@ -198,38 +215,38 @@ export function RankedCardLeaderboard({
           cardH,
           {
             label: contractor.name,
-            value: `${displayVal ?? 0} open · ${pct}% of total`,
+            value: `${fullVal} open · ${pct}% of total`,
             sublabel: `Rank #${i + 1} · ${riskLabel}`,
             color,
           },
         );
       });
 
-      drawScanline(ctx, W, H, T, 0.015);
+      drawScanline(ctx, dynamicW, H, T, 0.015);
 
       raf = requestAnimationFrame(draw);
     };
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [sorted, total]);
+  }, [sorted, total, dynamicW]);
 
   const isEmpty = sorted.length === 0;
   if (isEmpty)
-    return <ChartEmptyState width={W} height={H} data-testid={testId} />;
+    return <ChartEmptyState width={dynamicW} height={H} data-testid={testId} />;
 
   return (
     <div
       data-testid={testId}
-      style={{ position: "relative", width: W, height: H }}
+      style={{ position: "relative", width: dynamicW, height: H }}
     >
       <canvas
         ref={canvasRef}
         role="img"
         aria-label="Contractor rank — open EW count per contractor"
-        style={{ width: W, height: H, display: "block", borderRadius: 8 }}
+        style={{ width: dynamicW, height: H, display: "block", borderRadius: 8 }}
       />
-      <CanvasTooltip {...tooltip} parentW={W} parentH={H} />
+      <CanvasTooltip {...tooltip} parentW={dynamicW} parentH={H} />
     </div>
   );
 }

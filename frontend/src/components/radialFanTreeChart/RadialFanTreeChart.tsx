@@ -150,16 +150,27 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
       if (progress > 0.4) {
         const fade = Math.min(1, (progress - 0.4) / 0.4);
         ctx.globalAlpha = fade;
-        ctx.font = `500 24px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        const fullValue = totalLabel ?? formatNumber(total, 0);
+        const maxTextW = rootR * 1.7;
+        ctx.font = `500 16px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        let truncated = fullValue;
+        while (ctx.measureText(truncated).width > maxTextW && truncated.length > 1) {
+          truncated = truncated.slice(0, -1);
+        }
+        if (truncated !== fullValue) truncated = truncated.slice(0, -1) + '…';
         ctx.fillStyle = CC.t1;
         ctx.textAlign = 'center';
-        const displayValue = totalLabel ?? formatNumber(total, 0);
-        ctx.fillText(displayValue, rootX, rootY + 2);
-        ctx.font = AXIS_LABEL.font;
-        ctx.fillStyle = AXIS_LABEL.color;
-        ctx.fillText('NCEs', rootX, rootY + 22);
+        ctx.textBaseline = 'middle';
+        ctx.fillText(truncated, rootX, rootY);
         ctx.globalAlpha = 1;
       }
+
+      registerHitCircle(hitZonesRef.current, '__root__', rootX, rootY, rootR, {
+        label: 'Total NCEs',
+        value: totalLabel ?? formatNumber(total, 0),
+        sublabel: `across ${byContractor.length} contractors`,
+        color: CC.blue,
+      });
 
       raf = requestAnimationFrame(draw);
     };

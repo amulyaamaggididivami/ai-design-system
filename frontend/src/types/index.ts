@@ -143,12 +143,12 @@ export type BaseVisualizationConfig =
   | { type: 'stacked-horizontal-bar-chart'; data: ContractData }
   | { type: 'multi-metric-constellation-chart'; items: ContractorRow[] }
   | { type: 'progress-race-chart'; items: ContractorRow[] }
-  | { type: 'hub-and-spoke-radial-chart'; segments: EWStatusRow[]; title?: string }
+  | { type: 'hub-and-spoke-radial-chart'; segments: EWStatusRow[]; title?: string; unitLabel?: string }
   | { type: 'dot-matrix-chart'; items: EWCategoryRow[]; title?: string }
   | { type: 'ranked-card-leaderboard'; items: EWOpenContractorRow[]; title?: string }
   | { type: 'proportional-band-chart'; severities: EWSeverityRow[]; title?: string }
   | { type: 'radial-fan-tree-chart'; total: number; totalLabel?: string; items: NCEContractorRow[] }
-  | { type: 'semi-circular-gauge-chart'; value: number; confirmed: number; total: number }
+  | { type: 'semi-circular-gauge-chart'; confirmed: number; total: number }
   | { type: 'segmented-split-bar-chart'; items: VariationRow[] }
   | { type: 'balance-scale-chart'; left: QuotationSide; right: QuotationSide }
   | { type: 'area-line-chart'; points: QuotationTrendPoint[] }
@@ -221,7 +221,7 @@ export type ScorecardRow = {
 export type KeyHighlightBlock =
   | { type: 'stats';           items: Array<{ value: string; label: string; color?: string }>; takeaway?: string }
   | { type: 'chips';           items: KeyHighlightChip[]; takeaway?: string }
-  | { type: 'ranked';          items: Array<{ name: string; value: string; color?: string; kpiLabel?: string }>; takeaway?: string }
+  | { type: 'ranked';          items: Array<{ name: string; value: string; kpiLabel?: string }>; takeaway?: string }
   | { type: 'proportion';      leftPct: number; leftLabel: string; leftValue: string; leftColor?: string; rightPct: number; rightLabel: string; rightValue: string; rightColor?: string; chips?: KeyHighlightChip[]; takeaway?: string }
   | { type: 'ring';            pct: number; label: string; color?: string; chips?: KeyHighlightChip[]; takeaway?: string }
   | { type: 'badges';          items: KeyHighlightBadge[]; textSize?: number; takeaway?: string }

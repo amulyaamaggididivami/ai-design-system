@@ -6,6 +6,7 @@ import { stagger, tickHoverProgress, easeOutQuart } from '../../canvas/easing';
 import { CC, LEGEND_LABEL, CHART_VALUE, rgb, drawGlow, setupCanvas, AXIS_LABEL } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import { ToggleButton } from '../common/ToggleButton';
+import { formatNumber } from '../../utils/numberFormat';
 import type { VariationRow } from '../../types';
 import type { SegmentedSplitBarChartProps } from './types';
 
@@ -86,13 +87,13 @@ export function SegmentedSplitBarChart({ items: rawItems = [], 'data-testid': te
 
         registerHitRect(hitZonesRef.current, implId, padL, y, implW || 1, barH, {
           label: `${c.name} — Implemented`,
-          value: `${c.implemented ?? 0} variations`,
+          value: `${formatNumber(c.implemented ?? 0)} variations`,
           sublabel: `${Math.round(((c.implemented ?? 0) / (total || 1)) * 100)}% complete`,
           color: CC.green,
         });
         registerHitRect(hitZonesRef.current, unimplId, padL + implW, y, unimplW || 1, barH, {
           label: `${c.name} — Unimplemented`,
-          value: `${c.unimplemented ?? 0} variations`,
+          value: `${formatNumber(c.unimplemented ?? 0)} variations`,
           sublabel: `${Math.round(((c.unimplemented ?? 0) / (total || 1)) * 100)}% pending`,
           color: CC.amber,
         });
@@ -122,7 +123,7 @@ export function SegmentedSplitBarChart({ items: rawItems = [], 'data-testid': te
             ctx.font = CHART_VALUE.font;
             ctx.fillStyle = hpImpl > 0 ? CC.green : CC.t2;
             ctx.textAlign = 'center';
-            ctx.fillText(String(c.implemented ?? 0), padL + implW / 2, y + barH / 2 + 4);
+            ctx.fillText(formatNumber(c.implemented ?? 0), padL + implW / 2, y + barH / 2 + 4);
           }
         }
 
@@ -142,7 +143,7 @@ export function SegmentedSplitBarChart({ items: rawItems = [], 'data-testid': te
             ctx.font = CHART_VALUE.font;
             ctx.fillStyle = hpUn > 0 ? CC.amber : CC.t2;
             ctx.textAlign = 'center';
-            ctx.fillText(String(c.unimplemented ?? 0), padL + implW + unimplW / 2, y + barH / 2 + 4);
+            ctx.fillText(formatNumber(c.unimplemented ?? 0), padL + implW + unimplW / 2, y + barH / 2 + 4);
           }
         }
 

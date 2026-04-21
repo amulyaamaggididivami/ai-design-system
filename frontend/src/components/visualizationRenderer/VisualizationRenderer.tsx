@@ -35,12 +35,12 @@ export function VisualizationRenderer({ config, className }: VisualizationRender
   if (config.type === 'stacked-horizontal-bar-chart') return <StackedHorizontalBarChart data={config.data} />;
   if (config.type === 'multi-metric-constellation-chart') return <MultiMetricConstellationChart items={config.items} />;
   if (config.type === 'progress-race-chart') return <ProgressRaceChart items={config.items} />;
-  if (config.type === 'hub-and-spoke-radial-chart') return <HubAndSpokeRadialChart segments={config.segments} title={config.title} />;
+  if (config.type === 'hub-and-spoke-radial-chart') return <HubAndSpokeRadialChart segments={config.segments} title={config.title} unitLabel={config.unitLabel} />;
   if (config.type === 'dot-matrix-chart') return <DotMatrixChart items={config.items} />;
   if (config.type === 'ranked-card-leaderboard') return <RankedCardLeaderboard items={config.items} />;
   if (config.type === 'proportional-band-chart') return <ProportionalBandChart severities={config.severities} />;
   if (config.type === 'radial-fan-tree-chart') return <RadialFanTreeChart total={config.total} totalLabel={config.totalLabel} items={config.items} />;
-  if (config.type === 'semi-circular-gauge-chart') return <SemiCircularGaugeChart value={config.value} confirmed={config.confirmed} total={config.total} />;
+  if (config.type === 'semi-circular-gauge-chart') return <SemiCircularGaugeChart confirmed={config.confirmed} total={config.total} />;
   if (config.type === 'segmented-split-bar-chart') return <SegmentedSplitBarChart items={config.items} />;
   if (config.type === 'balance-scale-chart') return <BalanceScaleChart left={config.left} right={config.right} />;
   if (config.type === 'area-line-chart') return <AreaLineChart points={config.points} />;

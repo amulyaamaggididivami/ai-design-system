@@ -43,7 +43,7 @@ function ChipRow({ chips = [] }: { chips: KeyHighlightChip[] }) {
         <div
           key={i}
           style={{
-            width: 260, height: 120, display: 'flex', alignItems: 'baseline', gap: 8,
+            width: 260, height: 80, display: 'flex', alignItems: 'baseline', gap: 8,
             padding: '8px 0px',
             background: C.bg,
             border: `1px solid ${C.border}`,
@@ -51,7 +51,7 @@ function ChipRow({ chips = [] }: { chips: KeyHighlightChip[] }) {
             boxSizing: 'border-box' as const,
           }}
         >
-          <span style={{ ...VALUE, color: chip.color ?? C.t1 }}>
+          <span style={{ ...VALUE, color:  C.t1 }}>
             {chip.value}
           </span>
           <span style={{ ...LABEL, flex: 1 }}>
@@ -97,7 +97,7 @@ function Stats({ items = [] }: { items: Array<{ value: string; label: string; co
 // ─── Ranked ──────────────────────────────────────────────────────────────────
 // Name chip + value + description rows — each with colored left border
 // Used for: Q2, Q5, Q6
-function Ranked({ items = [] }: { items: Array<{ name: string; value: string; color?: string; kpiLabel?: string }> }) {
+function Ranked({ items = [] }: { items: Array<{ name: string; value: string; kpiLabel?: string }> }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 5 }}>
       {items.map((item, i) => (
@@ -112,14 +112,14 @@ function Ranked({ items = [] }: { items: Array<{ name: string; value: string; co
         >
           <span
             style={{
-              fontSize: 18, fontWeight: 500, color: item.color ?? C.t2,
-              background: (item.color ?? C.t2) + '22', padding: '2px 8px',
+              fontSize: 18, fontWeight: 500, color: C.t2,
+              background: 'transparent', padding: '2px 8px',
               borderRadius: 4, fontFamily: SANS, flexShrink: 0,
             }}
           >
             {item.name}
           </span>
-          <span style={{ ...VALUE, fontSize: 18, color: item.color ?? C.t1, minWidth: 70, flexShrink: 0 }}>
+          <span style={{ ...VALUE, fontSize: 18, color: C.t1, minWidth: 70, flexShrink: 0 }}>
             {item.value}
           </span>
           <span style={{ ...LABEL, flex: 1 }}>
@@ -151,7 +151,7 @@ function Chips({ items = [] }: { items: KeyHighlightChip[] }) {
             // borderRadius: 7,
           }}
         >
-          <div style={{ ...VALUE, color: item.color ?? C.t1 }}>
+          <div style={{ ...VALUE, color: C.t1 }}>
             {item.value}
           </div>
           <div style={{ ...LABEL }}>
@@ -189,7 +189,7 @@ function Badges({ items = [] }: { items: KeyHighlightBadge[] }) {
           >
             <span
               style={{
-                width: 7, height: 7, borderRadius: '50%', background: color,
+                width: 7, height: 7, borderRadius: '50%', background: CC.t2,
                 flexShrink: 0, marginTop: 5,
               }}
             />
@@ -277,7 +277,7 @@ function DotStrip({ min, max, unit, dots = [], chips = [] }: {
           );
         })}
       </div>
-      {chips && chips.length > 0 && <ChipRow chips={chips} />}
+      {chips && chips.length > 0 && <Chips items={chips} />}
     </div>
   );
 }
@@ -395,9 +395,10 @@ function Ring({ pct, label, color: colorProp, chips }: {
                   borderRadius: 5,
                 }}
               >
-            <span style={{ ...VALUE, color: chip.color ?? C.t1 }}>
+            <span style={{ ...VALUE, color: C.t2 }}>
                   {chip.value}
                 </span>
+                <span style={{ ...VALUE, color: C.t2, fontWeight: 400, userSelect: 'none' as const }}>|</span>
                 <span style={{ ...LABEL }}>
                   {chip.label}
                 </span>
@@ -440,8 +441,8 @@ function ScorecardRows({ items = [] }: { items: ScorecardRow[] }) {
           {/* Name */}
           <span
             style={{
-              fontSize: 18, fontWeight: 500, color: item.color ?? C.t2,
-              background: (item.color ?? C.t2) + '1A', padding: '2px 7px',
+              fontSize: 18, fontWeight: 500, color: C.t2,
+              background: 'transparent', padding: '2px 7px',
               borderRadius: 4, fontFamily: SANS, flexShrink: 0, minWidth: 62,
               textAlign: 'center' as const,
             }}
@@ -463,8 +464,8 @@ function ScorecardRows({ items = [] }: { items: ScorecardRow[] }) {
           </div>
 
           {/* Value */}
-          <span style={{ fontSize: 18, fontWeight: 500, color: item.color ?? C.t1, fontFamily: SANS, flexShrink: 0, minWidth: 52, textAlign: 'right' as const }}>
-            {item.value}
+          <span style={{ fontSize: 18, fontWeight: 400, color: C.t2, fontFamily: SANS, flexShrink: 0, minWidth: 52, textAlign: 'right' as const }}>
+            {item.value }
           </span>
 
           {/* Badge */}
@@ -515,20 +516,18 @@ function FlagsList({ items = [] }: { items: FlagsListRow[] }) {
             style={{
               display: 'flex', alignItems: 'flex-start', gap: 10,
               padding: '9px 12px',
-              background: color + '0A',
-              border: `1px solid ${color}25`,
+              background: 'transparent',
+              // border: `1px solid ${color}25`,
             }}
           >
-            <span
+            
+            {/* <span
               style={{
                 width: 7, height: 7, borderRadius: '50%', background: color,
                 flexShrink: 0, marginTop: 5,
               }}
-            />
-            <span style={{ flex: 1, ...LABEL }}>
-              {item.text}
-            </span>
-            <span
+            /> */}
+             <span
               style={{
                 fontSize: 18, fontWeight: 500, color,
                 background: color + '20', padding: '2px 7px',
@@ -537,6 +536,10 @@ function FlagsList({ items = [] }: { items: FlagsListRow[] }) {
             >
               {item.tag}
             </span>
+            <span style={{ flex: 1, ...LABEL }}>
+              {item.text}
+            </span>
+           
             <span style={{ ...LABEL, flexShrink: 0, marginTop: 1 }}>
               {item.date}
             </span>
@@ -587,9 +590,9 @@ function ComparisonRows({ columns = [], rows = [] }: { columns: string[]; rows: 
         >
           <span
             style={{
-              fontSize: 18, fontWeight: 600,
-              color: C.t2,
-              background: (row.color ?? C.t4) + '1A',
+              fontSize: 18, fontWeight: 500,
+              color: C.t1,
+              background: 'transparent',
               padding: '2px 8px', borderRadius: 4,
               fontFamily: SANS, flexShrink: 0, minWidth: 64,
               textAlign: 'center' as const,
@@ -598,7 +601,7 @@ function ComparisonRows({ columns = [], rows = [] }: { columns: string[]; rows: 
             {row.label}
           </span>
           {row.cells.map((cell, j) => (
-            <span key={j} style={{ flex: 1, fontSize: 18, fontWeight: 500, color: row.color ?? C.t1, fontFamily: SANS }}>
+            <span key={j} style={{ flex: 1, fontSize: 18, fontWeight: 500, color: C.t2, fontFamily: SANS }}>
               {cell}
             </span>
           ))}

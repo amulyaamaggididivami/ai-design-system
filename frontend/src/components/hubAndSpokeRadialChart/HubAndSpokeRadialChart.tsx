@@ -7,8 +7,9 @@ import { ChartEmptyState } from '../common/ChartEmptyState';
 import type { EWStatusRow } from '../../types';
 import type { HubAndSpokeRadialChartProps } from './types';
 
-const W = 460;
-const H = 300;
+const W = 300;
+const H =  280;
+const NODE_R = 100;
 
 const STATUS_COLORS: Record<string, string> = {
   Open: CC.red,
@@ -16,7 +17,7 @@ const STATUS_COLORS: Record<string, string> = {
   Closed: CC.green,
 };
 
-export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, 'data-testid': testId }: HubAndSpokeRadialChartProps) {
+export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, unitLabel = '', 'data-testid': testId }: HubAndSpokeRadialChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
   const hoverMap = useRef<Map<string, number>>(new Map());
@@ -34,8 +35,8 @@ export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, 'dat
     frameRef.current = 0;
 
     const cxCenter = W * 0.5;
-    const cyCenter = H * 0.54;
-    const nodeR = W * 0.22; // orbital radius
+    const cyCenter = H * 0.56;
+    const nodeR = NODE_R;
     const total = segments.reduce((s, seg) => s + (seg.count ?? 0), 0);
     const maxCount = Math.max(...segments.map(s => s.count ?? 0), 1);
 
@@ -145,7 +146,7 @@ export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, 'dat
           satR + 6,
           {
             label: seg.status,
-            value: `${seg.count} Early Warnings`,
+            value: unitLabel ? `${seg.count} ${unitLabel}` : String(seg.count),
             sublabel: `${Math.round(((seg.count ?? 0) / (total || 1)) * 100)}%`,
             color,
           },
@@ -167,14 +168,14 @@ export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, 'dat
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillStyle = rgb(CC.t1, 0.9);
-      ctx.fillText('EW Status', cxCenter, cyCenter - 4);
+      ctx.fillText(title ?? '', cxCenter, cyCenter - 4);
       ctx.font = `bold ` + AXIS_LABEL.font;
       ctx.fillStyle = CC.t1;
       ctx.fillText(String(total), cxCenter, cyCenter + 8);
 
       registerHitCircle(hitZonesRef.current, 'center', cxCenter, cyCenter, 28, {
-        label: 'Total EW Status',
-        value: `${total} Early Warnings`,
+        label: title ?? 'Total',
+        value: unitLabel ? `${total} ${unitLabel}` : String(total),
         color: CC.t2,
       });
 
@@ -185,7 +186,7 @@ export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, 'dat
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [segments, title]);
+  }, [segments, title, unitLabel]);
 
   const isEmpty = segments.length === 0;
   if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testId} />;

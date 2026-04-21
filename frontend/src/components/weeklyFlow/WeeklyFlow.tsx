@@ -76,8 +76,8 @@ export function WeeklyFlow({
     // ── Mid nodes — proportional to base/var share of grand total ────────────
     const gapMid = 14;
     const midFlowH = flowableH - gapMid;
-    const baseH = Math.max(28, (totalBase / grandTotal) * midFlowH);
-    const varH = Math.max(18, (totalVar / grandTotal) * midFlowH);
+    const baseH = Math.max(28, (totalBase / (grandTotal || 1)) * midFlowH);
+    const varH = Math.max(18, (totalVar / (grandTotal || 1)) * midFlowH);
     const totalMidH = baseH + varH + gapMid;
     const midStartY = padT + (availH - totalMidH) / 2;
     const baseNode = {
@@ -247,7 +247,7 @@ export function WeeklyFlow({
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText(
-            c.abbreviation ?? c.name.slice(0, 6),
+            c.abbreviation ?? (c.name?.slice(0, 6) ?? ''),
             cn.x + nodeW / 2,
             cn.h >= 36 ? cn.cy - 5 : cn.cy,
           );

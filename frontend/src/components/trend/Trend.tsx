@@ -75,7 +75,7 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
     const chartH = H - padT - padB;
 
     // Calculate proper min/max range to handle negative values
-    const counts = points.map(p => p.count);
+    const counts = points.length > 0 ? points.map(p => p.count) : [0];
     const minCount = Math.min(...counts);
     const maxCount = Math.max(...counts);
     const countRange = maxCount - minCount || 1; // Avoid division by zero

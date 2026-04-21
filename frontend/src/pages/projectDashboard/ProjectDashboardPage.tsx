@@ -270,7 +270,7 @@ export function ProjectDashboardPage() {
             <p style={S.qText}>{QUESTIONS[1]!.text}</p>
           </div>
           <div style={S.vizWrap}>
-            <MultiMetricConstellationChart contractors={contractData.items} data-testid="viz-contract-bars" />
+            <MultiMetricConstellationChart items={contractData.items} data-testid="viz-contract-bars" />
           </div>
           <div style={S.highlightsWrap}>
             <p style={S.highlightsLabel}>Key Highlights</p>
@@ -285,7 +285,7 @@ export function ProjectDashboardPage() {
             <p style={S.qText}>{QUESTIONS[2]!.text}</p>
           </div>
           <div style={S.vizWrap}>
-            <ProgressRaceChart contractors={contractData.items} data-testid="viz-commitment-race" />
+            <ProgressRaceChart items={contractData.items} data-testid="viz-commitment-race" />
           </div>
           <div style={S.highlightsWrap}>
             <p style={S.highlightsLabel}>Key Highlights</p>
@@ -334,7 +334,7 @@ export function ProjectDashboardPage() {
             <p style={S.qText}>{QUESTIONS[5]!.text}</p>
           </div>
           <div style={S.vizWrap}>
-            <RankedCardLeaderboard contractors={ewOpenByContractor} data-testid="viz-contractor-rank" />
+            <RankedCardLeaderboard items={ewOpenByContractor} data-testid="viz-contractor-rank" />
           </div>
           <div style={S.highlightsWrap}>
             <p style={S.highlightsLabel}>Key Highlights</p>
@@ -384,7 +384,6 @@ export function ProjectDashboardPage() {
           </div>
           <div style={{ ...S.vizWrap, justifyContent: 'center' }}>
             <SemiCircularGaugeChart
-              pct={nceCompensationData.pctConfirmed}
               confirmed={nceCompensationData.confirmed}
               total={nceCompensationData.total}
               data-testid="viz-compensation-gauge"
@@ -403,7 +402,7 @@ export function ProjectDashboardPage() {
             <p style={S.qText}>{QUESTIONS[9]!.text}</p>
           </div>
           <div style={S.vizWrap}>
-            <SegmentedSplitBarChart contractors={variationByContractor} data-testid="viz-variation-split" />
+            <SegmentedSplitBarChart items={variationByContractor} data-testid="viz-variation-split" />
           </div>
           <div style={S.highlightsWrap}>
             <p style={S.highlightsLabel}>Key Highlights</p>
@@ -452,7 +451,7 @@ export function ProjectDashboardPage() {
             <p style={S.qText}>{QUESTIONS[12]!.text}</p>
           </div>
           <div style={S.vizWrap}>
-            <WeeklyFlow contractors={contractData.items} data-testid="viz-weekly-flow" />
+            <WeeklyFlow items={contractData.items} data-testid="viz-weekly-flow" />
           </div>
           <div style={S.highlightsWrap}>
             <p style={S.highlightsLabel}>Key Highlights</p>

@@ -20,7 +20,7 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
 
     const cx = W / 2;
     const pivotY = 100;
-    const maxVal = Math.max(left.value, right.value);
+    const maxVal = Math.max(left.value ?? 0, right.value ?? 0, 1);
     const tilt = ((left.value - right.value) / maxVal) * 14; // degrees
 
     let raf: number;

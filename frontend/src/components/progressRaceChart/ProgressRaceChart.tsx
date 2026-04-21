@@ -9,7 +9,7 @@ import { ToggleButton } from '../common/ToggleButton';
 import type { ContractorRow } from '../../types';
 import type { ProgressRaceChartProps } from './types';
 
-const W          = 680;
+const W          = 660;
 const TRACK_H    = 42;
 const TRACK_GAP  = 10;
 const PAD_T      = 24;

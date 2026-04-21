@@ -8,7 +8,7 @@ import type { SemiCircularGaugeChartProps } from './types';
 const W = 480;
 const H = 340;
 
-export function SemiCircularGaugeChart({ value, confirmed, total, 'data-testid': testId }: SemiCircularGaugeChartProps) {
+export function SemiCircularGaugeChart({ confirmed, total, 'data-testid': testId }: SemiCircularGaugeChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
 
@@ -79,7 +79,7 @@ export function SemiCircularGaugeChart({ value, confirmed, total, 'data-testid':
       });
 
       // Filled gauge arc up to value
-      const safeValue = value ?? 0;
+      const safeValue = Math.round(((confirmed ?? 0) / (total || 1)) * 100);
       const fillAngle = startAngle + (safeValue / 100) * totalSpan * progress;
       const gaugeColor = safeValue >= 66 ? CC.green : safeValue >= 33 ? CC.amber : CC.red;
 
@@ -195,14 +195,14 @@ export function SemiCircularGaugeChart({ value, confirmed, total, 'data-testid':
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [value, confirmed, total]);
+  }, [confirmed, total]);
 
   return (
     <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>
       <canvas
         ref={canvasRef}
         role="img"
-        aria-label={`Compensation event gauge — ${value}% of NCEs confirmed as compensation events`}
+        aria-label={`Compensation event gauge — ${Math.round(((confirmed ?? 0) / (total || 1)) * 100)}% of NCEs confirmed as compensation events`}
         style={{ width: W, height: H, display: 'block' }}
       />
     </div>

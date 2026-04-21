@@ -4,12 +4,16 @@ import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { tickHoverProgress, easeOutQuart } from '../../canvas/easing';
 import { CC, AXIS_LABEL, CHART_VALUE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { formatNumber } from '../../utils/numberFormat';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import type { EWSeverityRow } from '../../types';
 import type { ProportionalBandChartProps } from './types';
 
-const W = 680;
+const MAX_W = 680;
 const H = 240;
+const PAD_SIDE = 28;
+// Minimum canvas allocation per band so labels stay readable; capped at MAX_W
+const MIN_BAND_W = 156;
 
 function truncateToWidth(ctx: CanvasRenderingContext2D, text: string, maxW: number): string {
   if (ctx.measureText(text).width <= maxW) return text;
@@ -30,25 +34,30 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
 
-  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
   const severities = useMemo(
     () => (rawSeverities as unknown[]).filter((s): s is EWSeverityRow => s != null && typeof s === 'object'),
     [rawSeverities],
   );
 
+  const dynamicW = severities.length > 0
+    ? Math.min(MAX_W, 2 * PAD_SIDE + severities.length * MIN_BAND_W)
+    : MAX_W;
+
+  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: dynamicW, height: H });
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = setupCanvas(canvas, W, H);
+    const ctx = setupCanvas(canvas, dynamicW, H);
     frameRef.current = 0;
     const DURATION = 60;
 
     const total = severities.reduce((s, s2) => s + (s2.count ?? 0), 0);
-    const padL = 28;
-    const padR = 28;
+    const padL = PAD_SIDE;
+    const padR = PAD_SIDE;
     const padT = 50;
     const padB = 52;
-    const trackW = W - padL - padR;
+    const trackW = dynamicW - padL - padR;
     const bandH = H - padT - padB;
 
     // Prism: narrower at top, wider at bottom per severity band
@@ -58,7 +67,7 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
     const draw = () => {
       frameRef.current++;
       const T = frameRef.current;
-      ctx.clearRect(0, 0, W, H);
+      ctx.clearRect(0, 0, dynamicW, H);
       ctx.letterSpacing = AXIS_LABEL.letterSpacing;
 
       const rawP = Math.min(T / DURATION, 1);
@@ -79,8 +88,8 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
       ctx.lineWidth = 1;
       ctx.setLineDash([4, 4]);
       ctx.beginPath();
-      ctx.moveTo(W / 2, padT);
-      ctx.lineTo(W / 2, padT + bandH);
+      ctx.moveTo(dynamicW / 2, padT);
+      ctx.lineTo(dynamicW / 2, padT + bandH);
       ctx.stroke();
       ctx.setLineDash([]);
 
@@ -132,7 +141,7 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
 
         registerHitRect(hitZonesRef.current, sev.severity, runX, padT, fullW, bandH, {
           label: sev.severity,
-          value: `${sev.count} Early Warnings`,
+          value: `${formatNumber(sev.count ?? 0)} Early Warnings`,
           sublabel: `${Math.round(((sev.count ?? 0) / (total || 1)) * 100)}% of all EWs`,
           color,
         });
@@ -152,7 +161,7 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
           // Count — inside band
           ctx.font = CHART_VALUE.font;
           ctx.fillStyle = hp > 0 ? CC.t1 : rgb(CC.t1, 0.85);
-          ctx.fillText(String(sev.count), cx, padT + bandH / 2 + 6);
+          ctx.fillText(formatNumber(sev.count ?? 0), cx, padT + bandH / 2 + 6);
 
           // Pct below band
           ctx.font = AXIS_LABEL.font;
@@ -178,20 +187,20 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [severities]);
+  }, [severities, dynamicW]);
 
   const isEmpty = severities.length === 0;
-  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testId} />;
+  if (isEmpty) return <ChartEmptyState width={dynamicW} height={H} data-testid={testId} />;
 
   return (
-    <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>
+    <div data-testid={testId} style={{ position: 'relative', width: dynamicW, height: H }}>
       <canvas
         ref={canvasRef}
         role="img"
         aria-label="Early Warning severity distribution — prism spectrum bands"
-        style={{ width: W, height: H, display: 'block' }}
+        style={{ width: dynamicW, height: H, display: 'block' }}
       />
-      <CanvasTooltip {...tooltip} parentW={W} parentH={H} />
+      <CanvasTooltip {...tooltip} parentW={dynamicW} parentH={H} />
     </div>
   );
 }

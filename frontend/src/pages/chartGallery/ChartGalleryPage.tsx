@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 
 import { KeyHighlights } from '../../components/keyHighlights/KeyHighlights';
-import { Takeaway } from '../../components/keyHighlights/Takeaway';
 import { MultiSegmentHorizontalBarChart } from '../../components/multiSegmentHorizontalBarChart';
 import { Trend } from '../../components/trend/Trend';
 import { VisualizationRenderer } from '../../components/visualizationRenderer/VisualizationRenderer';
@@ -108,11 +107,12 @@ const ewCategories = [
  * EWOpenContractorRow: { id, name, abbreviation?, count? }
  */
 const contractorRankContractors = [
-  { id: 'c1', name: 'Tata Projects',     abbreviation: 'Tata',   count: 50.56 },
-  { id: 'c3', name: 'Afcons Infra',      abbreviation: 'Afcons', count: 4 },
-  { id: 'c2', name: 'L&T Construction',  abbreviation: 'L&T',    count: 3 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 2 },
-  { id: 'c4', name: 'NCC Ltd',           abbreviation: 'NCC',    count: 2 },
+  { id: 'c1', name: 'Tata Projects',  label:"helooo contract ncesssss valuessss",  count: 55676349809090800.56 },
+  { id: 'c3', name: 'Afcons Infra',     count: 43456789 },
+  { id: 'c2', name: 'L&T Construction',    count: 157668692.3 },
+  { id: 'c4', name: 'NCC Ltd',              count: 75687.8 },
+  { id: 'c5', name: 'KEC International',     count: 25.4 },
+  { id: 'c6', name: 'KEC International',    count: 25.4 },
   
 ];
 
@@ -124,23 +124,23 @@ const contractorRankContractors = [
  */
 const severityBands = [
       {
-        "count": 4290585,
+        "count": 42970585,
         "severity": "90+ days (Tenova)"
       },
       {
         "severity": "0-30 days (Churngold)",
-        "count": 1607404
+        "count": 16077404
       },
       {
         "severity": "90+ days (ASL NG Prep)",
-        "count": 1605980
+        "count": 16035980
       },
       {
         "severity": "31-60 days (ASL NG Prep)",
-        "count": 1269303
+        "count": 12669303
       },
       {
-        "count": 2836728,
+        "count": 28346728,
         "severity": "Other Buckets"
       }
 ];
@@ -151,32 +151,24 @@ const severityBands = [
  * NCEContractorRow: { id, name, abbreviation?, count? }
  * total = sum of all counts (displayed at root).
  */
-const nceTotal = 25777777;
+
 const nceByContractorData = [
-  { id: 'c1', name: 'Tata Projects',     abbreviation: 'Tata',   count: 88888 },
-  { id: 'c3', name: 'Afcons Infra',      abbreviation: 'Afcons', count: 6999 },
-  { id: 'c2', name: 'L&T Construction',  abbreviation: 'L&T',    count: 49999 },
-  { id: 'c4', name: 'NCC Ltd',           abbreviation: 'NCC',    count: 49999 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 30000 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3000 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3000 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3000 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3000 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3000 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3000 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3000},
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3000 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    count: 3000 },
-
-
+  { id: 'sc-other',  name: 'Site Conditions - Other',          label: 'Site Conditions', count: 157 },
+  { id: 'prog',      name: 'Programme',                         label: 'Programme',        count: 122 },
+  { id: 'dm',        name: 'Design Maturity',                   label: 'Design Maturity',  count: 97  },
+  { id: 'err-con',   name: 'Error by Contractor',               label: 'Contractor Error', count: 28  },
+  { id: 'cs-design', name: 'Change to Scope of Work - Design',  label: 'Scope Change',     count: 27  },
 ];
+const nceTotal = 431;
+const nceTotalLabel = 'Active Early Warnings';
 
 /**
  * Q9 — semi-circular-gauge-chart
  * Needle gauge — pct sweeps needle, confirmed/total shown in centre.
  * pct: 0–100  |  confirmed: number of confirmed NCEs  |  total: total NCEs
  */
-const compensationGaugeData = { value: 60, confirmed: 15, total: 25 };
+const compensationGaugeData = {  confirmed: 519, total: 1000 };
+
 
 /**
  * Q10 — variation-split
@@ -184,18 +176,18 @@ const compensationGaugeData = { value: 60, confirmed: 15, total: 25 };
  * VariationRow: { id, name, abbreviation?, implemented?, unimplemented? }
  */
 const variationSplitContractors = [
-  { id: 'c1', name: 'Tata Projects',     abbreviation: 'Tata',   implemented: 12, unimplemented: 4 },
-  { id: 'c2', name: 'L&T Construction',  abbreviation: 'L&T',    implemented: 8,  unimplemented: 6 },
-  { id: 'c3', name: 'Afcons Infra',      abbreviation: 'Afcons', implemented: 5,  unimplemented: 9 },
+  { id: 'c1', name: 'Tata Projects',     abbreviation: 'Tata',   implemented: 12456, unimplemented: 4564 },
+  { id: 'c2', name: 'L&T Construction',  abbreviation: 'L&T',    implemented: 8565,  unimplemented: 667 },
+  { id: 'c3', name: 'Afcons Infra',      abbreviation: 'Afcons', implemented: 5434,  unimplemented: 96 },
   { id: 'c4', name: 'NCC Ltd',           abbreviation: 'NCC',    implemented: 11, unimplemented: 2 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6345,  unimplemented: 8 },
   { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6,  unimplemented: 8 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6456,  unimplemented: 8 },
   { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6,  unimplemented: 8 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6345,  unimplemented: 8 },
   { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6,  unimplemented: 8 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6,  unimplemented: 8 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6,  unimplemented: 8 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6,  unimplemented: 8 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6,  unimplemented: 8 },
-  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6,  unimplemented: 8 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 6765,  unimplemented: 8 },
+  { id: 'c5', name: 'KEC International', abbreviation: 'KEC',    implemented: 34566,  unimplemented: 8 },
 ];
 
 /**
@@ -466,11 +458,32 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
     takeaway: 'NCC and L&T are clustered near full close while KEC and Afcons lag — a 26-point spread across the portfolio.',
   },
 
+  dotStripWithChips: {
+    type: 'dot-strip',
+    min: 0,
+    max: 50,
+    unit: ' EWs',
+    dots: [
+      { name: 'NCC',    val: 4,  color: '#EEBF3B' },
+      { name: 'KEC',    val: 7,  color: '#A0B724' },
+      { name: 'L&T',    val: 11, color: '#5DA537' },
+      { name: 'Afcons', val: 18, color: '#3C45D1' },
+      { name: 'Tata',   val: 22, color: '#4C93D9' },
+    ],
+    chips: [
+      { value: '40 EWs',  label: 'total open across portfolio' },
+      { value: 'Tata',    label: 'highest — 55% above avg',     color: '#4C93D9' },
+      { value: 'NCC',     label: 'lowest — well within target', color: '#EEBF3B' },
+    ],
+    takeaway: 'Tata holds 55% more open EWs than the portfolio average — concentrated in Ground Conditions and Design categories.',
+  },
+
   // ring — variation implementation rate
   ring: {
     type: 'ring',
-    pct: 59,
+    pct: 86,
     color: '#4C93D9',
+    
     label: 'overall portfolio variation implementation rate — 42 of 71 variations actioned across all contractors',
     chips: [
       { value: 'NCC 85%',    label: 'highest implementation rate — only 2 pending',   color: '#EEBF3B' },
@@ -481,6 +494,18 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
   },
 
   // flags-list — active risk alerts across the portfolio
+  ranked: {
+    type: 'ranked',
+    items: [
+      { name: 'L&T',    value: '£210.6M', kpiLabel: '28% of portfolio — largest contractor by commitment' },
+      { name: 'NCC',    value: '£164.9M', kpiLabel: '22% share — commitment above 90%, on track' },
+      { name: 'Tata',   value: '£160.4M', kpiLabel: '21% share — 39% of all open EWs concentrated here' },
+      { name: 'Afcons', value: '£111.1M', kpiLabel: '15% share — variation implementation at 36%' },
+      { name: 'KEC',    value: '£105.2M', kpiLabel: '14% share — 42% variation ratio, highest in portfolio' },
+    ],
+    takeaway: 'L&T and NCC anchor 50% of portfolio value with healthy commitment rates. KEC carries the highest variation risk despite the smallest base.',
+  },
+
   flagsList: {
     type: 'flags-list',
     items: [
@@ -568,11 +593,11 @@ export function ChartGalleryPage() {
       <KeyHighlights block={HIGHLIGHTS.q7} />
 
       <h3>Q8 — radial-fan-tree-chart</h3>
-      <VisualizationRenderer config={{ type: 'radial-fan-tree-chart', total: nceTotal, items: nceByContractorData }} />
+      <VisualizationRenderer config={{ type: 'radial-fan-tree-chart', total: nceTotal, totalLabel: nceTotalLabel, items: nceByContractorData }} />
       <KeyHighlights block={HIGHLIGHTS.q8} />
 
       <h3>Q9 — semi-circular-gauge-chart</h3>
-      <VisualizationRenderer config={{ type: 'semi-circular-gauge-chart', value: compensationGaugeData.value, confirmed: compensationGaugeData.confirmed, total: compensationGaugeData.total }} />
+      <VisualizationRenderer config={{ type: 'semi-circular-gauge-chart', confirmed: compensationGaugeData.confirmed, total: compensationGaugeData.total }} />
       <KeyHighlights block={HIGHLIGHTS.q9} />
 
       <h3>Q10 — segmented-split-bar-chart</h3>
@@ -597,11 +622,17 @@ export function ChartGalleryPage() {
       <h3>Dot Strip</h3>
       <KeyHighlights block={HIGHLIGHTS.dotStrip} />
 
+      <h3>Dot Strip (with chips)</h3>
+      <KeyHighlights block={HIGHLIGHTS.dotStripWithChips} />
+
       <h3>Ring</h3>
       <KeyHighlights block={HIGHLIGHTS.ring} />
 
       <h3>Flags List</h3>
       <KeyHighlights block={HIGHLIGHTS.flagsList} />
+
+      <h3>Ranked</h3>
+      <KeyHighlights block={HIGHLIGHTS.ranked} />
 
       <h3>Multi-Segment Horizontal Bar Chart</h3>
       <MultiSegmentHorizontalBarChart
