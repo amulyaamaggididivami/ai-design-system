@@ -141,8 +141,8 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
 
         registerHitRect(hitZonesRef.current, sev.severity, runX, padT, fullW, bandH, {
           label: sev.severity,
-          value: `${formatNumber(sev.count ?? 0)} Early Warnings`,
-          sublabel: `${Math.round(((sev.count ?? 0) / (total || 1)) * 100)}% of all EWs`,
+          value: formatNumber(sev.count ?? 0),
+          sublabel: `${Math.round(((sev.count ?? 0) / (total || 1)) * 100)}%`,
           color,
         });
 
@@ -200,7 +200,7 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
         aria-label="Early Warning severity distribution — prism spectrum bands"
         style={{ width: dynamicW, height: H, display: 'block' }}
       />
-      <CanvasTooltip {...tooltip} parentW={dynamicW} parentH={H} />
+      <CanvasTooltip {...tooltip} parentW={dynamicW} parentH={H} placement="cursor-below" />
     </div>
   );
 }

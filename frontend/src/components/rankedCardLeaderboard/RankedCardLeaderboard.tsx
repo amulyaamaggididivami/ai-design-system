@@ -28,13 +28,6 @@ const CARD_GAP = 10;
 const MAX_COLS = 5;
 // Card width fixed at MAX_W proportions so card size stays consistent regardless of item count
 const CARD_W = (MAX_W - 2 * CARD_PAD - (MAX_COLS - 1) * CARD_GAP) / MAX_COLS;
-const RISK_LABELS = [
-  "Highest exposure",
-  "Elevated risk",
-  "Moderate exposure",
-  "Moderate exposure",
-  "Low exposure",
-];
 
 export function RankedCardLeaderboard({
   items: rawItems = [],
@@ -195,9 +188,7 @@ export function RankedCardLeaderboard({
         ctx.fillText(displayVal, photoX, cardY + cardH * 0.74);
 
 
-        // Tooltip with rank, %, risk level
         const pct = Math.round(((contractor.count ?? 0) / (total || 1)) * 100);
-        const riskLabel = RISK_LABELS[i] ?? "Low exposure";
 
         registerHitRect(
           hitZonesRef.current,
@@ -208,8 +199,8 @@ export function RankedCardLeaderboard({
           cardH,
           {
             label: contractor.name,
-            value: `${fullVal} open · ${pct}% of total`,
-            sublabel: `Rank #${i + 1} · ${riskLabel}`,
+            value: `${fullVal} · ${pct}% of total`,
+            sublabel: `Rank #${i + 1}`,
             color,
           },
         );

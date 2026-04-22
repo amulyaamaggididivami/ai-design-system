@@ -86,15 +86,15 @@ export function SegmentedSplitBarChart({ items: rawItems = [], 'data-testid': te
         const hpUn = hoverMap.current.get(unimplId) ?? 0;
 
         registerHitRect(hitZonesRef.current, implId, padL, y, implW || 1, barH, {
-          label: `${c.name} — Implemented`,
-          value: `${formatNumber(c.implemented ?? 0)} variations`,
-          sublabel: `${Math.round(((c.implemented ?? 0) / (total || 1)) * 100)}% complete`,
+          label: c.name,
+          value: formatNumber(c.implemented ?? 0),
+          sublabel: `${Math.round(((c.implemented ?? 0) / (total || 1)) * 100)}%`,
           color: CC.green,
         });
         registerHitRect(hitZonesRef.current, unimplId, padL + implW, y, unimplW || 1, barH, {
-          label: `${c.name} — Unimplemented`,
-          value: `${formatNumber(c.unimplemented ?? 0)} variations`,
-          sublabel: `${Math.round(((c.unimplemented ?? 0) / (total || 1)) * 100)}% pending`,
+          label: c.name,
+          value: formatNumber(c.unimplemented ?? 0),
+          sublabel: `${Math.round(((c.unimplemented ?? 0) / (total || 1)) * 100)}%`,
           color: CC.amber,
         });
 

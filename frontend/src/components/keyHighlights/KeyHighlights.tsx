@@ -67,9 +67,11 @@ function ChipRow({ chips = [] }: { chips: KeyHighlightChip[] }) {
 // 3 equal tiles — large number, small label, colored top border
 // Used for: Q1, Q11, Q12
 function Stats({ items = [] }: { items: Array<{ value: string; label: string; color?: string }> }) {
+  const visible = items.filter(item => item.value);
+  if (visible.length === 0) return null;
   return (
     <div style={{ display: 'flex', gap: 8 }}>
-      {items.map((item, i) => (
+      {visible.map((item, i) => (
         <div
           key={i}
           style={{
@@ -98,9 +100,11 @@ function Stats({ items = [] }: { items: Array<{ value: string; label: string; co
 // Name chip + value + description rows — each with colored left border
 // Used for: Q2, Q5, Q6
 function Ranked({ items = [] }: { items: Array<{ name: string; value: string; kpiLabel?: string }> }) {
+  const visible = items.filter(item => item.name ?? item.value);
+  if (visible.length === 0) return null;
   return (
     <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 5 }}>
-      {items.map((item, i) => (
+      {visible.map((item, i) => (
         <div
           key={i}
           style={{
@@ -135,9 +139,11 @@ function Ranked({ items = [] }: { items: Array<{ name: string; value: string; kp
 // Large value callout cards — value prominent, label below
 // Used for: Q4, Q8
 function Chips({ items = [] }: { items: KeyHighlightChip[] }) {
+  const visible = items.filter(item => item.value);
+  if (visible.length === 0) return null;
   return (
     <div style={{ display: 'flex', gap: 8 }}>
-      {items.map((item, i) => (
+      {visible.map((item, i) => (
         <div
           key={i}
           style={{
@@ -173,9 +179,11 @@ const BADGE_COLOR: Record<KeyHighlightBadge['severity'], string> = {
 };
 
 function Badges({ items = [] }: { items: KeyHighlightBadge[] }) {
+  const visible = items.filter(item => item.text);
+  if (visible.length === 0) return null;
   return (
     <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 5 }}>
-      {items.map((item, i) => {
+      {visible.map((item, i) => {
         const color = BADGE_COLOR[item.severity];
         return (
           <div
@@ -212,6 +220,8 @@ function DotStrip({ min, max, unit, dots = [], chips = [] }: {
   dots: KeyHighlightDot[];
   chips?: KeyHighlightChip[];
 }) {
+  const visibleDots = dots.filter(d => d.name);
+  if (visibleDots.length === 0) return null;
   const range = max - min;
   return (
     <div>
@@ -231,7 +241,7 @@ function DotStrip({ min, max, unit, dots = [], chips = [] }: {
           {max}{unit}
         </div>
         {/* Dots */}
-        {dots.map((dot, i) => {
+        {visibleDots.map((dot, i) => {
           const pct = ((dot.val - min) / range) * 100;
           const dotColor = dot.color ?? CC.blue;
           const above = i % 2 === 0; // alternate label side to reduce crowding
@@ -290,6 +300,7 @@ function Proportion({ leftPct, leftLabel, leftValue, leftColor, rightPct, rightL
   rightPct: number; rightLabel: string; rightValue: string; rightColor?: string;
   chips?: KeyHighlightChip[];
 }) {
+  if (!leftLabel && !rightLabel) return null;
   const lColor = leftColor ?? CC.blue;
   const rColor = rightColor ?? CC.blue;
   return (
@@ -345,6 +356,7 @@ function Ring({ pct, label, color: colorProp, chips }: {
   pct: number; label: string; color?: string;
   chips?: KeyHighlightChip[];
 }) {
+  if (pct == null && !label) return null;
   const color = colorProp ?? CC.blue;
   const r      = 30;
   const cx     = 40;
@@ -426,9 +438,11 @@ const BADGE_FG: Record<'green' | 'amber' | 'red', string> = {
 };
 
 function ScorecardRows({ items = [] }: { items: ScorecardRow[] }) {
+  const visible = items.filter(item => item.name ?? item.value);
+  if (visible.length === 0) return null;
   return (
     <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 5 }}>
-      {items.map((item, i) => (
+      {visible.map((item, i) => (
         <div
           key={i}
           style={{
@@ -506,9 +520,11 @@ const FLAG_COLOR: Record<FlagsListRow['severity'], string> = {
 };
 
 function FlagsList({ items = [] }: { items: FlagsListRow[] }) {
+  const visible = items.filter(item => item.text);
+  if (visible.length === 0) return null;
   return (
     <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 5 }}>
-      {items.map((item, i) => {
+      {visible.map((item, i) => {
         const color = FLAG_COLOR[item.severity];
         return (
           <div
@@ -554,6 +570,7 @@ function FlagsList({ items = [] }: { items: FlagsListRow[] }) {
 // Mini table: label column + N data columns, each row color-coded with a left border
 // Used for: Q2 (contractor base/var breakdown), Q11 (quotation accepted vs submitted)
 function ComparisonRows({ columns = [], rows = [] }: { columns: string[]; rows: ComparisonRow[] }) {
+  if (rows.length === 0) return null;
   return (
     <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 5 }}>
       {/* Column headers */}
