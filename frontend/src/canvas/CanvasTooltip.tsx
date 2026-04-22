@@ -14,7 +14,7 @@ interface CanvasTooltipProps extends TooltipState {
  * Dynamic position is applied imperatively via useLayoutEffect to avoid
  * inline style props while still updating each frame.
  */
-export function CanvasTooltip({ visible, x, y, content, parentW }: CanvasTooltipProps) {
+export function CanvasTooltip({ visible, x, y, content, parentW, parentH }: CanvasTooltipProps) {
   const rootRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -22,11 +22,23 @@ export function CanvasTooltip({ visible, x, y, content, parentW }: CanvasTooltip
     if (!el) return;
 
     const elW = el.offsetWidth;
-    let tx = x - elW / 2;
-    let ty = y - 58;
+    const elH = el.offsetHeight;
+    const GAP = 14;
+    const maxW = parentW ?? 400;
+    const maxH = parentH ?? 800;
+
+    // Default: upper-right of cursor
+    let tx = x + GAP;
+    let ty = y - elH - GAP;
+
+    // Flip horizontally if right edge overflows
+    if (tx + elW > maxW - 4) tx = x - elW - GAP;
+    // Flip vertically if top edge overflows
+    if (ty < 4) ty = y + GAP;
+
+    // Hard clamp so tooltip never exits the canvas
     if (tx < 4) tx = 4;
-    if (tx + elW > (parentW ?? 400) - 4) tx = (parentW ?? 400) - elW - 4;
-    if (ty < 4) ty = y + 16;
+    if (ty + elH > maxH - 4) ty = maxH - elH - 4;
 
     el.style.transform = `translate(${tx}px, ${ty}px)`;
     el.style.opacity = visible ? '1' : '0';
