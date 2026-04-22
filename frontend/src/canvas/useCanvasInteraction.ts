@@ -54,7 +54,6 @@ export function useCanvasInteraction(
   const mouseRef = useRef<MouseState>({ x: -1, y: -1, over: false });
   const hoveredRef = useRef<string | null>(null);
   const hitZonesRef = useRef<HitZone[]>([]);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [tooltip, setTooltip] = useState<TooltipState>({
     visible: false,
@@ -64,14 +63,10 @@ export function useCanvasInteraction(
   });
 
   const showTooltip = useCallback((x: number, y: number, content: TooltipContent | string) => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      setTooltip({ visible: true, x, y, content });
-    }, 30);
+    setTooltip({ visible: true, x, y, content });
   }, []);
 
   const hideTooltip = useCallback(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
     setTooltip(prev =>
       prev.visible
         ? { visible: false, x: prev.x, y: prev.y, content: prev.content }
@@ -139,7 +134,6 @@ export function useCanvasInteraction(
       canvas.removeEventListener('mousemove', handleMove);
       canvas.removeEventListener('mouseleave', handleLeave);
       canvas.removeEventListener('click', handleClick);
-      if (debounceRef.current) clearTimeout(debounceRef.current);
     };
   }, [canvasRef, width, height, enabled, onClick, showTooltip, hideTooltip]);
 
