@@ -6,9 +6,9 @@ import { easeOutBack, easeOutCubic } from '../../canvas/easing';
 import type { SemiCircularGaugeChartProps } from './types';
 
 const W = 480;
-const H = 340;
+const H = 222;
 
-export function SemiCircularGaugeChart({ confirmed, total, 'data-testid': testId }: SemiCircularGaugeChartProps) {
+export function SemiCircularGaugeChart({ confirmed, total, label, 'data-testid': testId }: SemiCircularGaugeChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
 
@@ -21,7 +21,7 @@ export function SemiCircularGaugeChart({ confirmed, total, 'data-testid': testId
     const NEEDLE_DURATION = 72;
 
     const cx = W / 2;
-    const cy = 220; // vertically centres arc + labels in canvas (54px top and bottom margin)
+    const cy = 155;
     const R = 120;
     const innerR = 74;
     const startAngle = Math.PI;
@@ -64,19 +64,6 @@ export function SemiCircularGaugeChart({ confirmed, total, 'data-testid': testId
         ctx.stroke();
       });
 
-      // Zone labels — pushed well outside the arc so they don't overlap tick %s
-      [
-        { label: 'Low', angle: startAngle + 0.16 * totalSpan },
-        { label: 'Mid', angle: startAngle + 0.5 * totalSpan },
-        { label: 'High', angle: startAngle + 0.84 * totalSpan },
-      ].forEach(({ label, angle }) => {
-        const lx = cx + Math.cos(angle) * (R + 46);
-        const ly = cy + Math.sin(angle) * (R + 46);
-        ctx.font = AXIS_LABEL.font;
-        ctx.fillStyle = AXIS_LABEL.color;
-        ctx.textAlign = 'center';
-        ctx.fillText(label, lx, ly + 3);
-      });
 
       // Filled gauge arc up to value
       const safeValue = Math.round(((confirmed ?? 0) / (total || 1)) * 100);
@@ -154,16 +141,13 @@ export function SemiCircularGaugeChart({ confirmed, total, 'data-testid': testId
       }
 
       // Stats below needle
-      if (progress > 0.7) {
+      if (progress > 0.7 && label) {
         const fade = Math.min(1, (progress - 0.7) / 0.3);
         ctx.globalAlpha = fade;
         ctx.font = LEGEND_LABEL.font;
         ctx.fillStyle = LEGEND_LABEL.color;
         ctx.textAlign = 'center';
-        ctx.fillText('NCEs confirmed', cx, cy + 32);
-        ctx.font = LEGEND_LABEL.font;
-        ctx.fillStyle = LEGEND_LABEL.color;
-        ctx.fillText(`${confirmed ?? 0} of ${total ?? 0} NCEs are confirmed compensation events`, cx, cy + 62);
+        ctx.fillText(`${confirmed ?? 0} of ${total ?? 0} ${label}`, cx, cy + 58);
         ctx.globalAlpha = 1;
       }
 
@@ -195,7 +179,7 @@ export function SemiCircularGaugeChart({ confirmed, total, 'data-testid': testId
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [confirmed, total]);
+  }, [confirmed, total, label]);
 
   return (
     <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>

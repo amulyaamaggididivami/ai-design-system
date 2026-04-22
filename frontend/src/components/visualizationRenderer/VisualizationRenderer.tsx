@@ -40,7 +40,7 @@ export function VisualizationRenderer({ config, className }: VisualizationRender
   if (config.type === 'ranked-card-leaderboard') return <RankedCardLeaderboard items={config.items} />;
   if (config.type === 'proportional-band-chart') return <ProportionalBandChart severities={config.severities} />;
   if (config.type === 'radial-fan-tree-chart') return <RadialFanTreeChart total={config.total} totalLabel={config.totalLabel} items={config.items} />;
-  if (config.type === 'semi-circular-gauge-chart') return <SemiCircularGaugeChart confirmed={config.confirmed} total={config.total} />;
+  if (config.type === 'semi-circular-gauge-chart') return <SemiCircularGaugeChart confirmed={config.confirmed} total={config.total} label={config.label} />;
   if (config.type === 'segmented-split-bar-chart') return <SegmentedSplitBarChart items={config.items} />;
   if (config.type === 'balance-scale-chart') return <BalanceScaleChart left={config.left} right={config.right} />;
   if (config.type === 'area-line-chart') return <AreaLineChart points={config.points} />;

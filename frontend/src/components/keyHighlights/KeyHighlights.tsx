@@ -44,7 +44,7 @@ function ChipRow({ chips = [] }: { chips: KeyHighlightChip[] }) {
           key={i}
           style={{
             width: 260, height: 80, display: 'flex', alignItems: 'baseline', gap: 8,
-            padding: '8px 0px',
+            padding: '10px 0px',
             background: C.bg,
             border: `1px solid ${C.border}`,
             borderRadius: 5,
@@ -75,7 +75,7 @@ function Stats({ items = [] }: { items: Array<{ value: string; label: string; co
           style={{
             display: 'flex', flexDirection: 'column' as const,
             justifyContent: 'center', alignItems: 'flex-start',
-            width: 260, height: 120, padding: '24px 0', gap: 8,
+            width: 260, height: 120, padding: '10px 0', gap: 8,
             flexShrink: 0,
             border: `1px solid ${C.border}`,
             background: C.bg,
@@ -105,7 +105,7 @@ function Ranked({ items = [] }: { items: Array<{ name: string; value: string; kp
           key={i}
           style={{
             display: 'flex', alignItems: 'center', gap: 12,
-            padding: '9px 0px',
+            padding: '10px 0px',
             background: C.bg,
             border: `1px solid ${C.border}`,
           }}
@@ -143,7 +143,7 @@ function Chips({ items = [] }: { items: KeyHighlightChip[] }) {
           style={{
             display: 'flex', flexDirection: 'column' as const,
             justifyContent: 'center', alignItems: 'flex-start',
-            width: 260, height: 120, padding: '24px 0', gap: 8,
+            width: 260, height: 120, padding: '10px 0', gap: 8,
             flexShrink: 0,
             background: C.bg,
             // border: `1px solid ${(item.color ? item.color + '30' : C.border)}`,
@@ -215,7 +215,7 @@ function DotStrip({ min, max, unit, dots = [], chips = [] }: {
   const range = max - min;
   return (
     <div>
-      <div style={{ position: 'relative' as const, height: 90, marginTop: 4 }}>
+      <div style={{ position: 'relative' as const, height: 90, padding: '10px 0px' }}>
         {/* Track line */}
         <div
           style={{
@@ -295,7 +295,7 @@ function Proportion({ leftPct, leftLabel, leftValue, leftColor, rightPct, rightL
   return (
     <div>
       {/* Split bar */}
-      <div style={{ display: 'flex', borderRadius: 6, overflow: 'hidden', height: 36, marginBottom: 8 }}>
+      <div style={{ display: 'flex', borderRadius: 6, overflow: 'hidden', height: 36, margin: '10px 0' }}>
         <div
           style={{
             width: `${leftPct}%`, background: lColor + '38',
@@ -333,7 +333,7 @@ function Proportion({ leftPct, leftLabel, leftValue, leftColor, rightPct, rightL
           </span>
         </div>
       </div>
-      {chips && chips.length > 0 && <ChipRow chips={chips} />}
+      {chips && chips.length > 0 && <Chips items={chips} />}
     </div>
   );
 }
@@ -379,7 +379,7 @@ function Ring({ pct, label, color: colorProp, chips }: {
       </div>
       {/* Label + chips */}
       <div style={{ flex: 1 }}>
-        <div style={{ ...LABEL, marginBottom: 10 }}>
+        <div style={{ ...LABEL, padding: '10px 0px' }}>
           {label}
         </div>
         {chips && (
@@ -389,7 +389,7 @@ function Ring({ pct, label, color: colorProp, chips }: {
                 key={i}
                 style={{
                   display: 'flex', alignItems: 'baseline', gap: 8,
-                  padding: '7px 10px',
+                  padding: '10px 10px',
                   background: C.bg,
                   border: `1px solid ${C.border}`,
                   borderRadius: 5,
@@ -433,7 +433,7 @@ function ScorecardRows({ items = [] }: { items: ScorecardRow[] }) {
           key={i}
           style={{
             display: 'flex', alignItems: 'center', gap: 10,
-            padding: '8px 0px',
+            padding: '10px 0px',
             background: C.bg,
             border: `1px solid ${C.border}`,
           }}

@@ -148,7 +148,7 @@ export type BaseVisualizationConfig =
   | { type: 'ranked-card-leaderboard'; items: EWOpenContractorRow[]; title?: string }
   | { type: 'proportional-band-chart'; severities: EWSeverityRow[]; title?: string }
   | { type: 'radial-fan-tree-chart'; total: number; totalLabel?: string; items: NCEContractorRow[] }
-  | { type: 'semi-circular-gauge-chart'; confirmed: number; total: number }
+  | { type: 'semi-circular-gauge-chart'; confirmed: number; total: number; label?: string }
   | { type: 'segmented-split-bar-chart'; items: VariationRow[] }
   | { type: 'balance-scale-chart'; left: QuotationSide; right: QuotationSide }
   | { type: 'area-line-chart'; points: QuotationTrendPoint[] }

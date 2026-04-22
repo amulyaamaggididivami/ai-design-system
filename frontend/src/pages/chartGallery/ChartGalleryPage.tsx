@@ -166,7 +166,7 @@ const nceTotalLabel = 'Active Early Warnings';
  * Needle gauge — pct sweeps needle, confirmed/total shown in centre.
  * pct: 0–100  |  confirmed: number of confirmed NCEs  |  total: total NCEs
  */
-const compensationGaugeData = {  confirmed: 519, total: 1000 };
+const compensationGaugeData = {  confirmed: 519, total: 1000, label: 'NCEs confirmed' };
 
 
 /**
@@ -596,7 +596,7 @@ export function ChartGalleryPage() {
       <KeyHighlights block={HIGHLIGHTS.q8} />
 
       <h3>Q9 — semi-circular-gauge-chart</h3>
-      <VisualizationRenderer config={{ type: 'semi-circular-gauge-chart', confirmed: compensationGaugeData.confirmed, total: compensationGaugeData.total }} />
+      <VisualizationRenderer config={{ type: 'semi-circular-gauge-chart', confirmed: compensationGaugeData.confirmed, total: compensationGaugeData.total, label: 'NCEs are confirmed compensation events' }} />
       <KeyHighlights block={HIGHLIGHTS.q9} />
 
       <h3>Q10 — segmented-split-bar-chart</h3>

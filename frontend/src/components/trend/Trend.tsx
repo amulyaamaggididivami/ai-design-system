@@ -269,7 +269,7 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
       />
       <div
         className="trend-scroll"
-        style={{ flex: 1, overflowX: 'auto' }}
+        style={{ flex: 1, minWidth: 0, overflowX: 'auto' }}
       >
         <div style={{ position: 'relative', width: chartCanvasW, height: H }}>
           <canvas
