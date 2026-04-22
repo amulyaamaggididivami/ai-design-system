@@ -55,7 +55,7 @@ export function ProgressRaceChart({ items: rawItems = [], 'data-testid': testId 
     const ctx = setupCanvas(canvas, W, H);
     frameRef.current = 0;
 
-    const padL   = W * 0.13;
+    const padL   = 150;
     const padR   = W * 0.08;
     const trackW = W - padL - padR;
 

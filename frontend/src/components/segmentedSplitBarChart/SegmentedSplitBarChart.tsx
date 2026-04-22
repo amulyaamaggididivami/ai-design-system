@@ -50,7 +50,7 @@ export function SegmentedSplitBarChart({ items: rawItems = [], 'data-testid': te
     frameRef.current = 0;
     const DURATION = 60;
 
-    const padL = 60;
+    const padL = 150;
     const padR = 28;
     const padT = PAD_T;
     const padB = PAD_B;
