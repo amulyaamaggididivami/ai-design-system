@@ -81,6 +81,14 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
         ctx.textBaseline = 'middle';
         ctx.fillText(truncate(ctx, con.name ?? '', NAME_W - 16), x0 - 8, y + BAR_H / 2);
 
+        // Register hit on label area — same id as bar so hover effect + tooltip both trigger
+        registerHitRect(hitZonesRef.current, con.id, 0, y, x0, BAR_H, {
+          label   : con.name,
+          value   : `${con.totalLabel ?? fmtValue(con.total ?? 0)} total`,
+          sublabel: `Base ${con.baseLabel ?? fmtValue(con.base ?? 0)} + Var ${con.variationLabel ?? fmtValue(con.variation ?? 0)} · ${con.percentage ?? 0}% committed`,
+          color,
+        });
+
         // Background track
         ctx.fillStyle = rgb(CC.bd, 0.25);
         ctx.beginPath();

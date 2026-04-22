@@ -104,6 +104,14 @@ export function SegmentedSplitBarChart({ items: rawItems = [], 'data-testid': te
         ctx.textAlign = 'right';
         ctx.fillText(truncate(ctx, c.abbreviation ?? c.name ?? '', padL - 16), padL - 8, y + barH / 2 + 4);
 
+        // Register hit on label area — same id as impl bar so hover effect + tooltip both trigger
+        registerHitRect(hitZonesRef.current, implId, 0, y, padL, barH, {
+          label: c.name ?? c.abbreviation ?? '',
+          value: `${formatNumber((c.implemented ?? 0) + (c.unimplemented ?? 0))} total variations`,
+          sublabel: `Implemented: ${formatNumber(c.implemented ?? 0)} · Pending: ${formatNumber(c.unimplemented ?? 0)}`,
+          color: CC.green,
+        });
+
         // Track
         ctx.fillStyle = rgb(CC.bd, 0.15);
         ctx.beginPath();
