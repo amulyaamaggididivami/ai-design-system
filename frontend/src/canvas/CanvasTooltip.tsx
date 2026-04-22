@@ -91,17 +91,19 @@ export function CanvasTooltip({ visible, x, y, content, parentW, parentH }: Canv
           {label}
         </div>
       )}
-      <div
-        style={{
-          fontSize: 16,
-          fontWeight: 500,
-          color: CC.t1,
-          whiteSpace: 'nowrap',
-          lineHeight: '22px',
-        }}
-      >
-        {value}
-      </div>
+      {value && (
+        <div
+          style={{
+            fontSize: 16,
+            fontWeight: 500,
+            color: CC.t1,
+            whiteSpace: 'nowrap',
+            lineHeight: '22px',
+          }}
+        >
+          {value}
+        </div>
+      )}
       {sublabel && (
         <div
           style={{

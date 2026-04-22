@@ -2,7 +2,7 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 
 export interface TooltipContent {
   label?: string;
-  value: string;
+  value?: string;
   sublabel?: string;
   color?: string;
 }
