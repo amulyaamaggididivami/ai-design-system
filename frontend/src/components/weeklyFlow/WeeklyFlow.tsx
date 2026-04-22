@@ -15,6 +15,7 @@ import {
   drawGlow,
   setupCanvas,
 } from "../../canvas/canvasUtils";
+import { formatNumber } from "../../utils/numberFormat";
 import type { WeeklyFlowProps } from "./types";
 
 const W = 800;
@@ -216,8 +217,8 @@ export function WeeklyFlow({
 
         registerHitRect(hitZonesRef.current, c.id, cn.x, cn.y, nodeW, cn.h, {
           label: c.name,
-          value: `${c.totalLabel ?? String(c.total ?? 0)} total commitment`,
-          sublabel: `Base ${c.baseLabel ?? String(c.base ?? 0)}  +  Variations ${c.variationLabel ?? String(c.variation ?? 0)}`,
+          value: c.totalLabel ?? String(c.total ?? 0),
+          sublabel: `${c.baseLabel ?? String(c.base ?? 0)} + ${c.variationLabel ?? String(c.variation ?? 0)}`,
           color: cn.color,
         });
 
@@ -286,7 +287,7 @@ export function WeeklyFlow({
         ctx.fillText("Base Value", col2X, baseNode.cy - 6);
         ctx.font = CHART_VALUE.font;
         ctx.fillStyle = CHART_VALUE.color;
-        ctx.fillText(`£${totalBase}M`, col2X, baseNode.cy + 8);
+        ctx.fillText(formatNumber(totalBase), col2X, baseNode.cy + 8);
         ctx.globalAlpha = 1;
         ctx.textBaseline = "alphabetic";
 
@@ -306,7 +307,7 @@ export function WeeklyFlow({
         ctx.fillText("Variations", col2X, varNode.cy - 4);
         ctx.font = CHART_VALUE.font;
         ctx.fillStyle = CHART_VALUE.color;
-        ctx.fillText(`£${totalVar}M`, col2X, varNode.cy + 8);
+        ctx.fillText(formatNumber(totalVar), col2X, varNode.cy + 8);
         ctx.globalAlpha = 1;
         ctx.textBaseline = "alphabetic";
       }
@@ -331,7 +332,7 @@ export function WeeklyFlow({
         ctx.fillText("Total Commitment", col3X, totalNode.cy - 12);
         ctx.font = CHART_VALUE.font;
         ctx.fillStyle = CC.blue;
-        ctx.fillText(`£${grandTotal}M`, col3X, totalNode.cy + 6);
+        ctx.fillText(formatNumber(grandTotal), col3X, totalNode.cy + 6);
         ctx.globalAlpha = 1;
         ctx.textBaseline = "alphabetic";
       }

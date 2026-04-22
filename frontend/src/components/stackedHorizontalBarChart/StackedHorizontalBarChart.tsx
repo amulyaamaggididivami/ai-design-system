@@ -144,8 +144,8 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
 
         registerHitRect(hitZonesRef.current, con.id, x0, y, Math.max(totalW, 1), BAR_H, {
           label   : con.name,
-          value   : `${con.totalLabel ?? fmtValue(con.total ?? 0)} total`,
-          sublabel: `Base ${con.baseLabel ?? fmtValue(con.base ?? 0)} + Var ${con.variationLabel ?? fmtValue(con.variation ?? 0)} · ${con.percentage ?? 0}% committed`,
+          value   : con.totalLabel ?? fmtValue(con.total ?? 0),
+          sublabel: `${con.baseLabel ?? fmtValue(con.base ?? 0)} + ${con.variationLabel ?? fmtValue(con.variation ?? 0)} · ${con.percentage ?? 0}%`,
           color,
         });
       });

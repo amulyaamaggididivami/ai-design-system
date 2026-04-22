@@ -148,8 +148,8 @@ export function AreaLineChart({ points: rawTrend = [], 'data-testid': testId }: 
 
         registerHitCircle(hitZonesRef.current, id, pt.x, pt.y, 10, {
           label: pt.point.week,
-          value: `${pt.point.count} quotations submitted`,
-          sublabel: `£${pt.point.value}M value`,
+          value: String(pt.point.count),
+          sublabel: String(pt.point.value),
           color: CC.blue,
         });
 

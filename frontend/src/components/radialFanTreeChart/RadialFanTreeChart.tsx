@@ -115,8 +115,8 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
           const displayVal = formatNumber(c.count ?? 0);
           registerHitCircle(hitZonesRef.current, c.id, lpos.x, lpos.y, leafR + 8, {
             label: c.name,
-            value: `${displayVal} NCEs raised`,
-            sublabel: `${Math.round(((c.count ?? 0) / (total || 1)) * 100)}% of all NCEs`,
+            value: displayVal,
+            sublabel: `${Math.round(((c.count ?? 0) / (total || 1)) * 100)}% of total`,
             color,
           });
 
@@ -166,9 +166,9 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
       }
 
       registerHitCircle(hitZonesRef.current, '__root__', rootX, rootY, rootR, {
-        label: 'Total NCEs',
-        value: totalLabel ?? formatNumber(total, 0),
-        sublabel: `across ${byContractor.length} contractors`,
+        label: totalLabel ?? 'Total',
+        value: formatNumber(total, 0),
+        sublabel: `${byContractor.length} items`,
         color: CC.blue,
       });
 
