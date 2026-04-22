@@ -234,7 +234,7 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
         for (let i = 0; i < drawN; i++) {
           registerHitCircle(hitZonesRef.current, `pt-${i}`, pts[i].x, pts[i].y, 10, {
             label: pts[i].point.week,
-            sublabel: String(pts[i].point.value),
+            value: String(pts[i].point.count),
             color: CC.blue,
           });
         }
