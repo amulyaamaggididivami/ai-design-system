@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, useMemo } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
-import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
+import { useCanvasInteraction, registerHitCircle, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { easeOutCubic } from '../../canvas/easing';
 import { CC, AXIS_LABEL, CHART_VALUE, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
@@ -136,7 +136,16 @@ export function ProgressRaceChart({ items: rawItems = [], 'data-testid': testId 
           sublabel: `Base: ${contractor.baseLabel ?? String(contractor.base ?? 0)} · Variations: ${contractor.variationLabel ?? String(contractor.variation ?? 0)}`,
           color,
         };
-        // Register hit on runner dot
+        // Register hit on full track lane + runner dot + label area — all use same id
+        registerHitRect(
+          hitZonesRef.current,
+          contractor.id,
+          0,
+          trackY,
+          padL + trackW,
+          TRACK_H,
+          hitData,
+        );
         registerHitCircle(
           hitZonesRef.current,
           contractor.id,
