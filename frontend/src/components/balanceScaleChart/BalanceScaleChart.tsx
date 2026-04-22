@@ -5,7 +5,7 @@ import { easeOutBack, easeOutCubic } from '../../canvas/easing';
 import type { BalanceScaleChartProps } from './types';
 
 const W = 500;
-const H = 320;
+const H = 270;
 
 export function BalanceScaleChart({ left, right, 'data-testid': testId }: BalanceScaleChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -19,7 +19,7 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
     const DURATION = 80;
 
     const cx = W / 2;
-    const pivotY = 100;
+    const pivotY = 50;
     const maxVal = Math.max(left.value ?? 0, right.value ?? 0, 1);
     const tilt = ((left.value - right.value) / maxVal) * 14; // degrees
 

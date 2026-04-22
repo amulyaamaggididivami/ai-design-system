@@ -9,7 +9,7 @@ import { formatNumber } from '../../utils/numberFormat';
 import type { NCEContractorRow } from '../../types';
 import type { RadialFanTreeChartProps } from './types';
 
-const DEFAULT_W = 800;
+const DEFAULT_W = 770;
 const MIN_H = 320;
 const PAD_V = 60;
 const MIN_LEAF_SPACING = 28;

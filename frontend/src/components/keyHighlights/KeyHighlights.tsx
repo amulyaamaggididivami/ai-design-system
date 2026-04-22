@@ -82,7 +82,7 @@ function Stats({ items = [] }: { items: Array<{ value: string; label: string; co
             boxSizing: 'border-box' as const,
           }}
         >
-          <div style={{ ...VALUE, color: item.color ?? C.t1 }}>
+          <div style={{ ...VALUE, color: C.t1 }}>
             {item.value}
           </div>
           <div style={{ ...LABEL }}>
@@ -303,7 +303,7 @@ function Proportion({ leftPct, leftLabel, leftValue, leftColor, rightPct, rightL
             paddingRight: 12,
           }}
         >
-          <span style={{ fontSize: 18, fontWeight: 500, color: lColor, fontFamily: SANS }}>
+          <span style={{ fontSize: 18, fontWeight: 500, color: C.t2, fontFamily: SANS }}>
             {leftValue}
           </span>
         </div>
@@ -315,7 +315,7 @@ function Proportion({ leftPct, leftLabel, leftValue, leftColor, rightPct, rightL
             paddingLeft: 12,
           }}
         >
-          <span style={{ fontSize: 18, fontWeight: 500, color: rColor, fontFamily: SANS }}>
+          <span style={{ fontSize: 18, fontWeight: 500, color: C.t2, fontFamily: SANS }}>
             {rightValue}
           </span>
         </div>

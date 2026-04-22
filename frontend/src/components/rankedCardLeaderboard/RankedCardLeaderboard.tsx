@@ -180,9 +180,9 @@ export function RankedCardLeaderboard({
         if (circleText !== fullCircleText) circleText = circleText.slice(0, -1) + '…';
         ctx.fillText(circleText, photoX, photoY);
 
-        // Open count — large value line
+        // Show count when present, fall back to label only when count is absent
         const formattedCount = formatNumber(contractor.count ?? 0);
-        const fullVal = contractor.label ?? formattedCount;
+        const fullVal = contractor.count != null ? formattedCount : (contractor.label ?? formattedCount);
         ctx.font = CHART_VALUE.font;
         ctx.textBaseline = "alphabetic";
         ctx.fillStyle = rgb(color, 0.9 + hp * 0.1);
@@ -193,13 +193,6 @@ export function RankedCardLeaderboard({
         }
         if (displayVal !== fullVal) displayVal = displayVal.slice(0, -1) + '…';
         ctx.fillText(displayVal, photoX, cardY + cardH * 0.74);
-
-        // Count line below — only when label is also shown
-        if (contractor.label) {
-          ctx.font = AXIS_LABEL.font;
-          ctx.fillStyle = rgb(color, 0.7 + hp * 0.2);
-          ctx.fillText(formattedCount, photoX, cardY + cardH * 0.88);
-        }
 
 
         // Tooltip with rank, %, risk level

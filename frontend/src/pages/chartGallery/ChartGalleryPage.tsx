@@ -107,12 +107,11 @@ const ewCategories = [
  * EWOpenContractorRow: { id, name, abbreviation?, count? }
  */
 const contractorRankContractors = [
-  { id: 'c1', name: 'Tata Projects',  label:"helooo contract ncesssss valuessss",  count: 55676349809090800.56 },
-  { id: 'c3', name: 'Afcons Infra',     count: 43456789 },
-  { id: 'c2', name: 'L&T Construction',    count: 157668692.3 },
-  { id: 'c4', name: 'NCC Ltd',              count: 75687.8 },
-  { id: 'c5', name: 'KEC International',     count: 25.4 },
-  { id: 'c6', name: 'KEC International',    count: 25.4 },
+  { id: 'c1', name: 'Tata Projects',  label:"1",  count: 1 },
+  { id: 'c3', name: 'Afcons Infra',     label:"2",count: 2 },
+  { id: 'c2', name: 'L&T Construction',    label:"6",count: 3 },
+  { id: 'c4', name: 'NCC Ltd',              label:"4",count: 4 },
+  { id: 'c5', name: 'KEC International',     label:"5",count: 5 },
   
 ];
 
