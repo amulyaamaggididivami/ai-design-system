@@ -131,9 +131,9 @@ export function ProgressRaceChart({ items: rawItems = [], 'data-testid': testId 
 
         // Register hit on runner dot + percentage label text
         const hitData = {
-          label   : contractor.name,
-          value   : `${contractor.percentage ?? 0}%`,
-          sublabel: `${contractor.baseLabel ?? String(contractor.base ?? 0)} · ${contractor.variationLabel ?? String(contractor.variation ?? 0)}`,
+          label: contractor.name,
+          value: `${contractor.percentage ?? 0}%`,
+          sublabel: contractor.totalLabel ?? (contractor.total != null ? String(contractor.total) : undefined),
           color,
         };
         // Register hit on full track lane + runner dot + label area — all use same id

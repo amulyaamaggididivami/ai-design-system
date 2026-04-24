@@ -47,6 +47,7 @@ function ChipRow({ chips = [] }: { chips: KeyHighlightChip[] }) {
             padding: '10px 0px',
             background: C.bg,
             border: `1px solid ${C.border}`,
+            rowGap: 16,
             borderRadius: 5,
             boxSizing: 'border-box' as const,
           }}
@@ -79,6 +80,7 @@ function Stats({ items = [] }: { items: Array<{ value: string; label: string; co
             justifyContent: 'center', alignItems: 'flex-start',
             width: 260, height: 120, padding: '10px 0', gap: 8,
             flexShrink: 0,
+            rowGap: 16,
             border: `1px solid ${C.border}`,
             background: C.bg,
             boxSizing: 'border-box' as const,
@@ -426,16 +428,6 @@ function Ring({ pct, label, color: colorProp, chips }: {
 // ─── ScorecardRows ───────────────────────────────────────────────────────────
 // Per-item rows: name chip | mini bar | value | optional badge + sublabel
 // Used for: Q3 (commitment), Q5 (EW categories), Q6 (open EWs), Q8 (NCEs), Q10 (variation implementation)
-const BADGE_BG: Record<'green' | 'amber' | 'red', string> = {
-  green: '#34D39918',
-  amber: '#FBBF2418',
-  red:   '#F0606018',
-};
-const BADGE_FG: Record<'green' | 'amber' | 'red', string> = {
-  green: '#34D399',
-  amber: '#FBBF24',
-  red:   '#F06060',
-};
 
 function ScorecardRows({ items = [] }: { items: ScorecardRow[] }) {
   const visible = items.filter(item => item.name ?? item.value);
@@ -483,12 +475,12 @@ function ScorecardRows({ items = [] }: { items: ScorecardRow[] }) {
           </span>
 
           {/* Badge */}
-          {item.badge && item.badgeSeverity && (
+          {item.badge && (
             <span
               style={{
                 fontSize: 18, fontWeight: 500,
-                color: BADGE_FG[item.badgeSeverity],
-                background: BADGE_BG[item.badgeSeverity],
+                color: C.t1,
+                background: 'transparent',
                 padding: '2px 7px', borderRadius: 4,
                 fontFamily: SANS, flexShrink: 0, minWidth: 72,
                 textAlign: 'center' as const,

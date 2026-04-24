@@ -200,7 +200,7 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
         aria-label="Early Warning severity distribution — prism spectrum bands"
         style={{ width: dynamicW, height: H, display: 'block' }}
       />
-      <CanvasTooltip {...tooltip} parentW={dynamicW} parentH={H} placement="cursor-below" />
+      <CanvasTooltip {...tooltip} parentW={dynamicW} parentH={H} />
     </div>
   );
 }

@@ -93,7 +93,9 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
 
     const pts = points.map((p, i) => ({
       x: padLC + i * stepX,
-      y: padT + chartH - ((p.count - minCount) / countRange) * chartH,
+      y: padT + chartH - (hasNegativeValues
+        ? (p.count - minCount) / countRange
+        : p.count / (maxCount || 1)) * chartH,
       point: p,
     }));
 

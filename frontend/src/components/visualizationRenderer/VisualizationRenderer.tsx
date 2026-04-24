@@ -32,7 +32,10 @@ export function VisualizationRenderer({ config, className }: VisualizationRender
   if (config.type === 'trend') return <TrendChart points={config.points} className={className} />;
   if (config.type === 'mini-bars') return <MiniBars rows={config.rows} className={className} />;
 
-  if (config.type === 'stacked-horizontal-bar-chart') return <StackedHorizontalBarChart data={config.data} />;
+  if (config.type === 'stacked-horizontal-bar-chart') {
+    const data = config.data ?? { items: config.items ?? [] };
+    return <StackedHorizontalBarChart data={data} />;
+  }
   if (config.type === 'multi-metric-constellation-chart') return <MultiMetricConstellationChart items={config.items} />;
   if (config.type === 'progress-race-chart') return <ProgressRaceChart items={config.items} />;
   if (config.type === 'hub-and-spoke-radial-chart') return <HubAndSpokeRadialChart segments={config.segments} title={config.title} unitLabel={config.unitLabel} />;

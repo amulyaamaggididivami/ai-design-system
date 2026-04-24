@@ -107,7 +107,7 @@ const ewCategories = [
  * EWOpenContractorRow: { id, name, abbreviation?, count? }
  */
 const contractorRankContractors = [
-  { id: 'c1', name: 'Tata Projects',  label:"1",  count: 1 },
+  { id: 'c1', name: 'Tata Projects',  label:"1 Rupee",  count: 1 },
   { id: 'c3', name: 'Afcons Infra',     label:"2",count: 2 },
   { id: 'c2', name: 'L&T Construction',    label:"6",count: 3 },
   { id: 'c4', name: 'NCC Ltd',              label:"4",count: 4 },
@@ -206,65 +206,36 @@ const quotationBalanceData = {
  * QuotationTrendPoint: { week: string, count: number, value: number }
  */
 const quotationTrendData = [
-  { week: 'W1asdfghsdfghjkj',  count: 2, value: 1.8 },
-  { week: 'Wsdsdfghjfghj2',  count: 3, value: 2.4 },
-  { week: 'Wsdfghjk3',  count: 1, value: 0.9 },
-  { week: 'W4',  count: 4, value: 3.6 },
-  { week: 'W5',  count: 5, value: 4.1 },
-  { week: 'W6',  count: 3, value: 2.8 },
-  { week: 'W7',  count: 6, value: 5.2 },
-  { week: 'W8',  count: 4, value: 3.9 },
-  { week: 'W9',  count: 7, value: 6.4 },
-  { week: 'W10dfghjk', count: 29, value: 7.1 },
-  { week: 'W1sdfghj1', count: 5, value: 4.8 },
-  { week: 'W1sdfghj2', count: 30, value: 8.3 },
-  { week: 'W1wertyui2', count: 9, value: 8.3 },
-  { week: 'W1xcvbn2', count: 15, value: 8.3 },
-  { week: 'W12wertyuio', count: 50, value: 8.3 },
-  { week: 'W12', count: 10, value: 8.3 },
-  { week: 'W12', count: 9, value: 8.3 },
-  { week: 'W12', count: 9, value: 8.3 },
-  { week: 'W12', count: 20, value: 8.3 },
-  { week: 'W12', count: 9, value: 8.3 },
-  { week: 'W10dfghjk', count: 29, value: 7.1 },
-  { week: 'W1sdfghj1', count: 5, value: 4.8 },
-  { week: 'W1sdfghj2', count: 30, value: 8.3 },
-  { week: 'W1wertyui2', count: 9, value: 8.3 },
-  { week: 'W1xcvbn2', count: 15, value: 8.3 },
-  { week: 'W12wertyuio', count: 50, value: 8.3 },
-  { week: 'W12', count: 10, value: 8.3 },
-  { week: 'W12', count: 9, value: 8.3 },
-  { week: 'W12', count: 9, value: 8.3 },
-  { week: 'W12', count: 20, value: 8.3 },
-  { week: 'W12', count: 9, value: 8.3 },
-  { week: 'W10dfghjk', count: 29, value: 7.1 },
-  { week: 'W1sdfghj1', count: 5, value: 4.8 },
-  { week: 'W1sdfghj2', count: 30, value: 8.3 },
-  { week: 'W1wertyui2', count: 9, value: 8.3 },
-  { week: 'W1xcvbn2', count: 15, value: 8.3 },
-  { week: 'W12wertyuio', count: 50, value: 8.3 },
-  { week: 'W12', count: 10, value: 8.3 },
-  { week: 'W12', count: 9, value: 8.3 },
-  { week: 'W12', count: 9, value: 8.3 },
-  { week: 'W12', count: 20, value: 8.3 },
-  { week: 'W12', count: 9, value: 8.3 },
-  { week: 'W10dfghjk', count: 29, value: 7.1 },
-  { week: 'W1sdfghj1', count: 5, value: 4.8 },
-  { week: 'W1sdfghj2', count: 30, value: 8.3 },
-  { week: 'W1wertyui2', count: 9, value: 8.3 },
-  { week: 'W1xcvbn2', count: 15, value: 8.3 },
-  { week: 'W12wertyuio', count: 50, value: 8.3 },
-  { week: 'W12', count: 10, value: 8.3 },
-  { week: 'W12', count: 9, value: 8.3 },
-  { week: 'W12', count: 9, value: 8.3 },
-  { week: 'W12', count: 20, value: 8.3 },
-  { week: 'W12', count: 9, value: 8.3 },
-  { week: 'W10dfghjk', count: 29, value: 7.1 },
-  { week: 'W1sdfghj1', count: 5, value: 4.8 },
-  { week: 'W1sdfghj2', count: 30, value: 8.3 },
-  { week: 'W1wertyui2', count: 9, value: 8.3 },
-  { week: 'W1xcvbn2', count: 15, value: 8.3 },
-  { week: 'W12wertyuio', count: 50, value: 8.3 },
+{
+        "value": 12,
+        "week": "Sep-2025",
+        "count": 137
+      },
+      {
+        "value": 7,
+        "week": "Oct-2025",
+        "count": 141
+      },
+      {
+        "value": 4,
+        "week": "Nov-2025",
+        "count": 163
+      },
+      {
+        "count": 89,
+        "value": 6,
+        "week": "Dec-2025"
+      },
+      {
+        "count": 121,
+        "value": 1,
+        "week": "Jan-2026"
+      },
+      {
+        "count": 137,
+        "value": 4,
+        "week": "Feb-2026"
+      }
 ];
 
 /**

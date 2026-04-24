@@ -174,18 +174,20 @@ export function RankedCardLeaderboard({
         ctx.fillText(circleText, photoX, photoY);
 
         // Show count when present, fall back to label only when count is absent
-        const formattedCount = formatNumber(contractor.count ?? 0);
-        const fullVal = contractor.count != null ? formattedCount : (contractor.label ?? formattedCount);
-        ctx.font = CHART_VALUE.font;
-        ctx.textBaseline = "alphabetic";
-        ctx.fillStyle = rgb(color, 0.9 + hp * 0.1);
-        const maxValW = w - 16;
-        let displayVal = fullVal;
-        while (ctx.measureText(displayVal).width > maxValW && displayVal.length > 1) {
-          displayVal = displayVal.slice(0, -1);
+        const formattedCount = contractor.count != null ? formatNumber(contractor.count) : null;
+        const fullVal = contractor.label ?? formattedCount;
+        if (fullVal) {
+          ctx.font = CHART_VALUE.font;
+          ctx.textBaseline = "alphabetic";
+          ctx.fillStyle = rgb(color, 0.9 + hp * 0.1);
+          const maxValW = w - 16;
+          let displayVal = fullVal;
+          while (ctx.measureText(displayVal).width > maxValW && displayVal.length > 1) {
+            displayVal = displayVal.slice(0, -1);
+          }
+          if (displayVal !== fullVal) displayVal = displayVal.slice(0, -1) + '…';
+          ctx.fillText(displayVal, photoX, cardY + cardH * 0.74);
         }
-        if (displayVal !== fullVal) displayVal = displayVal.slice(0, -1) + '…';
-        ctx.fillText(displayVal, photoX, cardY + cardH * 0.74);
 
 
         const pct = Math.round(((contractor.count ?? 0) / (total || 1)) * 100);

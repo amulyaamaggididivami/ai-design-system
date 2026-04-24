@@ -140,7 +140,8 @@ export type BaseVisualizationConfig =
       type: 'mini-bars';
       rows: MiniBarRow[];
     }
-  | { type: 'stacked-horizontal-bar-chart'; data: ContractData }
+  | { type: 'stacked-horizontal-bar-chart'; data: ContractData; items?: never }
+  | { type: 'stacked-horizontal-bar-chart'; items: ContractorRow[]; data?: never }
   | { type: 'multi-metric-constellation-chart'; items: ContractorRow[] }
   | { type: 'progress-race-chart'; items: ContractorRow[] }
   | { type: 'hub-and-spoke-radial-chart'; segments: EWStatusRow[]; title?: string; unitLabel?: string }
@@ -198,7 +199,7 @@ export type VariationRow = {
 
 export type QuotationSide = { value: number; count: number; label: string };
 export type QuotationSummary = { left: QuotationSide; right: QuotationSide };
-export type QuotationTrendPoint = { week: string; count: number; value: number };
+export type QuotationTrendPoint = { week: string; count: number; value?: number };
 
 // ─── Key Highlights Types ────────────────────────────────────────────────────
 
