@@ -28,7 +28,7 @@ const VALUE: React.CSSProperties = {
 
 // Typography spec — Text sm / Regular — applied to label/description text
 const LABEL: React.CSSProperties = {
-  color:      '#C2C2C2',
+  color:      '#B3B5B6',
   fontFamily: SANS,
   fontSize:   18,
   fontWeight: 400,
@@ -89,7 +89,7 @@ function Stats({ items = [] }: { items: Array<{ value: string; label: string; co
           <div style={{ ...VALUE, color: C.t1 }}>
             {item.value}
           </div>
-          <div style={{ ...LABEL }}>
+          <div style={{ ...LABEL}}>
             {item.label}
           </div>
         </div>
@@ -203,7 +203,7 @@ function Badges({ items = [] }: { items: KeyHighlightBadge[] }) {
                 flexShrink: 0, marginTop: 5,
               }}
             />
-            <span style={{ ...LABEL }}>
+            <span style={{ ...LABEL , color: '#B3B5B6'}}>
               {item.text}
             </span>
           </div>

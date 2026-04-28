@@ -24,7 +24,7 @@ const GAP       = 14;
 const PAD_T     = 16;
 const PAD_B     = 32;
 
-export function SegmentedSplitBarChart({ items: rawItems = [], 'data-testid': testId }: SegmentedSplitBarChartProps) {
+export function SegmentedSplitBarChart({ items: rawItems = [], labelA = 'Implemented', labelB = 'Unimplemented', unit = 'variations', 'data-testid': testId }: SegmentedSplitBarChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
@@ -107,8 +107,8 @@ export function SegmentedSplitBarChart({ items: rawItems = [], 'data-testid': te
         // Register hit on label area — same id as impl bar so hover effect + tooltip both trigger
         registerHitRect(hitZonesRef.current, implId, 0, y, padL, barH, {
           label: c.name ?? c.abbreviation ?? '',
-          value: `${formatNumber((c.implemented ?? 0) + (c.unimplemented ?? 0))} total variations`,
-          sublabel: `Implemented: ${formatNumber(c.implemented ?? 0)} · Pending: ${formatNumber(c.unimplemented ?? 0)}`,
+          value: `${formatNumber((c.implemented ?? 0) + (c.unimplemented ?? 0))} total ${unit}`,
+          sublabel: `${labelA}: ${formatNumber(c.implemented ?? 0)} · ${labelB}: ${formatNumber(c.unimplemented ?? 0)}`,
           color: CC.green,
         });
 
@@ -172,10 +172,10 @@ export function SegmentedSplitBarChart({ items: rawItems = [], 'data-testid': te
       ctx.font = LEGEND_LABEL.font;
       ctx.textAlign = 'right';
       ctx.fillStyle = CC.green;
-      ctx.fillText('■ Implemented', trackCX - 10, legendY);
+      ctx.fillText(`■ ${labelA}`, trackCX - 10, legendY);
       ctx.textAlign = 'left';
       ctx.fillStyle = LEGEND_LABEL.color;
-      ctx.fillText('■ Unimplemented', trackCX + 10, legendY);
+      ctx.fillText(`■ ${labelB}`, trackCX + 10, legendY);
 
       raf = requestAnimationFrame(draw);
     };

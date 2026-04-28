@@ -150,8 +150,8 @@ export type BaseVisualizationConfig =
   | { type: 'proportional-band-chart'; severities: EWSeverityRow[]; title?: string }
   | { type: 'radial-fan-tree-chart'; total: number; totalLabel?: string; items: NCEContractorRow[] }
   | { type: 'semi-circular-gauge-chart'; confirmed: number; total: number; label?: string }
-  | { type: 'segmented-split-bar-chart'; items: VariationRow[] }
-  | { type: 'balance-scale-chart'; left: QuotationSide; right: QuotationSide }
+  | { type: 'segmented-split-bar-chart'; items: VariationRow[]; labelA?: string; labelB?: string; unit?: string }
+  | { type: 'balance-scale-chart'; left: QuotationSide; right: QuotationSide; leftTitle?: string; rightTitle?: string; unit?: string }
   | { type: 'area-line-chart'; points: QuotationTrendPoint[] }
   | { type: 'trend-view'; points: QuotationTrendPoint[] }
   | { type: 'weekly-flow'; items: ContractorRow[] };

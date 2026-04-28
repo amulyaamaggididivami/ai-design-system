@@ -44,8 +44,8 @@ export function VisualizationRenderer({ config, className }: VisualizationRender
   if (config.type === 'proportional-band-chart') return <ProportionalBandChart severities={config.severities} />;
   if (config.type === 'radial-fan-tree-chart') return <RadialFanTreeChart total={config.total} totalLabel={config.totalLabel} items={config.items} />;
   if (config.type === 'semi-circular-gauge-chart') return <SemiCircularGaugeChart confirmed={config.confirmed} total={config.total} label={config.label} />;
-  if (config.type === 'segmented-split-bar-chart') return <SegmentedSplitBarChart items={config.items} />;
-  if (config.type === 'balance-scale-chart') return <BalanceScaleChart left={config.left} right={config.right} />;
+  if (config.type === 'segmented-split-bar-chart') return <SegmentedSplitBarChart items={config.items} labelA={config.labelA} labelB={config.labelB} unit={config.unit} />;
+  if (config.type === 'balance-scale-chart') return <BalanceScaleChart left={config.left} right={config.right} leftTitle={config.leftTitle} rightTitle={config.rightTitle} unit={config.unit} />;
   if (config.type === 'area-line-chart') return <AreaLineChart points={config.points} />;
   if (config.type === 'trend-view') return <Trend points={config.points} />;
   if (config.type === 'weekly-flow') return <WeeklyFlow items={config.items} />;

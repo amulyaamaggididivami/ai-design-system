@@ -5,9 +5,9 @@ import { easeOutBack, easeOutCubic } from '../../canvas/easing';
 import type { BalanceScaleChartProps } from './types';
 
 const W = 500;
-const H = 210;
+const H = 280;
 
-export function BalanceScaleChart({ left, right, 'data-testid': testId }: BalanceScaleChartProps) {
+export function BalanceScaleChart({ left, right, leftTitle = 'Accepted', rightTitle = 'Submitted', unit = 'quotations', 'data-testid': testId }: BalanceScaleChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
 
@@ -19,9 +19,12 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
     const DURATION = 80;
 
     const cx = W / 2;
-    const pivotY = 20;
-    const maxVal = Math.max(left.value ?? 0, right.value ?? 0, 1);
-    const tilt = ((left.value - right.value) / maxVal) * 14; // degrees
+    const pivotY = 50;
+    const absLeft = Math.abs(left.value ?? 0);
+    const absRight = Math.abs(right.value ?? 0);
+    const maxVal = Math.max(absLeft, absRight, 1);
+    const rawTilt = ((left.value - right.value) / (2 * maxVal)) * 14;
+    const tilt = Math.max(-14, Math.min(14, rawTilt));
 
     let raf: number;
 
@@ -71,7 +74,7 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
       ctx.stroke();
 
       // --- Left pan: Accepted ---
-      const leftPanH = Math.max(20, (left.value / maxVal) * 100 * progress);
+      const leftPanH = Math.max(20, (absLeft / maxVal) * 100 * progress);
       const leftPanY = leftEnd.y + 18;
       const panW = 90;
 
@@ -106,13 +109,13 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
         ctx.fillText(left.label, leftEnd.x, leftPanY + leftPanH + 18);
         ctx.font = AXIS_LABEL.font;
         ctx.fillStyle = AXIS_LABEL.color;
-        ctx.fillText('Accepted', leftEnd.x, leftPanY + leftPanH + 38);
-        ctx.fillText(`${left.count} quotations`, leftEnd.x, leftPanY + leftPanH + 58);
+        ctx.fillText(leftTitle, leftEnd.x, leftPanY + leftPanH + 38);
+        ctx.fillText(`${left.count} ${unit}`, leftEnd.x, leftPanY + leftPanH + 58);
         ctx.globalAlpha = 1;
       }
 
       // --- Right pan: Submitted ---
-      const rightPanH = Math.max(20, (right.value / maxVal) * 100 * progress);
+      const rightPanH = Math.max(20, (absRight / maxVal) * 100 * progress);
       const rightPanY = rightEnd.y + 18;
 
       // Pan fill
@@ -144,8 +147,8 @@ export function BalanceScaleChart({ left, right, 'data-testid': testId }: Balanc
         ctx.fillText(right.label, rightEnd.x, rightPanY + rightPanH + 18);
         ctx.font = AXIS_LABEL.font;
         ctx.fillStyle = AXIS_LABEL.color;
-        ctx.fillText('Submitted', rightEnd.x, rightPanY + rightPanH + 38);
-        ctx.fillText(`${right.count} quotations`, rightEnd.x, rightPanY + rightPanH + 58);
+        ctx.fillText(rightTitle, rightEnd.x, rightPanY + rightPanH + 38);
+        ctx.fillText(`${right.count} ${unit}`, rightEnd.x, rightPanY + rightPanH + 58);
         ctx.globalAlpha = 1;
       }
 

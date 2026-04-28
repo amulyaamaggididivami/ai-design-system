@@ -196,8 +196,20 @@ const variationSplitContractors = [
  * The beam tilts based on value difference.
  */
 const quotationBalanceData = {
-  left:  { value: 28.4, count: 31, label: '£28.4M' },
-  right: { value: 19.8, count: 22, label: '£19.8M' },
+  "unit": "variations",
+    "left": {
+      "count": 0,
+      "label": "£0.00",
+      "value": 0
+    },
+    "right": {
+      "label": "-£33.6K",
+      "value": -33553,
+      "count": 13
+    },
+    "rightTitle": "Option E (Reimbursable)",
+    "type": "balance-scale-chart",
+    "leftTitle": "Option A (Priced)"
 };
 
 /**
