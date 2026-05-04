@@ -71,19 +71,20 @@ function Stats({ items = [] }: { items: Array<{ value: string; label: string; co
   const visible = items.filter(item => item.value);
   if (visible.length === 0) return null;
   return (
-    <div style={{ display: 'flex', gap: 8 }}>
+    <div style={{ display: 'flex', gap: 20 }}>
       {visible.map((item, i) => (
         <div
           key={i}
           style={{
             display: 'flex', flexDirection: 'column' as const,
             justifyContent: 'center', alignItems: 'flex-start',
-            width: 260, height: 120, padding: '10px 0', gap: 8,
+            width: 286, minHeight: 129, padding: '20px 16px', gap: 8,
             flexShrink: 0,
-            rowGap: 16,
-            border: `1px solid ${C.border}`,
-            background: C.bg,
+            border: '1px solid rgba(255,255,255,0.20)',
+            background: 'rgba(255,255,255,0.05)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.20)',
             boxSizing: 'border-box' as const,
+            borderRadius: 4,
           }}
         >
           <div style={{ ...VALUE, color: C.t1 }}>
@@ -144,19 +145,20 @@ function Chips({ items = [] }: { items: KeyHighlightChip[] }) {
   const visible = items.filter(item => item.value);
   if (visible.length === 0) return null;
   return (
-    <div style={{ display: 'flex', gap: 8 }}>
+    <div style={{ display: 'flex', gap: 20 }}>
       {visible.map((item, i) => (
         <div
           key={i}
           style={{
             display: 'flex', flexDirection: 'column' as const,
             justifyContent: 'center', alignItems: 'flex-start',
-            width: 260, height: 120, padding: '10px 0', gap: 8,
+            width: 286, minHeight: 129, padding: '20px 16px', gap: 8,
             flexShrink: 0,
-            background: C.bg,
-            // border: `1px solid ${(item.color ? item.color + '30' : C.border)}`,
+            border: '1px solid rgba(255,255,255,0.20)',
+            background: 'rgba(255,255,255,0.05)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.20)',
             boxSizing: 'border-box' as const,
-            // borderRadius: 7,
+            borderRadius: 4,
           }}
         >
           <div style={{ ...VALUE, color: C.t1 }}>
@@ -186,7 +188,7 @@ function Badges({ items = [] }: { items: KeyHighlightBadge[] }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 5 }}>
       {visible.map((item, i) => {
-        const color = BADGE_COLOR[item.severity];
+        const _color = BADGE_COLOR[item.severity];
         return (
           <div
             key={i}
