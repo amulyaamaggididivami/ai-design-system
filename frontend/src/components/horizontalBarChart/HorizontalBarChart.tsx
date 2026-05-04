@@ -14,7 +14,7 @@ const MIN_H     = 160;
 const PAD       = { left: 8, right: 90, top: 16, bottom: 16 };
 const NAME_W    = 150;
 const BAR_H     = 4;
-const ROW_H     = 28;
+const ROW_H     = 48;
 const MAX_ITEMS = 8;
 
 function truncate(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
