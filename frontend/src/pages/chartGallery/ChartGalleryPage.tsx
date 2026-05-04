@@ -257,6 +257,19 @@ const quotationTrendData = [
  */
 const weeklyFlowContractors = contractValueData.items;
 
+/**
+ * horizontal-bar-chart
+ * Single-segment horizontal bar — total contract value per area/entity.
+ * HorizontalBarRow: { id, name, value, valueLabel? }
+ */
+const contractsByAreaRows = [
+  { id: 'a1', name: 'Tata',   value: 105_200_000 },
+  { id: 'a2', name: 'L&T',    value: 183_200_000 },
+  { id: 'a3', name: 'Afcons', value: 119_800_000 },
+  { id: 'a4', name: 'NCC',    value: 115_400_000 },
+  { id: 'a5', name: 'KEC',    value: 210_600_000 },
+];
+
 // ─── KeyHighlights blocks for each Q ─────────────────────────────────────────
 
 const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
@@ -621,6 +634,12 @@ export function ChartGalleryPage() {
         rows={dualSegmentBarRows}
         valuePrefix="$"
         data-testid="gallery-multi-segment-bar"
+      />
+
+      <h3>Horizontal bar chart
+      </h3>
+      <VisualizationRenderer
+        config={{ type: 'horizontal-bar-chart', rows: contractsByAreaRows, valuePrefix: '$' }}
       />
     </div>
   );

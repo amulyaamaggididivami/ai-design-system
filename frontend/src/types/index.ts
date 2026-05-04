@@ -154,7 +154,8 @@ export type BaseVisualizationConfig =
   | { type: 'balance-scale-chart'; left: QuotationSide; right: QuotationSide; leftTitle?: string; rightTitle?: string; unit?: string }
   | { type: 'area-line-chart'; points: QuotationTrendPoint[] }
   | { type: 'trend-view'; points: QuotationTrendPoint[] }
-  | { type: 'weekly-flow'; items: ContractorRow[] };
+  | { type: 'weekly-flow'; items: ContractorRow[] }
+  | { type: 'horizontal-bar-chart'; rows: HorizontalBarRow[]; valuePrefix?: string };
 
 export type VisualizationRendererProps = {
   config: BaseVisualizationConfig;
@@ -230,6 +231,15 @@ export type KeyHighlightBlock =
   | { type: 'scorecard-rows';  items: ScorecardRow[]; takeaway?: string }
   | { type: 'flags-list';      items: FlagsListRow[]; takeaway?: string }
   | { type: 'comparison-rows'; columns: string[]; rows: ComparisonRow[]; takeaway?: string };
+
+// ─── Horizontal Bar Chart Types ──────────────────────────────────────────────
+
+export type HorizontalBarRow = {
+  id: string;
+  name: string;
+  value: number;
+  valueLabel?: string;
+};
 
 // ─── Dual-Segment Horizontal Bar Chart Types ─────────────────────────────────
 

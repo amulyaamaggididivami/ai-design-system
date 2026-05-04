@@ -19,6 +19,7 @@ import { HubAndSpokeRadialChart } from '../hubAndSpokeRadialChart';
 import { TrendChart } from '../trendChart/TrendChart';
 import { SegmentedSplitBarChart } from '../segmentedSplitBarChart';
 import { WeeklyFlow } from '../weeklyFlow';
+import { HorizontalBarChart } from '../horizontalBarChart';
 import type { VisualizationRendererProps } from '../../types';
 
 export function VisualizationRenderer({ config, className }: VisualizationRendererProps) {
@@ -49,6 +50,7 @@ export function VisualizationRenderer({ config, className }: VisualizationRender
   if (config.type === 'area-line-chart') return <AreaLineChart points={config.points} />;
   if (config.type === 'trend-view') return <Trend points={config.points} />;
   if (config.type === 'weekly-flow') return <WeeklyFlow items={config.items} />;
+  if (config.type === 'horizontal-bar-chart') return <HorizontalBarChart rows={config.rows} valuePrefix={config.valuePrefix} />;
 
   return <div className="viz-empty">Visualization unavailable</div>;
 }
