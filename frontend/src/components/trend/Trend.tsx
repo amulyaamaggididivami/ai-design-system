@@ -12,7 +12,7 @@ import './trend.css';
 
 const MIN_W = 680;
 const H = 280;
-const PAD_L = 54;
+const PAD_L = 80;
 const PAD_R = 48; // Increased from 28 to provide adequate space for last point
 const MIN_STEP = 64;
 const LABEL_FONT = AXIS_LABEL.font;

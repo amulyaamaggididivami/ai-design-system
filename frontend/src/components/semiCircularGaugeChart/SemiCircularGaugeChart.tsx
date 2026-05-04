@@ -6,7 +6,25 @@ import { easeOutBack, easeOutCubic } from '../../canvas/easing';
 import type { SemiCircularGaugeChartProps } from './types';
 
 const W = 480;
-const H = 222;
+const H = 270;
+const LINE_H = 18;
+
+function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+  const words = text.split(' ');
+  const lines: string[] = [];
+  let current = '';
+  for (const word of words) {
+    const test = current ? `${current} ${word}` : word;
+    if (ctx.measureText(test).width > maxWidth && current) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = test;
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
+}
 
 export function SemiCircularGaugeChart({ confirmed, total, label, 'data-testid': testId }: SemiCircularGaugeChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -140,14 +158,18 @@ export function SemiCircularGaugeChart({ confirmed, total, label, 'data-testid':
         ctx.globalAlpha = 1;
       }
 
-      // Stats below needle
+      // Stats below needle — wrapped to fit canvas width
       if (progress > 0.7 && label) {
         const fade = Math.min(1, (progress - 0.7) / 0.3);
         ctx.globalAlpha = fade;
         ctx.font = LEGEND_LABEL.font;
         ctx.fillStyle = LEGEND_LABEL.color;
         ctx.textAlign = 'center';
-        ctx.fillText(`${confirmed ?? 0} of ${total ?? 0} ${label}`, cx, cy + 58);
+        const statsText = `${confirmed ?? 0} of ${total ?? 0} ${label}`;
+        const lines = wrapText(ctx, statsText, W - 40);
+        lines.forEach((line, i) => {
+          ctx.fillText(line, cx, cy + 58 + i * LINE_H);
+        });
         ctx.globalAlpha = 1;
       }
 
