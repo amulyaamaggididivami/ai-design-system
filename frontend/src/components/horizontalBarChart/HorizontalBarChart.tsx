@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
@@ -6,15 +6,16 @@ import { easeOutQuart, stagger, tickHoverProgress } from '../../canvas/easing';
 import { CC, AXIS_LABEL, CHART_VALUE, rgb, drawGlow } from '../../canvas/canvasUtils';
 import { useCanvasLoop } from '../../canvas/useCanvasLoop';
 import { ChartEmptyState } from '../common/ChartEmptyState';
+import { ToggleButton } from '../common/ToggleButton';
 import type { HorizontalBarChartProps } from './types';
 
-const W       = 680;
-const MIN_H   = 160;
-const PAD     = { left: 8, right: 90, top: 16, bottom: 16 };
-const NAME_W  = 150;
-const BAR_H   = 4;
-const ROW_H   = 28;
-const BAR_GAP = 0;
+const W         = 680;
+const MIN_H     = 160;
+const PAD       = { left: 8, right: 90, top: 16, bottom: 16 };
+const NAME_W    = 150;
+const BAR_H     = 4;
+const ROW_H     = 28;
+const MAX_ITEMS = 8;
 
 function truncate(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
   if (ctx.measureText(text).width <= maxWidth) return text;
@@ -34,10 +35,12 @@ function fmtValue(v: number, prefix: string): string {
 export function HorizontalBarChart({ rows, valuePrefix = '$', 'data-testid': testId }: HorizontalBarChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap  = useRef<Map<string, number>>(new Map());
+  const [showAll, setShowAll] = useState(false);
 
-  const validRows = rows.filter(r => r != null && typeof r.value === 'number');
-  const n         = validRows.length;
-  const maxValue  = Math.max(...validRows.map(r => Math.abs(r.value)), 1);
+  const validRows   = rows.filter(r => r != null && typeof r.value === 'number');
+  const visibleRows = showAll ? validRows : validRows.slice(0, MAX_ITEMS);
+  const n           = visibleRows.length;
+  const maxValue    = Math.max(...validRows.map(r => Math.abs(r.value)), 1);
   const barArea   = W - PAD.left - NAME_W - PAD.right;
   const contentH  = n * ROW_H;
   const H         = PAD.top + PAD.bottom + contentH;
@@ -52,7 +55,7 @@ export function HorizontalBarChart({ rows, valuePrefix = '$', 'data-testid': tes
       tickHoverProgress(hoverMap.current, hoveredRef.current);
       hitZonesRef.current = [];
 
-      validRows.forEach((row, i) => {
+      visibleRows.forEach((row, i) => {
         const localP = stagger(progress, i, n, easeOutQuart);
         const rowTop = PAD.top + i * ROW_H;
         const barY   = rowTop + (ROW_H - BAR_H) / 2;
@@ -62,7 +65,9 @@ export function HorizontalBarChart({ rows, valuePrefix = '$', 'data-testid': tes
         const barW   = (Math.abs(row.value) / maxValue) * barArea * localP;
         const label  = row.valueLabel ?? fmtValue(row.value, valuePrefix);
 
-        // Label (y-axis)
+        ctx.save();
+
+        // Row name — right-aligned before bar start
         ctx.font         = AXIS_LABEL.font;
         ctx.fillStyle    = hp > 0 ? CC.cyan : AXIS_LABEL.color;
         ctx.textAlign    = 'right';
@@ -70,13 +75,13 @@ export function HorizontalBarChart({ rows, valuePrefix = '$', 'data-testid': tes
         ctx.fillText(truncate(ctx, row.name, NAME_W - 16), x0 - 8, midY);
 
         registerHitRect(hitZonesRef.current, row.id, 0, rowTop, x0, ROW_H, {
-          label,
+          label: row.name,
           value: label,
           color: CC.cyan,
         });
 
-        // Track
-        ctx.fillStyle = rgb(CC.bd, 0.35);
+        // Track — full-width dim cyan fill matching reference
+        ctx.fillStyle = rgb(CC.cyan, 0.10);
         ctx.beginPath();
         ctx.roundRect(x0, barY, barArea, BAR_H, BAR_H / 2);
         ctx.fill();
@@ -103,17 +108,18 @@ export function HorizontalBarChart({ rows, valuePrefix = '$', 'data-testid': tes
           ctx.stroke();
         }
 
-        // Value label
+        // Value label — fixed right-aligned column
         if (localP > 0.35) {
           const fade = Math.min(1, (localP - 0.35) / 0.4);
           ctx.globalAlpha  = fade;
           ctx.font         = CHART_VALUE.font;
           ctx.fillStyle    = hp > 0 ? CC.cyan : CHART_VALUE.color;
-          ctx.textAlign    = 'left';
+          ctx.textAlign    = 'right';
           ctx.textBaseline = 'middle';
-          ctx.fillText(label, x0 + barW + 8, midY);
-          ctx.globalAlpha = 1;
+          ctx.fillText(label, W - 8, midY);
         }
+
+        ctx.restore();
 
         registerHitRect(hitZonesRef.current, row.id, x0, rowTop, Math.max(barW, 1), ROW_H, {
           label: row.name,
@@ -141,6 +147,15 @@ export function HorizontalBarChart({ rows, valuePrefix = '$', 'data-testid': tes
         />
         <CanvasTooltip {...tooltip} parentW={W} parentH={H} />
       </div>
+      {validRows.length > MAX_ITEMS && (
+        <div style={{ marginTop: 8 }}>
+          <ToggleButton
+            expanded={showAll}
+            onToggle={() => setShowAll(prev => !prev)}
+            data-testid={testId ? `${testId}-toggle` : undefined}
+          />
+        </div>
+      )}
     </div>
   );
 }
