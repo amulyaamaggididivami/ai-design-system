@@ -67,32 +67,38 @@ function ChipRow({ chips = [] }: { chips: KeyHighlightChip[] }) {
 // ─── Stats ───────────────────────────────────────────────────────────────────
 // 3 equal tiles — large number, small label, colored top border
 // Used for: Q1, Q11, Q12
-function Stats({ items = [] }: { items: Array<{ value: string; label: string; color?: string }> }) {
+function Stats({ items = [] }: { items: Array<{ value: string; label: string; color?: string; icon?: string }> }) {
   const visible = items.filter(item => item.value);
   if (visible.length === 0) return null;
   return (
-    <div style={{ display: 'flex', gap: 20 }}>
+    <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 20 }}>
       {visible.map((item, i) => (
         <div
           key={i}
           style={{
-            display: 'flex', flexDirection: 'column' as const,
-            justifyContent: 'center', alignItems: 'flex-start',
-            width: 286, minHeight: 129, padding: '20px 16px', gap: 8,
+            display: 'flex', flexDirection: 'row' as const,
+            justifyContent: 'space-between', alignItems: 'center',
+            width: 286, minHeight: 129, padding: '20px 16px',
             flexShrink: 0,
             border: '1px solid rgba(255,255,255,0.20)',
             background: 'rgba(255,255,255,0.05)',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.20)',
+            boxShadow: '3.42px 3.42px 3.42px 0px rgba(0,0,0,0.30)',
             boxSizing: 'border-box' as const,
-            borderRadius: 4,
           }}
         >
-          <div style={{ ...VALUE, color: C.t1 }}>
-            {item.value}
+          <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 24, flex: 1, minWidth: 0 }}>
+            <div style={{ ...VALUE, color: '#FFFFFF' }}>
+              {item.value}
+            </div>
+            <div style={{ ...LABEL, color: 'rgba(255,255,255,0.70)' }}>
+              {item.label}
+            </div>
           </div>
-          <div style={{ ...LABEL}}>
-            {item.label}
-          </div>
+          {item.icon && (
+            <div style={{ width: 60, height: 60, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src={item.icon} width={60} height={60} alt="" style={{ objectFit: 'contain' }} />
+            </div>
+          )}
         </div>
       ))}
     </div>
@@ -145,28 +151,34 @@ function Chips({ items = [] }: { items: KeyHighlightChip[] }) {
   const visible = items.filter(item => item.value);
   if (visible.length === 0) return null;
   return (
-    <div style={{ display: 'flex', gap: 20 }}>
+    <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 20 }}>
       {visible.map((item, i) => (
         <div
           key={i}
           style={{
-            display: 'flex', flexDirection: 'column' as const,
-            justifyContent: 'center', alignItems: 'flex-start',
-            width: 286, minHeight: 129, padding: '20px 16px', gap: 8,
+            display: 'flex', flexDirection: 'row' as const,
+            justifyContent: 'space-between', alignItems: 'center',
+            width: 286, minHeight: 129, padding: '20px 16px',
             flexShrink: 0,
             border: '1px solid rgba(255,255,255,0.20)',
             background: 'rgba(255,255,255,0.05)',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.20)',
+            boxShadow: '3.42px 3.42px 3.42px 0px rgba(0,0,0,0.30)',
             boxSizing: 'border-box' as const,
-            borderRadius: 4,
           }}
         >
-          <div style={{ ...VALUE, color: C.t1 }}>
-            {item.value}
+          <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 24, flex: 1, minWidth: 0 }}>
+            <div style={{ ...VALUE, color: '#FFFFFF' }}>
+              {item.value}
+            </div>
+            <div style={{ ...LABEL, color: 'rgba(255,255,255,0.70)' }}>
+              {item.label}
+            </div>
           </div>
-          <div style={{ ...LABEL }}>
-            {item.label}
-          </div>
+          {item.icon && (
+            <div style={{ width: 60, height: 60, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src={item.icon} width={60} height={60} alt="" style={{ objectFit: 'contain' }} />
+            </div>
+          )}
         </div>
       ))}
     </div>
