@@ -2306,42 +2306,55 @@
     .kh-body { display: flex; flex-direction: column; gap: 0; }
 
     /* Stats */
-    .kh-stats { display: flex; gap: 8px; flex-wrap: wrap; }
+    .kh-stats { display: flex; gap: 20px; flex-wrap: wrap; }
     .kh-stat-item {
-      flex: 1;
-      min-width: 90px;
+      width: 286px;
+      min-height: 129px;
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      padding: 10px 12px;
-      background: rgba(17, 27, 40, 0.7);
-      border-radius: 8px;
-      border: 1px solid var(--bd);
+      justify-content: center;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 20px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.20);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.20);
+      box-sizing: border-box;
+      flex-shrink: 0;
     }
     .kh-stat-value {
-      font-family: var(--mono);
-      font-size: 22px;
-      font-weight: 700;
-      line-height: 1;
+      font-family: var(--sans);
+      font-size: 24px;
+      font-weight: 500;
+      line-height: 32px;
+      color: #F7F7F7;
     }
     .kh-stat-label {
       font-family: var(--sans);
-      font-size: 10px;
-      color: var(--t3);
-      line-height: 1.35;
+      font-size: 14px;
+      color: #C2C2C2;
+      line-height: 1.4;
     }
 
     /* Chips row */
     .kh-chips-row { display: flex; gap: 8px; flex-wrap: wrap; }
-    .kh-chips-block { display: flex; flex-direction: column; gap: 5px; }
+    .kh-chips-block { display: flex; flex-direction: row; flex-wrap: wrap; gap: 20px; }
     .kh-chips-block-item {
+      width: 286px;
+      min-height: 129px;
       display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 14px;
-      background: rgba(17, 27, 40, 0.8);
-      border-radius: 6px;
-      border: 1px solid var(--bd);
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 20px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.20);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.20);
+      box-sizing: border-box;
+      flex-shrink: 0;
     }
     .kh-chip {
       display: flex;
