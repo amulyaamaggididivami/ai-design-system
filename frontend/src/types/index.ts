@@ -205,7 +205,7 @@ export type QuotationTrendPoint = { week: string; count: number; value?: number 
 
 // ─── Key Highlights Types ────────────────────────────────────────────────────
 
-export type KeyHighlightChip = { value: string; label: string; color?: string };
+export type KeyHighlightChip = { value: string; label: string; color?: string; icon?: string };
 export type KeyHighlightBadge = { text: string; severity: 'red' | 'amber' | 'green' };
 export type KeyHighlightDot = { val: number; color?: string; name: string };
 export type FlagsListRow = { text: string; tag: string; date: string; severity: 'red' | 'amber' | 'green' };
@@ -222,7 +222,7 @@ export type ScorecardRow = {
 };
 
 export type KeyHighlightBlock =
-  | { type: 'stats';           items: Array<{ value: string; label: string; color?: string }>; takeaway?: string }
+  | { type: 'stats';           items: Array<{ value: string; label: string; color?: string; icon?: string }>; takeaway?: string }
   | { type: 'chips';           items: KeyHighlightChip[]; takeaway?: string }
   | { type: 'ranked';          items: Array<{ name: string; value: string; kpiLabel?: string }>; takeaway?: string }
   | { type: 'proportion';      leftPct: number; leftLabel: string; leftValue: string; leftColor?: string; rightPct: number; rightLabel: string; rightValue: string; rightColor?: string; chips?: KeyHighlightChip[]; takeaway?: string }
