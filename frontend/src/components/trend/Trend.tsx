@@ -3,7 +3,7 @@ import { useRef, useEffect, useMemo } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
 import { easeOutCubic } from '../../canvas/easing';
-import { CC, AXIS_LABEL, rgb, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, AXIS_LABEL, CHART_PALETTE, rgb, setupCanvas } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import { formatNumber } from '../../utils/numberFormat';
 import type { QuotationTrendPoint } from '../../types';
@@ -26,7 +26,7 @@ const MAX_SAMPLE = 20; // max points to measureText for minStep calculation
 // At DPR=2 a 5 000px canvas uses ~22 MB; beyond that allocation blocks the main thread.
 const MAX_CANVAS_W = 5000;
 
-export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendProps) {
+export function Trend({ points: rawPoints = [], colorOffset = 0, 'data-testid': testId }: TrendProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const yAxisRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
@@ -62,6 +62,8 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
     const ctx = setupCanvas(canvas, chartCanvasW, H);
     const yCtx = yAxisRef.current ? setupCanvas(yAxisRef.current, PAD_L, H) : null;
     frameRef.current = 0;
+
+    const seriesColor = CHART_PALETTE[colorOffset % CHART_PALETTE.length];
 
     // Scale animation duration down for large datasets so each frame stays cheap
     const DURATION = points.length <= DURATION_BASE
@@ -130,8 +132,8 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
 
     // Cache the area gradient once — creating it inside draw() was doing this every frame
     const areaGrad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
-    areaGrad.addColorStop(0, rgb(CC.blue, 0.22));
-    areaGrad.addColorStop(1, rgb(CC.blue, 0.02));
+    areaGrad.addColorStop(0, rgb(seriesColor, 0.12));
+    areaGrad.addColorStop(1, rgb(seriesColor, 0.02));
 
     let prevDrawN = 0;
     let raf: number;
@@ -217,12 +219,12 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
         const py = isLast ? pts[i - 1].y + (pts[i].y - pts[i - 1].y) * t : pts[i].y;
         i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
       }
-      ctx.strokeStyle = rgb(CC.blue, 0.85);
+      ctx.strokeStyle = rgb(seriesColor, 0.85);
       ctx.lineWidth = 2;
       ctx.stroke();
 
       // Dots — batched into one path+fill instead of N individual arc+fill calls
-      ctx.fillStyle = rgb(CC.blue, 0.8);
+      ctx.fillStyle = rgb(seriesColor, 0.8);
       ctx.beginPath();
       for (let i = 0; i < drawN; i++) {
         ctx.moveTo(pts[i].x + 3.5, pts[i].y);
@@ -237,7 +239,7 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
           registerHitCircle(hitZonesRef.current, `pt-${i}`, pts[i].x, pts[i].y, 10, {
             label: pts[i].point.week,
             value: String(pts[i].point.count),
-            color: CC.blue,
+            color: seriesColor,
           });
         }
         prevDrawN = drawN;
@@ -256,7 +258,7 @@ export function Trend({ points: rawPoints = [], 'data-testid': testId }: TrendPr
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [points, chartCanvasW, minStep, hitZonesRef]);
+  }, [points, chartCanvasW, minStep, hitZonesRef, colorOffset]);
 
   const isEmpty = points.length < 2;
   if (isEmpty) return <ChartEmptyState width={MIN_W} height={H} data-testid={testId} />;

@@ -3,7 +3,7 @@ import { useRef, useEffect, useMemo } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasInteraction';
 import { stagger, tickHoverProgress, easeOutCubic } from '../../canvas/easing';
-import { CC, AXIS_LABEL, CHART_VALUE, PALETTE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, CHART_PALETTE, AXIS_LABEL, CHART_VALUE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import { formatNumber } from '../../utils/numberFormat';
 import type { NCEContractorRow } from '../../types';
@@ -14,7 +14,7 @@ const MIN_H = 320;
 const PAD_V = 60;
 const MIN_LEAF_SPACING = 28;
 
-export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContractor = [], width = DEFAULT_W, 'data-testid': testId }: RadialFanTreeChartProps) {
+export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContractor = [], width = DEFAULT_W, colorOffset = 0, 'data-testid': testId }: RadialFanTreeChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
@@ -24,12 +24,13 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
     [rawByContractor],
   );
 
-  const H = useMemo(
+  const fanH = useMemo(
     () => Math.max(MIN_H, PAD_V + Math.max(0, byContractor.length - 1) * MIN_LEAF_SPACING),
     [byContractor.length],
   );
+  const H = fanH;
 
-  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width, height: H });
+  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width, height: fanH });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -39,11 +40,11 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
     const DURATION = 72;
 
     const rootX = 88;
-    const rootY = H / 2;
+    const rootY = fanH / 2;
     const rootR = 32;
     const leafX = width - 200;
     const maxCount = Math.max(...byContractor.map(c => c.count ?? 0), 1);
-    const leafSpacing = byContractor.length > 1 ? (H - 60) / (byContractor.length - 1) : 0;
+    const leafSpacing = byContractor.length > 1 ? (fanH - 60) / (byContractor.length - 1) : 0;
     const leafStartY = 30;
 
     const leafPositions = byContractor.map((_, i) => ({
@@ -65,51 +66,52 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
       tickHoverProgress(hoverMap.current, hoveredRef.current);
       hitZonesRef.current = [];
 
-      // Root glow
-      drawGlow(ctx, rootX, rootY, 48 * progress, CC.blue, 0.15 * progress);
+      const color = CHART_PALETTE[colorOffset % CHART_PALETTE.length];
 
       // Draw branches and leaves
       byContractor.forEach((c, i) => {
-        const color = PALETTE[i % PALETTE.length];
         const localP = stagger(progress, i, byContractor.length, easeOutCubic);
         const lpos = leafPositions[i];
         const hp = hoverMap.current.get(c.id) ?? 0;
-        const branchThickness = Math.max(1.5, ((c.count ?? 0) / maxCount) * 6);
 
         if (localP < 0.01) return;
 
-        // Bezier branch
-        const cp1x = rootX + (leafX - rootX) * 0.4;
-        const cp1y = rootY;
-        const cp2x = rootX + (leafX - rootX) * 0.6;
+        // Bezier branch — starts at circle edge, not center
+        const angle = Math.atan2(lpos.y - rootY, lpos.x - rootX);
+        const bStartX = rootX + Math.cos(angle) * rootR;
+        const bStartY = rootY + Math.sin(angle) * rootR;
+        const cp1x = bStartX + (leafX - bStartX) * 0.4;
+        const cp1y = bStartY;
+        const cp2x = bStartX + (leafX - bStartX) * 0.6;
         const cp2y = lpos.y;
 
-        // Trace the branch up to localP
-        // Approximate by sampling the bezier
         const steps = 40;
         const limitT = localP;
-
         ctx.beginPath();
         for (let s = 0; s <= steps; s++) {
           const t = (s / steps) * limitT;
-          const x = (1 - t) ** 3 * rootX + 3 * (1 - t) ** 2 * t * cp1x + 3 * (1 - t) * t ** 2 * cp2x + t ** 3 * lpos.x;
-          const y = (1 - t) ** 3 * rootY + 3 * (1 - t) ** 2 * t * cp1y + 3 * (1 - t) * t ** 2 * cp2y + t ** 3 * lpos.y;
+          const x = (1 - t) ** 3 * bStartX + 3 * (1 - t) ** 2 * t * cp1x + 3 * (1 - t) * t ** 2 * cp2x + t ** 3 * lpos.x;
+          const y = (1 - t) ** 3 * bStartY + 3 * (1 - t) ** 2 * t * cp1y + 3 * (1 - t) * t ** 2 * cp2y + t ** 3 * lpos.y;
           if (s === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
-        ctx.strokeStyle = rgb(color, hp > 0 ? 0.8 : 0.45);
-        ctx.lineWidth = branchThickness * (hp > 0 ? 1.3 : 1);
+        // Gradient stroke: tealDark (#00818F) → teal (#69DFE9)
+        const branchGrad = ctx.createLinearGradient(bStartX, bStartY, lpos.x, lpos.y);
+        branchGrad.addColorStop(0, rgb(color, hp > 0 ? 1.0 : 0.8));
+        branchGrad.addColorStop(1, rgb(color, hp > 0 ? 1.0 : 0.7));
+        ctx.strokeStyle = branchGrad;
+        ctx.lineWidth = hp > 0 ? 2 : 1.33;
         ctx.stroke();
 
-        // Leaf node
+        // Leaf node — fixed 20px radius (40×40px), solid teal
         if (localP > 0.85) {
           const leafFade = Math.min(1, (localP - 0.85) / 0.15);
-          const leafR = 4 + ((c.count ?? 0) / maxCount) * 12;
+          const leafR = 20;
 
-          drawGlow(ctx, lpos.x, lpos.y, leafR * 2.5, color, (0.25 + hp * 0.2) * leafFade);
+          drawGlow(ctx, lpos.x, lpos.y, leafR * 2, color, (0.2 + hp * 0.2) * leafFade);
           ctx.beginPath();
           ctx.arc(lpos.x, lpos.y, leafR * leafFade, 0, Math.PI * 2);
-          ctx.fillStyle = rgb(color, (0.7 + hp * 0.2) * leafFade);
+          ctx.fillStyle = rgb(color, leafFade);
           ctx.fill();
 
           const displayVal = formatNumber(c.count ?? 0);
@@ -120,13 +122,13 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
             color,
           });
 
-          // Name and count labels — single line to avoid vertical collision
+          // Labels
           ctx.globalAlpha = leafFade;
           ctx.font = AXIS_LABEL.font;
           ctx.textAlign = 'left';
           const nameText = c.abbreviation ?? c.name?.slice(0, 6) ?? '';
           const countText = ` ${formatNumber(c.count ?? 0)}`;
-          const xLabel = lpos.x + leafR + 6;
+          const xLabel = lpos.x + leafR + 8;
           const yLabel = lpos.y + 4;
           ctx.fillStyle = hp > 0 ? color : rgb(CC.t2, 0.85);
           ctx.fillText(nameText, xLabel, yLabel);
@@ -138,14 +140,36 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
         }
       });
 
-      // Root node (drawn on top)
+      // Root node (drawn on top) — Figma spec: fill #D9D9D9 1%, inner shadow blur=19.88 #69DFE9 60%
+      const rootDrawR = rootR * progress;
       ctx.beginPath();
-      ctx.arc(rootX, rootY, rootR * progress, 0, Math.PI * 2);
-      ctx.fillStyle = CC.bgL;
+      ctx.arc(rootX, rootY, rootDrawR, 0, Math.PI * 2);
+      ctx.fillStyle = rgb('#D9D9D9', 0.01 * progress);
       ctx.fill();
-      ctx.strokeStyle = rgb(CC.blue, 0.6 * progress);
-      ctx.lineWidth = 2;
+
+      // Inner shadow: clip to circle, draw transparent stroke with teal shadow
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(rootX, rootY, rootDrawR, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.shadowColor = rgb(color, 0.60 * progress);
+      ctx.shadowBlur = 19.88;
+      ctx.strokeStyle = rgb(color, 0);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(rootX, rootY, rootDrawR, 0, Math.PI * 2);
       ctx.stroke();
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+      ctx.restore();
+
+      // Outer border: 1px teal
+      ctx.beginPath();
+      ctx.arc(rootX, rootY, rootDrawR, 0, Math.PI * 2);
+      ctx.strokeStyle = rgb(color, 0.8 * progress);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
 
       if (progress > 0.4) {
         const fade = Math.min(1, (progress - 0.4) / 0.4);
@@ -162,6 +186,7 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(truncated, rootX, rootY);
+        ctx.textBaseline = 'alphabetic';
         ctx.globalAlpha = 1;
       }
 
@@ -169,7 +194,7 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
         label: totalLabel ?? 'Total',
         value: formatNumber(total, 0),
         sublabel: `${byContractor.length} items`,
-        color: CC.blue,
+        color,
       });
 
       raf = requestAnimationFrame(draw);
@@ -177,7 +202,7 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [total, totalLabel, byContractor, H, width]);
+  }, [total, totalLabel, byContractor, fanH, width]);
 
   const isEmpty = byContractor.length === 0;
   if (isEmpty) return <ChartEmptyState width={width} height={MIN_H} data-testid={testId} />;

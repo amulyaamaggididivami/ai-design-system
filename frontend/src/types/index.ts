@@ -160,6 +160,7 @@ export type BaseVisualizationConfig =
 export type VisualizationRendererProps = {
   config: BaseVisualizationConfig;
   className?: string;
+  colorOffset?: number;
 };
 
 // ─── Contract Management Dashboard Types ─────────────────────────────────────

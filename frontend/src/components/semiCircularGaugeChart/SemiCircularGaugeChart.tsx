@@ -1,13 +1,16 @@
 import { useRef, useEffect } from 'react';
 
-import { setupCanvas } from '../../canvas/canvasUtils';
+import { setupCanvas, CHART_PALETTE } from '../../canvas/canvasUtils';
 import { CC, AXIS_LABEL, LEGEND_LABEL, rgb, drawGlow } from '../../canvas/canvasUtils';
 import { easeOutBack, easeOutCubic } from '../../canvas/easing';
 import type { SemiCircularGaugeChartProps } from './types';
 
 const W = 480;
-const H = 270;
+const H = 310;
 const LINE_H = 18;
+
+// Dark companion for each CHART_PALETTE entry — used as gradient start / sector fill
+const CHART_PALETTE_DARK = ['#00818F', '#5C42B8', '#C87B0A', '#2563EB', '#166534'] as const;
 
 function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
   const words = text.split(' ');
@@ -26,7 +29,7 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
   return lines;
 }
 
-export function SemiCircularGaugeChart({ confirmed, total, label, 'data-testid': testId }: SemiCircularGaugeChartProps) {
+export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 0, 'data-testid': testId }: SemiCircularGaugeChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
 
@@ -35,13 +38,18 @@ export function SemiCircularGaugeChart({ confirmed, total, label, 'data-testid':
     if (!canvas) return;
     const ctx = setupCanvas(canvas, W, H);
     frameRef.current = 0;
+
+    const idx = colorOffset % CHART_PALETTE.length;
+    const color = CHART_PALETTE[idx];
+    const colorDark = CHART_PALETTE_DARK[idx];
+
     const DURATION = 80;
     const NEEDLE_DURATION = 72;
 
     const cx = W / 2;
-    const cy = 155;
-    const R = 120;
-    const innerR = 74;
+    const cy = 175;
+    const TRACK_R = 148; // outer dim track arc
+    const ARC_R   = 133; // inner colored arc — ~5px gap between them
     const startAngle = Math.PI;
     const endAngle = 2 * Math.PI;
     const totalSpan = Math.PI; // semicircle
@@ -54,146 +62,109 @@ export function SemiCircularGaugeChart({ confirmed, total, label, 'data-testid':
       ctx.clearRect(0, 0, W, H);
       ctx.letterSpacing = AXIS_LABEL.letterSpacing;
 
-      const rawP = Math.min(T / DURATION, 1);
+      const rawP    = Math.min(T / DURATION, 1);
       const progress = easeOutCubic(rawP);
-      const needleP = easeOutBack(Math.min(T / NEEDLE_DURATION, 1));
+      const needleP  = easeOutBack(Math.min(T / NEEDLE_DURATION, 1));
 
-      // Background gauge track (full arc)
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, startAngle, endAngle);
-      ctx.strokeStyle = rgb(CC.bd, 0.35);
-      ctx.lineWidth = R - innerR;
-      ctx.stroke();
-
-      // Color zones in the background arc (low→mid→high)
-      const zones = [
-        { start: 0, end: 0.33, color: CC.red },
-        { start: 0.33, end: 0.66, color: CC.amber },
-        { start: 0.66, end: 1.0, color: CC.green },
-      ];
-
-      zones.forEach(zone => {
-        const zStart = startAngle + zone.start * totalSpan;
-        const zEnd = startAngle + zone.end * totalSpan;
-        ctx.beginPath();
-        ctx.arc(cx, cy, (R + innerR) / 2, zStart, zEnd);
-        ctx.strokeStyle = rgb(zone.color, 0.12);
-        ctx.lineWidth = R - innerR - 4;
-        ctx.stroke();
-      });
-
-
-      // Filled gauge arc up to value
       const safeValue = Math.round(((confirmed ?? 0) / (total || 1)) * 100);
       const fillAngle = startAngle + (safeValue / 100) * totalSpan * progress;
-      const gaugeColor = safeValue >= 66 ? CC.green : safeValue >= 33 ? CC.amber : CC.red;
 
-      // Glow on the fill arc tip
-      const tipX = cx + Math.cos(fillAngle) * (R + innerR) / 2;
-      const tipY = cy + Math.sin(fillAngle) * (R + innerR) / 2;
-      drawGlow(ctx, tipX, tipY, 18, gaugeColor, 0.35 * progress);
-
+      // ── Track arc — full semicircle, dim ────────────────────────────────────
       ctx.beginPath();
-      ctx.arc(cx, cy, (R + innerR) / 2, startAngle, fillAngle);
-      ctx.strokeStyle = rgb(gaugeColor, 0.7 * progress);
-      ctx.lineWidth = R - innerR - 8;
+      ctx.arc(cx, cy, TRACK_R, startAngle, endAngle);
+      ctx.strokeStyle = rgb(color, 0.28);
+      ctx.lineWidth = 10;
       ctx.lineCap = 'round';
       ctx.stroke();
       ctx.lineCap = 'butt';
 
-      // Needle — longer, with tail stub for balance
-      const needleAngle = startAngle + (safeValue / 100) * totalSpan * needleP;
-      const needleLen = innerR + 8;
-      const nx = cx + Math.cos(needleAngle) * needleLen;
-      const ny = cy + Math.sin(needleAngle) * needleLen;
-      // Short tail in opposite direction
-      const tailLen = 14;
-      const tx = cx - Math.cos(needleAngle) * tailLen;
-      const ty = cy - Math.sin(needleAngle) * tailLen;
-
-      // Needle shadow/glow line
-      ctx.strokeStyle = rgb(gaugeColor, 0.18 * needleP);
-      ctx.lineWidth = 6;
-      ctx.lineCap = 'round';
+      // ── Filled sector (dark wedge) ──────────────────────────────────────────
       ctx.beginPath();
-      ctx.moveTo(tx, ty);
-      ctx.lineTo(nx, ny);
-      ctx.stroke();
-
-      // Needle main line
-      ctx.strokeStyle = rgb(CC.t1, 0.92 * needleP);
-      ctx.lineWidth = 2;
-      ctx.lineCap = 'round';
-      ctx.beginPath();
-      ctx.moveTo(tx, ty);
-      ctx.lineTo(nx, ny);
-      ctx.stroke();
-
-      // Needle tip dot
-      ctx.beginPath();
-      ctx.arc(nx, ny, 3, 0, Math.PI * 2);
-      ctx.fillStyle = rgb(gaugeColor, 0.9 * needleP);
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, ARC_R, startAngle, fillAngle);
+      ctx.closePath();
+      ctx.fillStyle = rgb(colorDark, 0.35 * progress);
       ctx.fill();
 
-      // Pivot collar — outer glow ring + filled center
-      drawGlow(ctx, cx, cy, 20, gaugeColor, 0.25 * needleP);
+      // ── Colored arc stroke on filled portion ────────────────────────────────
+      const tipX = cx + Math.cos(fillAngle) * ARC_R;
+      const tipY = cy + Math.sin(fillAngle) * ARC_R;
+      drawGlow(ctx, tipX, tipY, 10, color, 0.3 * progress);
+      const arcGrad = ctx.createLinearGradient(
+        cx + Math.cos(startAngle) * ARC_R, cy + Math.sin(startAngle) * ARC_R,
+        tipX, tipY,
+      );
+      arcGrad.addColorStop(0, rgb(colorDark, 0.9 * progress));
+      arcGrad.addColorStop(1, rgb(color,     1.0 * progress));
       ctx.beginPath();
-      ctx.arc(cx, cy, 9, 0, Math.PI * 2);
-      ctx.strokeStyle = rgb(gaugeColor, 0.5 * needleP);
-      ctx.lineWidth = 1.5;
+      ctx.arc(cx, cy, ARC_R, startAngle, fillAngle);
+      ctx.strokeStyle = arcGrad;
+      ctx.lineWidth = 10;
+      ctx.lineCap = 'round';
       ctx.stroke();
+      ctx.lineCap = 'butt';
+
+      // ── Needle ──────────────────────────────────────────────────────────────
+      const needleAngle = startAngle + (safeValue / 100) * totalSpan * needleP;
+      const nx = cx + Math.cos(needleAngle) * ARC_R;
+      const ny = cy + Math.sin(needleAngle) * ARC_R;
+
+      ctx.strokeStyle = rgb(CC.t1, 0.9 * needleP);
+      ctx.lineWidth = 1.5;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(nx, ny);
+      ctx.stroke();
+      ctx.lineCap = 'butt';
+
+      // ── Pivot dot ───────────────────────────────────────────────────────────
+      drawGlow(ctx, cx, cy, 14, color, 0.2 * needleP);
       ctx.beginPath();
       ctx.arc(cx, cy, 5, 0, Math.PI * 2);
       ctx.fillStyle = CC.t1;
       ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+      ctx.strokeStyle = rgb(color, 0.7 * needleP);
+      ctx.lineWidth = 1;
+      ctx.stroke();
 
-      // Center text — percentage above needle
-      if (progress > 0.5) {
-        const fade = Math.min(1, (progress - 0.5) / 0.5);
-        ctx.globalAlpha = fade;
-        ctx.font = `500 24px 'Satoshi Variable', 'DM Sans', sans-serif`;
-        ctx.fillStyle = gaugeColor;
+      // ── 0% / 50% / 100% labels only ────────────────────────────────────────
+      [[0, '0%'], [0.5, '50%'], [1, '100%']].forEach(([frac, lbl]) => {
+        const a   = startAngle + (frac as number) * totalSpan;
+        const offset = frac === 1 ? TRACK_R + 36 : TRACK_R + 20;
+        const lx  = cx + Math.cos(a) * offset;
+        const ly  = cy + Math.sin(a) * offset;
+        ctx.font      = AXIS_LABEL.font;
+        ctx.fillStyle = AXIS_LABEL.color;
         ctx.textAlign = 'center';
-        ctx.fillText(`${Math.round(safeValue * needleP)}%`, cx, cy - 38);
+        ctx.fillText(lbl as string, lx, ly + 4);
+      });
+
+      // ── Percentage — below center ────────────────────────────────────────────
+      if (progress > 0.4) {
+        const fade = Math.min(1, (progress - 0.4) / 0.4);
+        ctx.globalAlpha = fade;
+        ctx.font      = `700 32px 'Satoshi Variable', 'DM Sans', sans-serif`;
+        ctx.fillStyle = CC.t1;
+        ctx.textAlign = 'center';
+        ctx.fillText(`${Math.round(safeValue * needleP)}%`, cx, cy + 54);
         ctx.globalAlpha = 1;
       }
 
-      // Stats below needle — wrapped to fit canvas width
+      // ── Stats text ───────────────────────────────────────────────────────────
       if (progress > 0.7 && label) {
         const fade = Math.min(1, (progress - 0.7) / 0.3);
         ctx.globalAlpha = fade;
-        ctx.font = LEGEND_LABEL.font;
+        ctx.font      = LEGEND_LABEL.font;
         ctx.fillStyle = LEGEND_LABEL.color;
         ctx.textAlign = 'center';
         const statsText = `${confirmed ?? 0} of ${total ?? 0} ${label}`;
-        const lines = wrapText(ctx, statsText, W - 40);
-        lines.forEach((line, i) => {
-          ctx.fillText(line, cx, cy + 58 + i * LINE_H);
+        wrapText(ctx, statsText, W - 40).forEach((line, i) => {
+          ctx.fillText(line, cx, cy + 90 + i * LINE_H);
         });
         ctx.globalAlpha = 1;
-      }
-
-      // Arc tick marks
-      for (let i = 0; i <= 10; i++) {
-        const tickAngle = startAngle + (i / 10) * totalSpan;
-        const tickOuter = R + 8;
-        const tickInner = R + 2;
-        ctx.strokeStyle = rgb(CC.bd, 0.5);
-        ctx.lineWidth = i % 5 === 0 ? 1.5 : 0.8;
-        ctx.beginPath();
-        ctx.moveTo(cx + Math.cos(tickAngle) * tickInner, cy + Math.sin(tickAngle) * tickInner);
-        ctx.lineTo(cx + Math.cos(tickAngle) * tickOuter, cy + Math.sin(tickAngle) * tickOuter);
-        ctx.stroke();
-
-        // Major tick % labels — sit just outside the tick, well inside zone labels
-        if (i % 5 === 0) {
-          const lx = cx + Math.cos(tickAngle) * (R + 18);
-          const ly = cy + Math.sin(tickAngle) * (R + 18);
-          ctx.font = AXIS_LABEL.font;
-          ctx.fillStyle = AXIS_LABEL.color;
-          ctx.textAlign = 'center';
-          ctx.fillText(`${i * 10}%`, lx, ly + 3);
-        }
       }
 
       raf = requestAnimationFrame(draw);
@@ -201,7 +172,7 @@ export function SemiCircularGaugeChart({ confirmed, total, label, 'data-testid':
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [confirmed, total, label]);
+  }, [confirmed, total, label, colorOffset]);
 
   return (
     <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>

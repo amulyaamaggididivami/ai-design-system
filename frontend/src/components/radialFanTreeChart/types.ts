@@ -5,5 +5,6 @@ export interface RadialFanTreeChartProps {
   totalLabel?: string;
   items: NCEContractorRow[];
   width?: number;
+  colorOffset?: number;
   'data-testid'?: string;
 }

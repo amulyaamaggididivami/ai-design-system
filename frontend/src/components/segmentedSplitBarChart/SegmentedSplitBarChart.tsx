@@ -17,12 +17,14 @@ function truncate(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
   return t + '…';
 }
 
-const W         = 680;
-const MAX_ITEMS = 8;
-const BAR_H     = 26;
-const GAP       = 14;
-const PAD_T     = 16;
-const PAD_B     = 32;
+const W          = 680;
+const MAX_ITEMS  = 8;
+const BAR_H      = 6;
+const INNER_GAP  = 8;
+const PAIR_H     = BAR_H * 2 + INNER_GAP;
+const PAIR_GAP   = 36;
+const PAD_T      = 16;
+const PAD_B      = 48;
 
 export function SegmentedSplitBarChart({ items: rawItems = [], labelA = 'Implemented', labelB = 'Unimplemented', unit = 'variations', 'data-testid': testId }: SegmentedSplitBarChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -39,7 +41,7 @@ export function SegmentedSplitBarChart({ items: rawItems = [], labelA = 'Impleme
     [items, showAll],
   );
 
-  const H = PAD_T + PAD_B + visible.length * (BAR_H + GAP) - GAP;
+  const H = PAD_T + PAD_B + visible.length * (PAIR_H + PAIR_GAP) - PAIR_GAP;
 
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
 
@@ -50,16 +52,16 @@ export function SegmentedSplitBarChart({ items: rawItems = [], labelA = 'Impleme
     frameRef.current = 0;
     const DURATION = 60;
 
-    const padL = 150;
-    const padR = 28;
-    const padT = PAD_T;
-    const padB = PAD_B;
-    const barH = BAR_H;
-    const gap = GAP;
+    const padL   = 150;
+    const padR   = 100;
     const trackW = W - padL - padR;
-    const maxTotal = Math.max(...visible.map(c => (c.implemented ?? 0) + (c.unimplemented ?? 0)), 1);
-    const totalH = visible.length * (barH + gap) - gap;
-    const startY = padT + (H - padT - padB - totalH) / 2;
+    const maxVal = Math.max(
+      ...visible.map(c => c.implemented   ?? 0),
+      ...visible.map(c => c.unimplemented ?? 0),
+      1,
+    );
+    const totalH = visible.length * (PAIR_H + PAIR_GAP) - PAIR_GAP;
+    const startY = PAD_T + (H - PAD_T - PAD_B - totalH) / 2;
 
     let raf: number;
 
@@ -68,114 +70,126 @@ export function SegmentedSplitBarChart({ items: rawItems = [], labelA = 'Impleme
       const T = frameRef.current;
       ctx.clearRect(0, 0, W, H);
 
-      const rawP = Math.min(T / DURATION, 1);
+      const rawP    = Math.min(T / DURATION, 1);
       const progress = easeOutQuart(rawP);
 
       tickHoverProgress(hoverMap.current, hoveredRef.current);
       hitZonesRef.current = [];
 
       visible.forEach((c, i) => {
-        const localP = stagger(progress, i, visible.length, easeOutQuart);
-        const y = startY + i * (barH + gap);
-        const total = (c.implemented ?? 0) + (c.unimplemented ?? 0);
-        const implW = ((c.implemented ?? 0) / maxTotal) * trackW * localP;
-        const unimplW = ((c.unimplemented ?? 0) / maxTotal) * trackW * localP;
-        const implId = `${c.id}-impl`;
+        const localP  = stagger(progress, i, visible.length, easeOutQuart);
+        const pairY   = startY + i * (PAIR_H + PAIR_GAP);
+        const yImpl   = pairY;
+        const yUniml  = pairY + BAR_H + INNER_GAP;
+        const implId  = `${c.id}-impl`;
         const unimplId = `${c.id}-un`;
-        const hpImpl = hoverMap.current.get(implId) ?? 0;
-        const hpUn = hoverMap.current.get(unimplId) ?? 0;
+        const hpImpl  = hoverMap.current.get(implId) ?? 0;
+        const hpUn    = hoverMap.current.get(unimplId) ?? 0;
+        const implW   = ((c.implemented   ?? 0) / maxVal) * trackW * localP;
+        const unimplW = ((c.unimplemented ?? 0) / maxVal) * trackW * localP;
 
-        registerHitRect(hitZonesRef.current, implId, padL, y, implW || 1, barH, {
-          label: c.name,
-          value: formatNumber(c.implemented ?? 0),
-          sublabel: `${Math.round(((c.implemented ?? 0) / (total || 1)) * 100)}%`,
-          color: CC.green,
-        });
-        registerHitRect(hitZonesRef.current, unimplId, padL + implW, y, unimplW || 1, barH, {
-          label: c.name,
-          value: formatNumber(c.unimplemented ?? 0),
-          sublabel: `${Math.round(((c.unimplemented ?? 0) / (total || 1)) * 100)}%`,
-          color: CC.amber,
-        });
-
-        // Contractor name
-        ctx.font = AXIS_LABEL.font;
-        ctx.fillStyle = CC.t2;
+        // Contractor name — centered between the two bars
+        ctx.font      = AXIS_LABEL.font;
+        ctx.fillStyle = hpImpl > 0 || hpUn > 0 ? CC.t1 : CC.t2;
         ctx.textAlign = 'right';
-        ctx.fillText(truncate(ctx, c.abbreviation ?? c.name ?? '', padL - 16), padL - 8, y + barH / 2 + 4);
+        ctx.textBaseline = 'middle';
+        ctx.fillText(truncate(ctx, c.abbreviation ?? c.name ?? '', padL - 16), padL - 8, pairY + PAIR_H / 2);
+        ctx.textBaseline = 'alphabetic';
 
-        // Register hit on label area — same id as impl bar so hover effect + tooltip both trigger
-        registerHitRect(hitZonesRef.current, implId, 0, y, padL, barH, {
+        // Hit zone on name area
+        registerHitRect(hitZonesRef.current, implId, 0, pairY, padL, PAIR_H, {
           label: c.name ?? c.abbreviation ?? '',
           value: `${formatNumber((c.implemented ?? 0) + (c.unimplemented ?? 0))} total ${unit}`,
           sublabel: `${labelA}: ${formatNumber(c.implemented ?? 0)} · ${labelB}: ${formatNumber(c.unimplemented ?? 0)}`,
           color: CC.green,
         });
 
-        // Track
-        ctx.fillStyle = rgb(CC.bd, 0.15);
-        ctx.beginPath();
-        ctx.roundRect(padL, y, (total / maxTotal) * trackW, barH, 4);
-        ctx.fill();
-
-        // Implemented (green) segment
+        // ── Implemented bar (green) ─────────────────────────────────────────
         if (implW > 0) {
-          if (hpImpl > 0) drawGlow(ctx, padL + implW / 2, y + barH / 2, implW * 0.3, CC.green, 0.12 * hpImpl);
-          ctx.fillStyle = rgb(CC.green, 0.6 + hpImpl * 0.2);
+          if (hpImpl > 0) drawGlow(ctx, padL + implW / 2, yImpl + BAR_H / 2, implW * 0.15, CC.green, 0.18 * hpImpl);
+          const gImpl = ctx.createLinearGradient(padL, 0, padL + implW, 0);
+          gImpl.addColorStop(0, rgb(CC.green, 0.7));
+          gImpl.addColorStop(1, rgb(CC.green, 1.0));
+          ctx.fillStyle = gImpl;
           ctx.beginPath();
-          ctx.roundRect(padL, y, implW, barH, [4, 0, 0, 4]);
+          ctx.roundRect(padL, yImpl, implW, BAR_H, BAR_H / 2);
           ctx.fill();
+        }
+        registerHitRect(hitZonesRef.current, implId, padL, yImpl, Math.max(implW, 1), BAR_H, {
+          label: c.name, value: formatNumber(c.implemented ?? 0), color: CC.green,
+        });
 
-          // Implemented count
-          if (implW > 28 && localP > 0.5) {
-            ctx.font = CHART_VALUE.font;
-            ctx.fillStyle = hpImpl > 0 ? CC.green : CC.t2;
-            ctx.textAlign = 'center';
-            ctx.fillText(formatNumber(c.implemented ?? 0), padL + implW / 2, y + barH / 2 + 4);
-          }
+        // Value label right of impl bar
+        if (localP > 0.4) {
+          const fade = Math.min(1, (localP - 0.4) / 0.4);
+          ctx.globalAlpha  = fade;
+          ctx.font         = CHART_VALUE.font;
+          ctx.fillStyle    = CC.t1;
+          ctx.textAlign    = 'left';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(formatNumber(c.implemented ?? 0), padL + implW + 16, yImpl + BAR_H / 2);
+          ctx.globalAlpha  = 1;
+          ctx.textBaseline = 'alphabetic';
         }
 
-        // Unimplemented (grey/amber) segment
+        // ── Unimplemented bar (amber) ────────────────────────────────────────
         if (unimplW > 0) {
-          if (hpUn > 0) drawGlow(ctx, padL + implW + unimplW / 2, y + barH / 2, unimplW * 0.3, CC.amber, 0.12 * hpUn);
-          ctx.fillStyle = rgb(CC.amber, 0.18 + hpUn * 0.18);
-          ctx.strokeStyle = rgb(CC.amber, 0.3 + hpUn * 0.3);
-          ctx.lineWidth = 1;
+          if (hpUn > 0) drawGlow(ctx, padL + unimplW / 2, yUniml + BAR_H / 2, unimplW * 0.15, CC.amber, 0.18 * hpUn);
+          const gUn = ctx.createLinearGradient(padL, 0, padL + unimplW, 0);
+          gUn.addColorStop(0, rgb(CC.amber, 0.5));
+          gUn.addColorStop(1, rgb(CC.amber, 0.9));
+          ctx.fillStyle = gUn;
           ctx.beginPath();
-          ctx.roundRect(padL + implW, y, unimplW, barH, [0, 4, 4, 0]);
+          ctx.roundRect(padL, yUniml, unimplW, BAR_H, BAR_H / 2);
           ctx.fill();
-          ctx.stroke();
-
-          // Unimplemented count
-          if (unimplW > 28 && localP > 0.5) {
-            ctx.font = CHART_VALUE.font;
-            ctx.fillStyle = hpUn > 0 ? CC.amber : CC.t2;
-            ctx.textAlign = 'center';
-            ctx.fillText(formatNumber(c.unimplemented ?? 0), padL + implW + unimplW / 2, y + barH / 2 + 4);
-          }
         }
+        registerHitRect(hitZonesRef.current, unimplId, padL, yUniml, Math.max(unimplW, 1), BAR_H, {
+          label: c.name, value: formatNumber(c.unimplemented ?? 0), color: CC.amber,
+        });
 
-        // Split divider
-        if (implW > 0 && unimplW > 0) {
-          ctx.strokeStyle = rgb(CC.bg, 0.7);
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(padL + implW, y);
-          ctx.lineTo(padL + implW, y + barH);
-          ctx.stroke();
+        // Value label right of uniml bar
+        if (localP > 0.4) {
+          const fade = Math.min(1, (localP - 0.4) / 0.4);
+          ctx.globalAlpha  = fade;
+          ctx.font         = CHART_VALUE.font;
+          ctx.fillStyle    = CC.t1;
+          ctx.textAlign    = 'left';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(formatNumber(c.unimplemented ?? 0), padL + unimplW + 16, yUniml + BAR_H / 2);
+          ctx.globalAlpha  = 1;
+          ctx.textBaseline = 'alphabetic';
         }
       });
 
-      // Legend below bars — centered over track
-      const legendY = startY + totalH + 24;
-      const trackCX = padL + trackW / 2;
-      ctx.font = LEGEND_LABEL.font;
-      ctx.textAlign = 'right';
-      ctx.fillStyle = CC.green;
-      ctx.fillText(`■ ${labelA}`, trackCX - 10, legendY);
-      ctx.textAlign = 'left';
+      // ── Legend ──────────────────────────────────────────────────────────────
+      const legendY  = startY + totalH + 28;
+      const trackCX  = padL + trackW / 2;
+      ctx.font       = LEGEND_LABEL.font;
+      ctx.textBaseline = 'middle';
+
+      const swatchW = 14;
+      const gLegImpl = ctx.createLinearGradient(trackCX - 120, 0, trackCX - 120 + swatchW, 0);
+      gLegImpl.addColorStop(0, rgb(CC.green, 0.7));
+      gLegImpl.addColorStop(1, rgb(CC.green, 1.0));
+      ctx.fillStyle = gLegImpl;
+      ctx.beginPath();
+      ctx.roundRect(trackCX - 120, legendY - 3, swatchW, 6, 2);
+      ctx.fill();
       ctx.fillStyle = LEGEND_LABEL.color;
-      ctx.fillText(`■ ${labelB}`, trackCX + 10, legendY);
+      ctx.textAlign = 'left';
+      ctx.fillText(labelA, trackCX - 120 + swatchW + 6, legendY);
+
+      const gLegUn = ctx.createLinearGradient(trackCX + 10, 0, trackCX + 10 + swatchW, 0);
+      gLegUn.addColorStop(0, rgb(CC.amber, 0.5));
+      gLegUn.addColorStop(1, rgb(CC.amber, 0.9));
+      ctx.fillStyle = gLegUn;
+      ctx.beginPath();
+      ctx.roundRect(trackCX + 10, legendY - 3, swatchW, 6, 2);
+      ctx.fill();
+      ctx.fillStyle = LEGEND_LABEL.color;
+      ctx.fillText(labelB, trackCX + 10 + swatchW + 6, legendY);
+
+      ctx.textBaseline = 'alphabetic';
 
       raf = requestAnimationFrame(draw);
     };

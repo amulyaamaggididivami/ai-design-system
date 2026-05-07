@@ -6,24 +6,59 @@
 // --- Color tokens ---
 
 export const CC = {
-  bg:     '#0C0E12',
-  bgL:    '#0C1420',
-  sf:     '#13161B',
-  bd:     '#22262F',
-  blue:   '#4C93D9',
-  cyan:   '#36BFFA',
-  orange: '#EC772A',
-  red:    '#EC772A',
-  green:  '#5DA537',
-  purple: '#818FF8',
-  amber:  '#EEBF3B',
-  t1:     '#F7F9FA',
-  t2:     '#B3B5B6',
-  t3:     '#94979C',
-  t4:     '#334155',
+  bg:       '#0C0E12',
+  bgL:      '#0C1420',
+  sf:       '#13161B',
+  bd:       '#22262F',
+  blue:     '#4C93D9',
+  cyan:     '#36BFFA',
+  orange:   '#EC772A',
+  red:      '#EC772A',
+  green:    '#5DA537',
+  purple:   '#818FF8',
+  amber:    '#EEBF3B',
+  teal:     '#69DFE9',
+  tealDark: '#00818F',
+  t1:       '#F7F9FA',
+  t2:       '#B3B5B6',
+  t3:       '#94979C',
+  t4:       '#334155',
+} as const;
+
+/** Gradient color pairs — [from, to] — from the design-system palette */
+export const GRAD = {
+  teal:    ['#00818F', '#69DFE9'],
+  violet:  ['#5B3CB1', '#C8B6F3'],
+  mint:    ['#27837A', '#81E8CE'],
+  magenta: ['#8732A7', '#E7A1F0'],
+  sky:     ['#0068BE', '#8EC2F6'],
+  blue:    ['#084CF0', '#8BA9FF'],
+  purple:  ['#5C42B8', '#9DA5FD'],
+  royal:   ['#2556C8', '#A9B1F8'],
+  success: ['#58B21C', '#97F558'],
+  warning: ['#FFD974', '#E4AA0D'],
+  error:   ['#EC8C42', '#E46A0D'],
+} as const;
+
+/** Solid endpoint colors — from the design-system palette */
+export const SOLID = {
+  teal:    '#69DFE9',
+  violet:  '#C8B6F3',
+  mint:    '#81E8CE',
+  magenta: '#E7A1F0',
+  sky:     '#0068BE',
+  blue:    '#084CF0',
+  purple:  '#5C42B8',
+  royal:   '#2556C8',
+  success: '#58B21C',
+  warning: '#E4AA0D',
+  error:   '#E46A0D',
 } as const;
 
 export const PALETTE = [CC.blue, CC.amber, CC.purple, CC.green, CC.red];
+
+/** Per-chart offset palette — offset 0 keeps the default teal, 1+ cycles through alternates */
+export const CHART_PALETTE = [CC.teal, CC.purple, CC.amber, CC.blue, CC.green] as const;
 
 
 // --- Typography tokens ---
