@@ -41,30 +41,41 @@ export function BalanceScaleChart({ left, right, leftTitle = 'Accepted', rightTi
       const panY = anchorY + strLen;
       const r    = [0, 0, 10, 10] as [number, number, number, number];
 
-      // Outer glow
-      drawGlow(ctx, anchorX, panY + panH / 2, panW * 0.6, color, 0.25 * prog);
-
-      // Fill: #FFFFFF at 1% (Figma spec)
+      // Solid dark base fill
       ctx.beginPath();
       ctx.roundRect(panX, panY, panW, panH, r);
-      ctx.fillStyle = rgb(CC.t1, 0.01 * prog);
+      ctx.fillStyle = rgb(CC.t4, 0.92 * prog);
       ctx.fill();
 
-      // Inner shadow: X=0 Y=0 Blur=30 Spread=0 color@70% — Figma spec
-      // Hairline stroke (opacity 0) clipped inside shape so only the blur spreads inward
+      // Inner shadow — 0px 0px 30px 0px color@70% inset
+      // Replicated via 4 linear gradient fills from each edge, clipped to shape
       ctx.save();
       ctx.beginPath();
       ctx.roundRect(panX, panY, panW, panH, r);
       ctx.clip();
-      ctx.shadowColor = rgb(color, 0.70 * prog);
-      ctx.shadowBlur  = 30;
-      ctx.strokeStyle = rgb(color, 0);
-      ctx.lineWidth   = 1;
-      ctx.beginPath();
-      ctx.roundRect(panX, panY, panW, panH, r);
-      ctx.stroke();
-      ctx.shadowColor = 'transparent';
-      ctx.shadowBlur  = 0;
+      const gs = 30; // glow size = CSS blur radius
+      const c0 = rgb(color, 0.7 * prog);
+      const c1 = rgb(color, 0);
+      // Bottom
+      const lgB = ctx.createLinearGradient(0, panY + panH, 0, panY + panH - gs);
+      lgB.addColorStop(0, c0); lgB.addColorStop(1, c1);
+      ctx.fillStyle = lgB;
+      ctx.fillRect(panX, panY + panH - gs, panW, gs);
+      // Top
+      const lgT = ctx.createLinearGradient(0, panY, 0, panY + gs);
+      lgT.addColorStop(0, c0); lgT.addColorStop(1, c1);
+      ctx.fillStyle = lgT;
+      ctx.fillRect(panX, panY, panW, gs);
+      // Left
+      const lgL = ctx.createLinearGradient(panX, 0, panX + gs, 0);
+      lgL.addColorStop(0, c0); lgL.addColorStop(1, c1);
+      ctx.fillStyle = lgL;
+      ctx.fillRect(panX, panY, gs, panH);
+      // Right
+      const lgR = ctx.createLinearGradient(panX + panW, 0, panX + panW - gs, 0);
+      lgR.addColorStop(0, c0); lgR.addColorStop(1, c1);
+      ctx.fillStyle = lgR;
+      ctx.fillRect(panX + panW - gs, panY, gs, panH);
       ctx.restore();
 
       // Border: 1px solid color, all sides — Figma spec
@@ -74,23 +85,25 @@ export function BalanceScaleChart({ left, right, leftTitle = 'Accepted', rightTi
       ctx.lineWidth   = 1;
       ctx.stroke();
 
-      // String: straight down from anchor to pan top-center
-      const panCX = panX + panW / 2;
+      // Single thread down, splits into small V only at the last ~10px before pan
+      const panCX   = panX + panW / 2;
+      const splitY  = panY - 5;
       ctx.strokeStyle = rgb(CC.t2, 0.5 * prog);
       ctx.lineWidth   = 1;
+      // Main vertical thread
       ctx.beginPath();
       ctx.moveTo(anchorX, anchorY + 4);
-      ctx.lineTo(panCX, panY);
+      ctx.lineTo(panCX, splitY);
       ctx.stroke();
-
-      // Small V at pan top: center → top-left corner & center → top-right corner
-      ctx.strokeStyle = rgb(CC.t2, 0.4 * prog);
-      [panX + 6, panX + panW - 6].forEach(cornerX => {
-        ctx.beginPath();
-        ctx.moveTo(panCX, panY);
-        ctx.lineTo(cornerX, panY);
-        ctx.stroke();
-      });
+      // Tiny V split at the bottom
+      ctx.beginPath();
+      ctx.moveTo(panCX, splitY);
+      ctx.lineTo(panCX - 10, panY);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(panCX, splitY);
+      ctx.lineTo(panCX + 10, panY);
+      ctx.stroke();
 
       // Anchor dot
       ctx.beginPath();

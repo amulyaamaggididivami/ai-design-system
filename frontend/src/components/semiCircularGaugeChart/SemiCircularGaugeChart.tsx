@@ -69,7 +69,7 @@ export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 
       const safeValue = Math.round(((confirmed ?? 0) / (total || 1)) * 100);
       const fillAngle = startAngle + (safeValue / 100) * totalSpan * progress;
 
-      // ── Track arc — full semicircle, dim ────────────────────────────────────
+      // ── Dim track — full semicircle background ──────────────────────────────
       ctx.beginPath();
       ctx.arc(cx, cy, TRACK_R, startAngle, endAngle);
       ctx.strokeStyle = rgb(color, 0.28);
@@ -78,7 +78,7 @@ export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 
       ctx.stroke();
       ctx.lineCap = 'butt';
 
-      // ── Filled sector (dark wedge) ──────────────────────────────────────────
+      // ── Dark sector fill — inside the gap between track and center ───────────
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.arc(cx, cy, ARC_R, startAngle, fillAngle);
@@ -86,49 +86,59 @@ export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 
       ctx.fillStyle = rgb(colorDark, 0.35 * progress);
       ctx.fill();
 
-      // ── Colored arc stroke on filled portion ────────────────────────────────
-      const tipX = cx + Math.cos(fillAngle) * ARC_R;
-      const tipY = cy + Math.sin(fillAngle) * ARC_R;
+      // ── Colored fill painted ON the track — same TRACK_R, paints over dim ───
+      const tipX = cx + Math.cos(fillAngle) * TRACK_R;
+      const tipY = cy + Math.sin(fillAngle) * TRACK_R;
       drawGlow(ctx, tipX, tipY, 10, color, 0.3 * progress);
       const arcGrad = ctx.createLinearGradient(
-        cx + Math.cos(startAngle) * ARC_R, cy + Math.sin(startAngle) * ARC_R,
+        cx + Math.cos(startAngle) * TRACK_R, cy + Math.sin(startAngle) * TRACK_R,
         tipX, tipY,
       );
       arcGrad.addColorStop(0, rgb(colorDark, 0.9 * progress));
       arcGrad.addColorStop(1, rgb(color,     1.0 * progress));
       ctx.beginPath();
-      ctx.arc(cx, cy, ARC_R, startAngle, fillAngle);
+      ctx.arc(cx, cy, TRACK_R, startAngle, fillAngle);
       ctx.strokeStyle = arcGrad;
       ctx.lineWidth = 10;
       ctx.lineCap = 'round';
       ctx.stroke();
       ctx.lineCap = 'butt';
 
-      // ── Needle ──────────────────────────────────────────────────────────────
+      // ── Needle — tapered polygon, tip at ARC_R, tail 24px past pivot ────────
       const needleAngle = startAngle + (safeValue / 100) * totalSpan * needleP;
-      const nx = cx + Math.cos(needleAngle) * ARC_R;
-      const ny = cy + Math.sin(needleAngle) * ARC_R;
+      const nTipX  = cx + Math.cos(needleAngle) * ARC_R;
+      const nTipY  = cy + Math.sin(needleAngle) * ARC_R;
+      const TAIL   = 24;
+      const tailX  = cx - Math.cos(needleAngle) * TAIL;
+      const tailY  = cy - Math.sin(needleAngle) * TAIL;
 
-      ctx.strokeStyle = rgb(CC.t1, 0.9 * needleP);
-      ctx.lineWidth = 1.5;
-      ctx.lineCap = 'round';
+      const perpX = -Math.sin(needleAngle);
+      const perpY =  Math.cos(needleAngle);
+      const HW    = 2.5 * needleP;
+
       ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(nx, ny);
+      ctx.moveTo(nTipX, nTipY);
+      ctx.lineTo(cx    + perpX * HW,  cy    + perpY * HW);
+      ctx.lineTo(tailX + perpX * 1,   tailY + perpY * 1);
+      ctx.lineTo(tailX - perpX * 1,   tailY - perpY * 1);
+      ctx.lineTo(cx    - perpX * HW,  cy    - perpY * HW);
+      ctx.closePath();
+      ctx.fillStyle = rgb(CC.t1, needleP);
+      ctx.fill();
+
+      // ── Pivot — white circle + teal ring ─────────────────────────────────────
+      // Teal outer ring
+      ctx.beginPath();
+      ctx.arc(cx, cy, 11, 0, Math.PI * 2);
+      ctx.strokeStyle = rgb(color, 0.85 * needleP);
+      ctx.lineWidth   = 2;
       ctx.stroke();
-      ctx.lineCap = 'butt';
 
-      // ── Pivot dot ───────────────────────────────────────────────────────────
-      drawGlow(ctx, cx, cy, 14, color, 0.2 * needleP);
+      // White fill
       ctx.beginPath();
-      ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+      ctx.arc(cx, cy, 9, 0, Math.PI * 2);
       ctx.fillStyle = CC.t1;
       ctx.fill();
-      ctx.beginPath();
-      ctx.arc(cx, cy, 5, 0, Math.PI * 2);
-      ctx.strokeStyle = rgb(color, 0.7 * needleP);
-      ctx.lineWidth = 1;
-      ctx.stroke();
 
       // ── 0% / 50% / 100% labels only ────────────────────────────────────────
       [[0, '0%'], [0.5, '50%'], [1, '100%']].forEach(([frac, lbl]) => {

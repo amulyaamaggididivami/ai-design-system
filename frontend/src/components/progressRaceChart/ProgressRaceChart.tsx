@@ -92,7 +92,7 @@ export function ProgressRaceChart({ items: rawItems = [], colorOffset = 0, 'data
         // Track background
         ctx.fillStyle = rgb(CC.t4, 0.5 + hp * 0.1);
         ctx.beginPath();
-        ctx.roundRect(padL, trackY, trackW, TRACK_H, TRACK_H / 2);
+        ctx.rect(padL, trackY, trackW, TRACK_H);
         ctx.fill();
 
         // Runner animation
@@ -107,7 +107,7 @@ export function ProgressRaceChart({ items: rawItems = [], colorOffset = 0, 'data
           trailGrad.addColorStop(1, rgb(color, 0.90));
           ctx.fillStyle = trailGrad;
           ctx.beginPath();
-          ctx.roundRect(padL, trackY, runnerX - padL, TRACK_H, TRACK_H / 2);
+          ctx.rect(padL, trackY, runnerX - padL, TRACK_H);
           ctx.fill();
         }
 
