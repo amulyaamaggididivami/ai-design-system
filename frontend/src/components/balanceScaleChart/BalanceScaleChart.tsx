@@ -41,42 +41,18 @@ export function BalanceScaleChart({ left, right, leftTitle = 'Accepted', rightTi
       const panY = anchorY + strLen;
       const r    = [0, 0, 10, 10] as [number, number, number, number];
 
-      // Solid dark base fill
+      // Radial fill — dark/transparent center, vivid color at edges (no square gap)
+      const panCX2 = panX + panW / 2;
+      const panCY2 = panY + panH / 2;
+      const radR   = Math.sqrt((panW / 2) ** 2 + (panH / 2) ** 2); // corner distance
+      const radFill = ctx.createRadialGradient(panCX2, panCY2, 0, panCX2, panCY2, radR);
+      radFill.addColorStop(0,    rgb(color, 0.02 * prog));
+      radFill.addColorStop(0.55, rgb(color, 0.25 * prog));
+      radFill.addColorStop(1,    rgb(color, 0.72 * prog));
       ctx.beginPath();
       ctx.roundRect(panX, panY, panW, panH, r);
-      ctx.fillStyle = rgb(CC.t4, 0.92 * prog);
+      ctx.fillStyle = radFill;
       ctx.fill();
-
-      // Inner shadow — 0px 0px 30px 0px color@70% inset
-      // Replicated via 4 linear gradient fills from each edge, clipped to shape
-      ctx.save();
-      ctx.beginPath();
-      ctx.roundRect(panX, panY, panW, panH, r);
-      ctx.clip();
-      const gs = 30; // glow size = CSS blur radius
-      const c0 = rgb(color, 0.7 * prog);
-      const c1 = rgb(color, 0);
-      // Bottom
-      const lgB = ctx.createLinearGradient(0, panY + panH, 0, panY + panH - gs);
-      lgB.addColorStop(0, c0); lgB.addColorStop(1, c1);
-      ctx.fillStyle = lgB;
-      ctx.fillRect(panX, panY + panH - gs, panW, gs);
-      // Top
-      const lgT = ctx.createLinearGradient(0, panY, 0, panY + gs);
-      lgT.addColorStop(0, c0); lgT.addColorStop(1, c1);
-      ctx.fillStyle = lgT;
-      ctx.fillRect(panX, panY, panW, gs);
-      // Left
-      const lgL = ctx.createLinearGradient(panX, 0, panX + gs, 0);
-      lgL.addColorStop(0, c0); lgL.addColorStop(1, c1);
-      ctx.fillStyle = lgL;
-      ctx.fillRect(panX, panY, gs, panH);
-      // Right
-      const lgR = ctx.createLinearGradient(panX + panW, 0, panX + panW - gs, 0);
-      lgR.addColorStop(0, c0); lgR.addColorStop(1, c1);
-      ctx.fillStyle = lgR;
-      ctx.fillRect(panX + panW - gs, panY, gs, panH);
-      ctx.restore();
 
       // Border: 1px solid color, all sides — Figma spec
       ctx.beginPath();
