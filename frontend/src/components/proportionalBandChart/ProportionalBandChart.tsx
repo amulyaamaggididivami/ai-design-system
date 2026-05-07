@@ -3,17 +3,17 @@ import { useRef, useEffect, useMemo } from 'react';
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { tickHoverProgress, easeOutQuart } from '../../canvas/easing';
-import { CC, AXIS_LABEL, CHART_VALUE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { CC, CHART_PALETTE, AXIS_LABEL, rgb, setupCanvas } from '../../canvas/canvasUtils';
 import { formatNumber } from '../../utils/numberFormat';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import type { EWSeverityRow } from '../../types';
 import type { ProportionalBandChartProps } from './types';
 
-const MAX_W = 680;
-const H = 240;
-const PAD_SIDE = 28;
-// Minimum canvas allocation per band so labels stay readable; capped at MAX_W
-const MIN_BAND_W = 156;
+const MAX_W     = 780;
+const H         = 340;
+const PAD_SIDE  = 28;
+const BAND_GAP  = 4;   // px gap between adjacent trapezoids
+const MIN_BAND_W = 148;
 
 function truncateToWidth(ctx: CanvasRenderingContext2D, text: string, maxW: number): string {
   if (ctx.measureText(text).width <= maxW) return text;
@@ -22,14 +22,7 @@ function truncateToWidth(ctx: CanvasRenderingContext2D, text: string, maxW: numb
   return `${t}…`;
 }
 
-const SEVERITY_COLORS: Record<string, string> = {
-  Critical: CC.red,
-  High:     CC.orange,
-  Medium:   CC.amber,
-  Low:      CC.green,
-};
-
-export function ProportionalBandChart({ severities: rawSeverities = [], 'data-testid': testId }: ProportionalBandChartProps) {
+export function ProportionalBandChart({ severities: rawSeverities = [], colorOffset = 0, 'data-testid': testId }: ProportionalBandChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
@@ -55,13 +48,16 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
     const total = severities.reduce((s, s2) => s + (s2.count ?? 0), 0);
     const padL = PAD_SIDE;
     const padR = PAD_SIDE;
-    const padT = 50;
-    const padB = 52;
-    const trackW = dynamicW - padL - padR;
-    const bandH = H - padT - padB;
+    const padT = 54;
+    const padB = 54;
+    const trackW   = dynamicW - padL - padR;
+    const bandH    = H - padT - padB;
+    const gapTotal = Math.max(0, severities.length - 1) * BAND_GAP;
+    const bandTrackW = trackW - gapTotal;
 
-    // Prism: narrower at top, wider at bottom per severity band
-    const segWidths = severities.map(s => ((s.count ?? 0) / (total || 1)) * trackW);
+    // Proportional widths — sum equals bandTrackW, gaps sit between them
+    const segWidths = severities.map(s => ((s.count ?? 0) / (total || 1)) * bandTrackW);
+    const color = CHART_PALETTE[colorOffset % CHART_PALETTE.length];
     let raf: number;
 
     const draw = () => {
@@ -76,66 +72,53 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
       tickHoverProgress(hoverMap.current, hoveredRef.current);
       hitZonesRef.current = [];
 
-      // Background prism outline
-      ctx.strokeStyle = rgb(CC.bd, 0.2);
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.rect(padL, padT, trackW, bandH);
-      ctx.stroke();
-
-      // Prism centerline
-      ctx.strokeStyle = rgb(CC.t2, 0.15);
-      ctx.lineWidth = 1;
-      ctx.setLineDash([4, 4]);
-      ctx.beginPath();
-      ctx.moveTo(dynamicW / 2, padT);
-      ctx.lineTo(dynamicW / 2, padT + bandH);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
       let runX = padL;
 
       severities.forEach((sev, i) => {
-        const color = SEVERITY_COLORS[sev.severity] ?? CC.blue;
-        const fullW = segWidths[i];
-        const hp = hoverMap.current.get(sev.severity) ?? 0;
+        const fullW = segWidths[i] ?? 0;
+        const hp    = hoverMap.current.get(sev.severity) ?? 0;
 
-        // Prism-style trapezoid — each band narrows toward top-center
-        const taper = 0.15; // how much narrower at top
-        const midX = runX + fullW / 2;
-        const topW = fullW * (1 - taper);
+        const taper    = 0.22;
+        const midX     = runX + fullW / 2;
+        const topW     = fullW * (1 - taper);
 
-        // Drawn width (animated)
         const drawnFullW = fullW * progress;
-        const drawnTopW = topW * progress;
-        const drawnTopX = midX - drawnTopW / 2;
+        const drawnTopW  = topW  * progress;
+        const drawnTopX  = midX - drawnTopW / 2;
 
         if (drawnFullW > 0) {
-          if (hp > 0) drawGlow(ctx, runX + drawnFullW / 2, padT + bandH / 2, drawnFullW * 0.4, color, 0.15 * hp);
+          const trapPath = (): void => {
+            ctx.beginPath();
+            ctx.moveTo(drawnTopX,             padT);
+            ctx.lineTo(drawnTopX + drawnTopW, padT);
+            ctx.lineTo(runX + drawnFullW,     padT + bandH);
+            ctx.lineTo(runX,                  padT + bandH);
+            ctx.closePath();
+          };
 
-          ctx.beginPath();
-          ctx.moveTo(drawnTopX, padT);
-          ctx.lineTo(drawnTopX + drawnTopW, padT);
-          ctx.lineTo(runX + drawnFullW, padT + bandH);
-          ctx.lineTo(runX, padT + bandH);
-          ctx.closePath();
-          ctx.fillStyle = rgb(color, 0.45 + hp * 0.25);
+          // 1 — Very dark fill
+          trapPath();
+          ctx.fillStyle = rgb(color, 0.06 + hp * 0.04);
           ctx.fill();
 
-          // Top edge highlight
-          ctx.strokeStyle = rgb(color, (0.5 + hp * 0.3) * progress);
-          ctx.lineWidth = hp > 0 ? 2 : 1;
-          ctx.beginPath();
-          ctx.moveTo(drawnTopX, padT);
-          ctx.lineTo(drawnTopX + drawnTopW, padT);
+          // 2 — Inset shadow matching: 0px 0px 55px 0px #7CBBE14D inset
+          ctx.save();
+          trapPath();
+          ctx.clip();
+          ctx.shadowColor = rgb(color, 0.302 * progress); // #4D = 77/255 ≈ 30%
+          ctx.shadowBlur  = 55;
+          ctx.strokeStyle = rgb(color, 0.302 * progress);
+          ctx.lineWidth   = 2;
+          trapPath();
           ctx.stroke();
+          ctx.shadowColor = 'transparent';
+          ctx.shadowBlur  = 0;
+          ctx.restore();
 
-          // Bottom edge
-          ctx.strokeStyle = rgb(color, (0.3 + hp * 0.3) * progress);
-          ctx.lineWidth = hp > 0 ? 2 : 1;
-          ctx.beginPath();
-          ctx.moveTo(runX, padT + bandH);
-          ctx.lineTo(runX + drawnFullW, padT + bandH);
+          // 3 — 1px border
+          trapPath();
+          ctx.strokeStyle = rgb(color, 0.9 * progress);
+          ctx.lineWidth   = 1;
           ctx.stroke();
         }
 
@@ -146,48 +129,38 @@ export function ProportionalBandChart({ severities: rawSeverities = [], 'data-te
           color,
         });
 
-        // Center labels
         if (progress > 0.5) {
           const fade = Math.min(1, (progress - 0.5) / 0.5);
           const cx = runX + fullW / 2;
           ctx.globalAlpha = fade;
 
-          // Severity name — truncated above band (full name shown on hover tooltip)
-          ctx.font = AXIS_LABEL.font;
-          ctx.fillStyle = hp > 0 ? color : rgb(color, 0.9);
+          // Label above band
+          ctx.font      = AXIS_LABEL.font;
+          ctx.fillStyle = hp > 0 ? color : rgb(CC.t1, 0.65);
           ctx.textAlign = 'center';
-          ctx.fillText(truncateToWidth(ctx, sev.severity, fullW - 12), cx, padT - 12);
+          ctx.fillText(truncateToWidth(ctx, sev.severity, fullW - 8), cx, padT - 14);
 
-          // Count — inside band
-          ctx.font = CHART_VALUE.font;
-          ctx.fillStyle = hp > 0 ? CC.t1 : rgb(CC.t1, 0.85);
-          ctx.fillText(formatNumber(sev.count ?? 0), cx, padT + bandH / 2 + 6);
+          // Value inside band — larger bold font
+          ctx.font      = `600 22px 'Satoshi Variable', 'DM Sans', sans-serif`;
+          ctx.fillStyle = rgb(CC.t1, 0.92 + hp * 0.08);
+          ctx.fillText(formatNumber(sev.count ?? 0), cx, padT + bandH / 2 + 8);
 
           // Pct below band
-          ctx.font = AXIS_LABEL.font;
-          ctx.fillStyle = hp > 0 ? color : AXIS_LABEL.color;
-          ctx.fillText(`${Math.round(((sev.count ?? 0) / (total || 1)) * 100)}%`, cx, padT + bandH + 18);
+          ctx.font      = AXIS_LABEL.font;
+          ctx.fillStyle = hp > 0 ? color : rgb(CC.t1, 0.5);
+          ctx.fillText(`${Math.round(((sev.count ?? 0) / (total || 1)) * 100)}%`, cx, padT + bandH + 22);
           ctx.globalAlpha = 1;
         }
 
-        runX += fullW;
+        runX += fullW + BAND_GAP;
       });
-
-      // Spectrum gradient overlay (very subtle)
-      const specGrad = ctx.createLinearGradient(padL, 0, padL + trackW, 0);
-      specGrad.addColorStop(0, rgb(CC.red, 0.03));
-      specGrad.addColorStop(0.33, rgb(CC.orange, 0.03));
-      specGrad.addColorStop(0.66, rgb(CC.amber, 0.03));
-      specGrad.addColorStop(1, rgb(CC.green, 0.03));
-      ctx.fillStyle = specGrad;
-      ctx.fillRect(padL, padT, trackW * progress, bandH);
 
       raf = requestAnimationFrame(draw);
     };
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [severities, dynamicW]);
+  }, [severities, dynamicW, colorOffset]);
 
   const isEmpty = severities.length === 0;
   if (isEmpty) return <ChartEmptyState width={dynamicW} height={H} data-testid={testId} />;

@@ -471,45 +471,22 @@ function ScorecardRows({ items = [] }: { items: ScorecardRow[] }) {
           </span>
 
           {/* Mini bar */}
-          <div style={{ flex: 1, height: 4, background: 'rgba(255,255,255,0.07)', borderRadius: 2, overflow: 'hidden' }}>
+          <div style={{ flex: 1, height: 4, background: 'rgba(255,255,255,0.07)', borderRadius: 0, overflow: 'hidden' }}>
             <div
               style={{
                 height: '100%',
                 width: `${item.pct}%`,
-                background: item.color ?? C.t2,
-                borderRadius: 2,
+                background: item.color ?? CC.purple,
+                borderRadius: 0,
                 opacity: 0.75,
               }}
             />
           </div>
 
-          {/* Value */}
-          <span style={{ fontSize: 18, fontWeight: 400, color: C.t2, fontFamily: SANS, flexShrink: 0, minWidth: 52, textAlign: 'right' as const }}>
-            {item.value }
+          {/* Right-side label block — value, badge, sublabel all right-aligned in one column */}
+          <span style={{ fontSize: 18, fontWeight: 400, color: C.t2, fontFamily: SANS, flexShrink: 0, minWidth: 320, textAlign: 'right' as const }}>
+            {[item.value, item.badge, item.sublabel].filter(Boolean).join('  ')}
           </span>
-
-          {/* Badge */}
-          {item.badge && (
-            <span
-              style={{
-                fontSize: 18, fontWeight: 500,
-                color: C.t1,
-                background: 'transparent',
-                padding: '2px 7px', borderRadius: 4,
-                fontFamily: SANS, flexShrink: 0, minWidth: 72,
-                textAlign: 'center' as const,
-              }}
-            >
-              {item.badge}
-            </span>
-          )}
-
-          {/* Sublabel */}
-          {item.sublabel && (
-            <span style={{ ...LABEL, flexShrink: 0, minWidth: 80, textAlign: 'right' as const }}>
-              {item.sublabel}
-            </span>
-          )}
         </div>
       ))}
     </div>

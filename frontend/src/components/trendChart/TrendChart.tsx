@@ -39,8 +39,8 @@ export function TrendChart({ points = [], className, colors }: TrendChartProps) 
 
     frameRef.current = 0;
     const DURATION = 48;
-    const lineColor = colors?.line ?? CC.blue;
-    const pointColor = colors?.point ?? CC.blue;
+    const lineColor = colors?.line ?? CC.teal;
+    const pointColor = colors?.point ?? CC.teal;
     const axisColor = colors?.axisLine ?? CC.bd;
 
     let raf: number;

@@ -28,7 +28,7 @@ export function ToggleButton({
         boxSizing: 'border-box',
         border: 'none',
         borderRadius: 6,
-        color: '#71B941',
+        color: '#69DFE9',
         fontSize: 14,
         fontFamily: "'Satoshi Variable', 'DM Sans', sans-serif",
         fontStyle: 'normal',

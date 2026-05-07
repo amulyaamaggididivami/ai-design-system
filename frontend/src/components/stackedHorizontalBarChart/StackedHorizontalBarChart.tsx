@@ -13,10 +13,10 @@ import type { StackedHorizontalBarChartProps } from './types';
 const W        = 680;
 const MIN_H    = 220;
 const MAX_ITEMS = 8;
-const COLORS   = [CC.blue, CC.amber, CC.purple, CC.green];
-const PAD      = { left: 8, right: 80, top: 16, bottom: 38 };
+const COLORS   = [CC.teal];
+const PAD      = { left: 8, right: 100, top: 16, bottom: 38 };
 const NAME_W   = 150;
-const BAR_H    = 18;
+const BAR_H    = 6;
 
 function truncate(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
   if (ctx.measureText(text).width <= maxWidth) return text;
@@ -44,7 +44,7 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
   const visibleItems = showAll ? sortedItems : sortedItems.slice(0, MAX_ITEMS);
   const n             = visibleItems.length;
   const maxCommitment = Math.max(...sortedItems.map(c => Math.abs(c.total ?? 0)), 1);
-  const BAR_GAP       = 8;
+  const BAR_GAP       = 24;
   const contentH      = n * BAR_H + Math.max(0, n - 1) * BAR_GAP;
   const dynamicH      = PAD.top + PAD.bottom + contentH;
   const barArea       = W - PAD.left - NAME_W - PAD.right;
@@ -89,45 +89,42 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
           color,
         });
 
-        // Background track
-        ctx.fillStyle = rgb(CC.bd, 0.25);
-        ctx.beginPath();
-        ctx.roundRect(x0, y, barArea, BAR_H, 4);
-        ctx.fill();
-
-        // Base value segment (solid, brighter)
-        if (baseW > 0) {
-          if (hp > 0) drawGlow(ctx, x0 + baseW / 2, y + BAR_H / 2, baseW * 0.3, color, 0.1 * hp);
-          ctx.fillStyle = rgb(color, 0.5 + hp * 0.15);
+        // Teal gradient bar (earned/obtained portion)
+        if (totalW > 0) {
+          if (hp > 0) drawGlow(ctx, x0 + totalW / 2, y + BAR_H / 2, totalW * 0.15, CC.teal, 0.12 * hp);
+          const grad = ctx.createLinearGradient(x0, 0, x0 + totalW, 0);
+          grad.addColorStop(0, rgb(CC.tealDark, 0.85));
+          grad.addColorStop(1, rgb(CC.teal, 1.0));
+          ctx.fillStyle = grad;
           ctx.beginPath();
-          ctx.roundRect(x0, y, baseW, BAR_H, 4);
+          ctx.roundRect(x0, y, totalW, BAR_H, BAR_H / 2);
           ctx.fill();
         }
 
-        // Variation segment (lighter fill, dashed divider)
-        if (varW > 2) {
-          ctx.fillStyle = rgb(color, 0.22 + hp * 0.08);
+        // Unobtained area — faint teal gradient continuation
+        const unfilledW = barArea - totalW * localP;
+        if (unfilledW > 2) {
+          const unfilledX = x0 + totalW * localP;
+          const unGrad = ctx.createLinearGradient(unfilledX, 0, x0 + barArea, 0);
+          unGrad.addColorStop(0, rgb(CC.tealDark, 0.35));
+          unGrad.addColorStop(1, rgb(CC.tealDark, 0.08));
+          ctx.fillStyle = unGrad;
           ctx.beginPath();
-          ctx.roundRect(x0 + baseW, y, varW, BAR_H, [0, 4, 4, 0]);
+          ctx.roundRect(unfilledX, y, unfilledW, BAR_H, [0, BAR_H / 2, BAR_H / 2, 0]);
           ctx.fill();
-          ctx.setLineDash([2, 3]);
-          ctx.strokeStyle = rgb(color, 0.55);
-          ctx.lineWidth   = 1;
-          ctx.beginPath();
-          ctx.moveTo(x0 + baseW, y + 3);
-          ctx.lineTo(x0 + baseW, y + BAR_H - 3);
-          ctx.stroke();
-          ctx.setLineDash([]);
         }
 
-        // Hover border
-        if (hp > 0 && totalW > 0) {
-          ctx.strokeStyle = rgb(color, 0.5 * hp);
-          ctx.lineWidth   = 1;
-          ctx.setLineDash([]);
+        // Triangle ▲ — tip touches bar bottom edge, body below
+        if (totalW > 4) {
+          const triX   = x0 + totalW * localP;
+          const tipY   = y + BAR_H;
+          ctx.fillStyle = rgb(CC.t1, localP);
           ctx.beginPath();
-          ctx.roundRect(x0, y, totalW, BAR_H, 4);
-          ctx.stroke();
+          ctx.moveTo(triX,     tipY);       // tip on bar bottom
+          ctx.lineTo(triX - 5, tipY + 9);  // bottom-left
+          ctx.lineTo(triX + 5, tipY + 9);  // bottom-right
+          ctx.closePath();
+          ctx.fill();
         }
 
         // £ value label that appears after bar animates in
@@ -138,7 +135,7 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
           ctx.fillStyle    = hp > 0 ? color : CHART_VALUE.color;
           ctx.textAlign    = 'left';
           ctx.textBaseline = 'middle';
-          ctx.fillText(con.totalLabel ?? fmtValue(con.total ?? 0), x0 + totalW + 6, y + BAR_H / 2);
+          ctx.fillText(con.totalLabel ?? fmtValue(con.total ?? 0), x0 + barArea + 28, y + BAR_H / 2);
           ctx.globalAlpha = 1;
         }
 
@@ -157,7 +154,10 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
       ctx.textAlign    = 'left';
 
       // Base swatch
-      ctx.fillStyle = rgb(CC.blue, 0.5);
+      const swatchGrad = ctx.createLinearGradient(PAD.left + NAME_W, 0, PAD.left + NAME_W + 14, 0);
+      swatchGrad.addColorStop(0, rgb(CC.tealDark, 0.85));
+      swatchGrad.addColorStop(1, rgb(CC.teal, 1.0));
+      ctx.fillStyle = swatchGrad;
       ctx.beginPath();
       ctx.roundRect(PAD.left + NAME_W, ly - 3, 14, 6, 2);
       ctx.fill();
@@ -165,20 +165,12 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
       ctx.fillText('base value', PAD.left + NAME_W + 18, ly);
 
       // Variation swatch
-      ctx.fillStyle = rgb(CC.blue, 0.22);
+      ctx.fillStyle = rgb(CC.teal, 0.35);
       ctx.beginPath();
-      ctx.roundRect(PAD.left + NAME_W + 94, ly - 3, 14, 6, 2);
+      ctx.roundRect(PAD.left + NAME_W + 160, ly - 3, 14, 6, 2);
       ctx.fill();
-      ctx.setLineDash([2, 3]);
-      ctx.strokeStyle = rgb(CC.blue, 0.5);
-      ctx.lineWidth   = 0.5;
-      ctx.beginPath();
-      ctx.moveTo(PAD.left + NAME_W + 101, ly - 3);
-      ctx.lineTo(PAD.left + NAME_W + 101, ly + 3);
-      ctx.stroke();
-      ctx.setLineDash([]);
       ctx.fillStyle = LEGEND_LABEL.color;
-      ctx.fillText('approved variations', PAD.left + NAME_W + 112, ly);
+      ctx.fillText('approved variations', PAD.left + NAME_W + 178, ly);
 
       // Portfolio total right-aligned
       ctx.font      = LEGEND_LABEL.font;

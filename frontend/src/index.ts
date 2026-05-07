@@ -16,3 +16,4 @@ export { KeyHighlights } from './components/keyHighlights/KeyHighlights';
 export { Takeaway } from './components/keyHighlights/Takeaway';
 export { VisualizationRenderer } from './components/visualizationRenderer/VisualizationRenderer';
 export type { BaseVisualizationConfig, KeyHighlightBlock, MiniBarRow, PointPair, SankeyLinkData, SankeyNodeData, VizRow } from './types';
+export { PALETTE, CHART_PALETTE, GRAD, SOLID } from './canvas/canvasUtils';

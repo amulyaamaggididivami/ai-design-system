@@ -257,6 +257,19 @@ const quotationTrendData = [
  */
 const weeklyFlowContractors = contractValueData.items;
 
+/**
+ * horizontal-bar-chart
+ * Single-segment horizontal bar — total contract value per area/entity.
+ * HorizontalBarRow: { id, name, value, valueLabel? }
+ */
+const contractsByAreaRows = [
+  { id: 'a1', name: 'Tata',   value: 105_200_000 },
+  { id: 'a2', name: 'L&T',    value: 183_200_000 },
+  { id: 'a3', name: 'Afcons', value: 119_800_000 },
+  { id: 'a4', name: 'NCC',    value: 115_400_000 },
+  { id: 'a5', name: 'KEC',    value: 210_600_000 },
+];
+
 // ─── KeyHighlights blocks for each Q ─────────────────────────────────────────
 
 const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
@@ -353,11 +366,11 @@ const HIGHLIGHTS: Record<string, KeyHighlightBlock> = {
   q8: {
     type: 'scorecard-rows',
     items: [
-      { name: 'Tata',   value: '8 NCEs', pct: 100, color: '#4C93D9', sublabel: '32% of total — highest raiser' },
-      { name: 'Afcons', value: '6 NCEs', pct: 75,  color: '#3C45D1', sublabel: '24% — Tata + Afcons = 56%' },
-      { name: 'L&T',    value: '4 NCEs', pct: 50,  color: '#5DA537', sublabel: '16% share' },
-      { name: 'NCC',    value: '4 NCEs', pct: 50,  color: '#EEBF3B', sublabel: '16% share' },
-      { name: 'KEC',    value: '3 NCEs', pct: 38,  color: '#A0B724', sublabel: '12% — fewest despite highest var ratio' },
+      { name: 'Tata',   value: '8 NCEs', pct: 100, sublabel: '32% of total — highest raiser' },
+      { name: 'Afcons', value: '6 NCEs', pct: 75,  sublabel: '24% — Tata + Afcons = 56%' },
+      { name: 'L&T',    value: '4 NCEs', pct: 50,  sublabel: '16% share' },
+      { name: 'NCC',    value: '4 NCEs', pct: 50,  sublabel: '16% share' },
+      { name: 'KEC',    value: '3 NCEs', pct: 38,  sublabel: '12% — fewest despite highest var ratio' },
     ],
     takeaway: 'Tata\'s NCE concentration (32%) mirrors its EW exposure (39%) — both metrics converge on the same contractor as the portfolio\'s primary risk driver.',
   },
@@ -621,6 +634,12 @@ export function ChartGalleryPage() {
         rows={dualSegmentBarRows}
         valuePrefix="$"
         data-testid="gallery-multi-segment-bar"
+      />
+
+      <h3>Horizontal bar chart
+      </h3>
+      <VisualizationRenderer
+        config={{ type: 'horizontal-bar-chart', rows: contractsByAreaRows, valuePrefix: '$' }}
       />
     </div>
   );

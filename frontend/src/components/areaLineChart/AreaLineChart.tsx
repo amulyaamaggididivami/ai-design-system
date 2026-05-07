@@ -8,8 +8,8 @@ import { ChartEmptyState } from '../common/ChartEmptyState';
 import type { QuotationTrendPoint } from '../../types';
 import type { AreaLineChartProps } from './types';
 
-const W = 680;
-const H = 280;
+const W = 780;
+const H = 360;
 
 export function AreaLineChart({ points: rawTrend = [], 'data-testid': testId }: AreaLineChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -29,10 +29,10 @@ export function AreaLineChart({ points: rawTrend = [], 'data-testid': testId }: 
     frameRef.current = 0;
     const DURATION = 72;
 
-    const padL = 54;
-    const padR = 28;
-    const padT = 30;
-    const padB = 54;
+    const padL = 64;
+    const padR = 48;
+    const padT = 48;
+    const padB = 68;
     const chartW = W - padL - padR;
     const chartH = H - padT - padB;
     const maxCount = Math.max(...trend.map(p => p.count), 1);
@@ -59,8 +59,8 @@ export function AreaLineChart({ points: rawTrend = [], 'data-testid': testId }: 
       tickHoverProgress(hoverMap.current, hoveredRef.current);
       hitZonesRef.current = [];
 
-      // Grid lines
-      [0.25, 0.5, 0.75, 1.0].forEach(frac => {
+      // Grid lines (including 0 baseline)
+      [0, 0.25, 0.5, 0.75, 1.0].forEach(frac => {
         const y = padT + chartH - frac * chartH;
         ctx.strokeStyle = rgb(CC.bd, 0.18);
         ctx.lineWidth = 1;
@@ -83,14 +83,8 @@ export function AreaLineChart({ points: rawTrend = [], 'data-testid': testId }: 
       ctx.font = AXIS_LABEL.font;
       ctx.fillStyle = AXIS_LABEL.color;
       ctx.textAlign = 'center';
-      ctx.fillText('Submissions', 0, 0);
+      ctx.fillText('Count', 0, 0);
       ctx.restore();
-
-      // X-axis label
-      ctx.font = AXIS_LABEL.font;
-      ctx.fillStyle = AXIS_LABEL.color;
-      ctx.textAlign = 'center';
-      ctx.fillText('Week', padL + chartW / 2, H - 6);
 
       // X-axis baseline
       ctx.strokeStyle = rgb(CC.bd, 0.3);
@@ -121,8 +115,8 @@ export function AreaLineChart({ points: rawTrend = [], 'data-testid': testId }: 
         ctx.closePath();
 
         const areaGrad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
-        areaGrad.addColorStop(0, rgb(CC.blue, 0.22));
-        areaGrad.addColorStop(1, rgb(CC.blue, 0.02));
+        areaGrad.addColorStop(0, rgb(CC.teal, 0.12));
+        areaGrad.addColorStop(1, rgb(CC.teal, 0.02));
         ctx.fillStyle = areaGrad;
         ctx.fill();
       }
@@ -136,7 +130,7 @@ export function AreaLineChart({ points: rawTrend = [], 'data-testid': testId }: 
         const py = i === 0 || (i < drawN - 1) ? pts[i].y : pts[i - 1].y + (pts[i].y - pts[i - 1].y) * (isInterp ? t : 1);
         i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
       }
-      ctx.strokeStyle = rgb(CC.blue, 0.85);
+      ctx.strokeStyle = rgb(CC.teal, 0.85);
       ctx.lineWidth = 2;
       ctx.stroke();
 
@@ -149,37 +143,37 @@ export function AreaLineChart({ points: rawTrend = [], 'data-testid': testId }: 
         registerHitCircle(hitZonesRef.current, id, pt.x, pt.y, 10, {
           label: pt.point.week,
           value: String(pt.point.count),
-          color: CC.blue,
+          color: CC.teal,
         });
 
         // Hover crosshair
         if (hp > 0) {
-          drawCrosshair(ctx, pt.x, padT, padT + chartH, rgb(CC.blue, 0.15 * hp));
+          drawCrosshair(ctx, pt.x, padT, padT + chartH, rgb(CC.teal, 0.15 * hp));
         }
 
         // Glow on peaks or hovered
         const isPeak = pt.point.count === maxCount;
         if (hp > 0 || isPeak) {
-          drawGlow(ctx, pt.x, pt.y, 14, CC.blue, (isPeak ? 0.3 : 0) + hp * 0.25);
+          drawGlow(ctx, pt.x, pt.y, 14, CC.teal, (isPeak ? 0.3 : 0) + hp * 0.25);
         }
 
         // Dot
         ctx.beginPath();
         ctx.arc(pt.x, pt.y, hp > 0 ? 5 : 3.5, 0, Math.PI * 2);
-        ctx.fillStyle = rgb(CC.blue, hp > 0 ? 1 : 0.8);
+        ctx.fillStyle = rgb(CC.teal, hp > 0 ? 1 : 0.8);
         ctx.fill();
 
         // Count label above point
         if (hp > 0 || isPeak) {
           ctx.font = AXIS_LABEL.font;
-          ctx.fillStyle = CC.blue;
+          ctx.fillStyle = CC.teal;
           ctx.textAlign = 'center';
           ctx.fillText(String(pt.point.count), pt.x, pt.y - 10);
         }
 
         // Week label below axis
         ctx.font = AXIS_LABEL.font;
-        ctx.fillStyle = hp > 0 ? CC.blue : AXIS_LABEL.color;
+        ctx.fillStyle = hp > 0 ? CC.teal : AXIS_LABEL.color;
         ctx.textAlign = 'center';
         ctx.fillText(pt.point.week, pt.x, H - padB + 14);
       });
