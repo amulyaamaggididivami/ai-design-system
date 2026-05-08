@@ -167,13 +167,13 @@ export function SegmentedSplitBarChart({ items: rawItems = [], labelA = 'Impleme
       ctx.font       = LEGEND_LABEL.font;
       ctx.textBaseline = 'middle';
 
-      const swatchW = 14;
+      const swatchW = 12;
       const gLegImpl = ctx.createLinearGradient(trackCX - 120, 0, trackCX - 120 + swatchW, 0);
       gLegImpl.addColorStop(0, rgb(CC.green, 0.7));
       gLegImpl.addColorStop(1, rgb(CC.green, 1.0));
       ctx.fillStyle = gLegImpl;
       ctx.beginPath();
-      ctx.roundRect(trackCX - 120, legendY - 3, swatchW, 6, 2);
+      ctx.rect(trackCX - 120, legendY - 6, swatchW, 12);
       ctx.fill();
       ctx.fillStyle = LEGEND_LABEL.color;
       ctx.textAlign = 'left';
@@ -184,7 +184,7 @@ export function SegmentedSplitBarChart({ items: rawItems = [], labelA = 'Impleme
       gLegUn.addColorStop(1, rgb(CC.amber, 0.9));
       ctx.fillStyle = gLegUn;
       ctx.beginPath();
-      ctx.roundRect(trackCX + 10, legendY - 3, swatchW, 6, 2);
+      ctx.rect(trackCX + 10, legendY - 6, swatchW, 12);
       ctx.fill();
       ctx.fillStyle = LEGEND_LABEL.color;
       ctx.fillText(labelB, trackCX + 10 + swatchW + 6, legendY);

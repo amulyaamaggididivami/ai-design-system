@@ -41,18 +41,33 @@ export function BalanceScaleChart({ left, right, leftTitle = 'Accepted', rightTi
       const panY = anchorY + strLen;
       const r    = [0, 0, 10, 10] as [number, number, number, number];
 
-      // Radial fill — dark/transparent center, vivid color at edges (no square gap)
-      const panCX2 = panX + panW / 2;
-      const panCY2 = panY + panH / 2;
-      const radR   = Math.sqrt((panW / 2) ** 2 + (panH / 2) ** 2); // corner distance
-      const radFill = ctx.createRadialGradient(panCX2, panCY2, 0, panCX2, panCY2, radR);
-      radFill.addColorStop(0,    rgb(color, 0.02 * prog));
-      radFill.addColorStop(0.55, rgb(color, 0.25 * prog));
-      radFill.addColorStop(1,    rgb(color, 0.72 * prog));
+      // Square inner glow — 4 linear gradients clipped to pan shape
+      // gs > half of each dimension ensures full overlap (no dark center gap)
+      ctx.save();
       ctx.beginPath();
       ctx.roundRect(panX, panY, panW, panH, r);
-      ctx.fillStyle = radFill;
-      ctx.fill();
+      ctx.clip();
+      const gsX = 25;
+      const gsY = 25;
+      const c0  = rgb(color, 0.27 * prog);
+      const c1  = rgb(color, 0);
+      // Left
+      const lgL = ctx.createLinearGradient(panX, 0, panX + gsX, 0);
+      lgL.addColorStop(0, c0); lgL.addColorStop(1, c1);
+      ctx.fillStyle = lgL; ctx.fillRect(panX, panY, gsX, panH);
+      // Right
+      const lgR = ctx.createLinearGradient(panX + panW, 0, panX + panW - gsX, 0);
+      lgR.addColorStop(0, c0); lgR.addColorStop(1, c1);
+      ctx.fillStyle = lgR; ctx.fillRect(panX + panW - gsX, panY, gsX, panH);
+      // Top
+      const lgT = ctx.createLinearGradient(0, panY, 0, panY + gsY);
+      lgT.addColorStop(0, c0); lgT.addColorStop(1, c1);
+      ctx.fillStyle = lgT; ctx.fillRect(panX, panY, panW, gsY);
+      // Bottom
+      const lgB = ctx.createLinearGradient(0, panY + panH, 0, panY + panH - gsY);
+      lgB.addColorStop(0, c0); lgB.addColorStop(1, c1);
+      ctx.fillStyle = lgB; ctx.fillRect(panX, panY + panH - gsY, panW, gsY);
+      ctx.restore();
 
       // Border: 1px solid color, all sides — Figma spec
       ctx.beginPath();
