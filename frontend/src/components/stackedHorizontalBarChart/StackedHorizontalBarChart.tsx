@@ -1,7 +1,8 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useCallback } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
+import type { TooltipContent } from '../../canvas/useCanvasInteraction';
 import { easeOutQuart, stagger, tickHoverProgress } from '../../canvas/easing';
 import { CC, AXIS_LABEL, CHART_VALUE, LEGEND_LABEL, rgb, drawGlow } from '../../canvas/canvasUtils';
 import { useCanvasLoop } from '../../canvas/useCanvasLoop';
@@ -33,12 +34,21 @@ function fmtValue(v: number): string {
   return `${sign}£${abs.toFixed(0)}`;
 }
 
-export function StackedHorizontalBarChart({ data, 'data-testid': testId }: StackedHorizontalBarChartProps) {
+export function StackedHorizontalBarChart({ data, dataByEntity, onItemClick, selectedId, 'data-testid': testId }: StackedHorizontalBarChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap  = useRef<Map<string, number>>(new Map());
+  const selectedIdRef  = useRef(selectedId);
+  selectedIdRef.current = selectedId;
+
+  const handleClick = useCallback((id: string, data: TooltipContent | string) => {
+    const label = typeof data === 'object' ? (data.label ?? id) : id;
+    onItemClick?.(id, label);
+  }, [onItemClick]);
   const [showAll, setShowAll] = useState(false);
 
-  const { items: items = [], totals } = data;
+  const isDrillMode   = !!(selectedId && dataByEntity?.[selectedId]);
+  const activeData    = isDrillMode ? dataByEntity![selectedId!] : data;
+  const { items: items = [], totals } = activeData;
   const validItems   = items.filter((c): c is ContractorRow => c != null && typeof c === 'object');
   const sortedItems  = [...validItems].sort((a, b) => (b.total ?? 0) - (a.total ?? 0));
   const visibleItems = showAll ? sortedItems : sortedItems.slice(0, MAX_ITEMS);
@@ -49,30 +59,31 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
   const dynamicH      = PAD.top + PAD.bottom + contentH;
   const barArea       = W - PAD.left - NAME_W - PAD.right;
 
-  const isEmpty = validItems.length === 0;
+  // Ref-based draw state so the stale useCanvasLoop closure reads current values every frame
+  const drawStateRef = useRef({ visibleItems, maxCommitment, totals, barArea, BAR_GAP, n, dynamicH, isDrillMode });
+  drawStateRef.current = { visibleItems, maxCommitment, totals, barArea, BAR_GAP, n, dynamicH, isDrillMode };
 
-  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: dynamicH });
+  const isEmpty = (data.items ?? []).filter((c): c is ContractorRow => c != null && typeof c === 'object').length === 0;
+
+  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: dynamicH, onClick: onItemClick ? handleClick : undefined });
 
   useCanvasLoop(
     canvasRef,
     W,
     dynamicH,
     (ctx, progress) => {
+      const { visibleItems: vi, maxCommitment: mc, totals: tot, barArea: ba, BAR_GAP: bg, n: len, dynamicH: dH, isDrillMode: drill } = drawStateRef.current;
       tickHoverProgress(hoverMap.current, hoveredRef.current);
       hitZonesRef.current = [];
 
-      visibleItems.forEach((con, i) => {
+      vi.forEach((con, i) => {
         const color  = COLORS[i % COLORS.length];
-        const localP = stagger(progress, i, n, easeOutQuart);
-        const y      = PAD.top + i * (BAR_H + BAR_GAP);
+        const localP = stagger(progress, i, len, easeOutQuart);
+        const y      = PAD.top + i * (BAR_H + bg);
         const x0     = PAD.left + NAME_W;
         const hp     = hoverMap.current.get(con.id) ?? 0;
-        // clamp to 0 so negative-total bars don't render leftward
-        const absBase  = Math.max(con.base ?? 0, 0);
-        const absTotal = Math.max(con.total ?? 0, 0);
-        const baseW  = (absBase  / maxCommitment) * barArea * localP;
-        const totalW = (absTotal / maxCommitment) * barArea * localP;
-        const varW   = totalW - baseW;
+        const dimFactor = !drill && selectedIdRef.current && con.id !== selectedIdRef.current ? 0.2 : 1;
+        const totalW = (Math.max(con.total ?? 0, 0) / mc) * ba * localP;
 
         // Contractor name  y-axis
         ctx.font         = AXIS_LABEL.font;
@@ -93,8 +104,8 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
         if (totalW > 0) {
           if (hp > 0) drawGlow(ctx, x0 + totalW / 2, y + BAR_H / 2, totalW * 0.15, CC.teal, 0.12 * hp);
           const grad = ctx.createLinearGradient(x0, 0, x0 + totalW, 0);
-          grad.addColorStop(0, rgb(CC.tealDark, 0.85));
-          grad.addColorStop(1, rgb(CC.teal, 1.0));
+          grad.addColorStop(0, rgb(CC.tealDark, 0.85 * dimFactor));
+          grad.addColorStop(1, rgb(CC.teal, 1.0 * dimFactor));
           ctx.fillStyle = grad;
           ctx.beginPath();
           ctx.roundRect(x0, y, totalW, BAR_H, BAR_H / 2);
@@ -102,12 +113,12 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
         }
 
         // Unobtained area — faint teal gradient continuation
-        const unfilledW = barArea - totalW * localP;
+        const unfilledW = ba - totalW * localP;
         if (unfilledW > 2) {
           const unfilledX = x0 + totalW * localP;
-          const unGrad = ctx.createLinearGradient(unfilledX, 0, x0 + barArea, 0);
-          unGrad.addColorStop(0, rgb(CC.tealDark, 0.35));
-          unGrad.addColorStop(1, rgb(CC.tealDark, 0.08));
+          const unGrad = ctx.createLinearGradient(unfilledX, 0, x0 + ba, 0);
+          unGrad.addColorStop(0, rgb(CC.tealDark, 0.35 * dimFactor));
+          unGrad.addColorStop(1, rgb(CC.tealDark, 0.08 * dimFactor));
           ctx.fillStyle = unGrad;
           ctx.beginPath();
           ctx.roundRect(unfilledX, y, unfilledW, BAR_H, [0, BAR_H / 2, BAR_H / 2, 0]);
@@ -118,7 +129,7 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
         if (totalW > 4) {
           const triX   = x0 + totalW * localP;
           const tipY   = y + BAR_H;
-          ctx.fillStyle = rgb(CC.t1, localP);
+          ctx.fillStyle = rgb(CC.t1, localP * dimFactor);
           ctx.beginPath();
           ctx.moveTo(triX,     tipY);       // tip on bar bottom
           ctx.lineTo(triX - 5, tipY + 9);  // bottom-left
@@ -130,12 +141,12 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
         // £ value label that appears after bar animates in
         if (localP > 0.35) {
           const fade = Math.min(1, (localP - 0.35) / 0.4);
-          ctx.globalAlpha  = fade;
+          ctx.globalAlpha  = fade * dimFactor;
           ctx.font         = CHART_VALUE.font;
           ctx.fillStyle    = hp > 0 ? color : CHART_VALUE.color;
           ctx.textAlign    = 'left';
           ctx.textBaseline = 'middle';
-          ctx.fillText(con.totalLabel ?? fmtValue(con.total ?? 0), x0 + barArea + 28, y + BAR_H / 2);
+          ctx.fillText(con.totalLabel ?? fmtValue(con.total ?? 0), x0 + ba + 28, y + BAR_H / 2);
           ctx.globalAlpha = 1;
         }
 
@@ -148,7 +159,7 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
       });
 
       // Legend row
-      const ly = dynamicH - 14;
+      const ly = dH - 14;
       ctx.textBaseline = 'middle';
       ctx.font         = LEGEND_LABEL.font;
       ctx.textAlign    = 'left';
@@ -176,7 +187,7 @@ export function StackedHorizontalBarChart({ data, 'data-testid': testId }: Stack
       ctx.font      = LEGEND_LABEL.font;
       ctx.textAlign = 'right';
       ctx.fillStyle = LEGEND_LABEL.color;
-      ctx.fillText(`Portfolio: ${fmtValue(totals?.total ?? 0)}`, W - 8, ly);
+      ctx.fillText(`Portfolio: ${fmtValue(tot?.total ?? 0)}`, W - 8, ly);
     },
     true,
     { easing: easeOutQuart },

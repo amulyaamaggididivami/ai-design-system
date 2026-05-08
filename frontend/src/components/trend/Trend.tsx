@@ -26,14 +26,16 @@ const MAX_SAMPLE = 20; // max points to measureText for minStep calculation
 // At DPR=2 a 5 000px canvas uses ~22 MB; beyond that allocation blocks the main thread.
 const MAX_CANVAS_W = 5000;
 
-export function Trend({ points: rawPoints = [], colorOffset = 0, 'data-testid': testId }: TrendProps) {
+export function Trend({ points: rawPoints = [], selectedId, seriesByEntity, colorOffset = 0, 'data-testid': testId }: TrendProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const yAxisRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
 
+  const activeRaw = selectedId && seriesByEntity?.[selectedId] ? seriesByEntity[selectedId] : rawPoints;
+
   const points = useMemo(
-    () => (rawPoints as unknown[]).filter((p): p is QuotationTrendPoint => p != null && typeof p === 'object'),
-    [rawPoints],
+    () => (activeRaw as unknown[]).filter((p): p is QuotationTrendPoint => p != null && typeof p === 'object'),
+    [activeRaw],
   );
 
   const minStep = useMemo(() => {

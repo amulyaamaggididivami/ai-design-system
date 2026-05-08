@@ -1,7 +1,8 @@
-import { useRef, useEffect, useState, useMemo } from 'react';
+import { useRef, useEffect, useState, useMemo, useCallback } from 'react';
 
 import { CanvasTooltip } from '../../canvas/CanvasTooltip';
 import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
+import type { TooltipContent } from '../../canvas/useCanvasInteraction';
 import { stagger, tickHoverProgress, easeOutQuart } from '../../canvas/easing';
 import { CC, LEGEND_LABEL, CHART_VALUE, rgb, drawGlow, setupCanvas, AXIS_LABEL } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
@@ -26,24 +27,40 @@ const PAIR_GAP   = 36;
 const PAD_T      = 16;
 const PAD_B      = 48;
 
-export function SegmentedSplitBarChart({ items: rawItems = [], labelA = 'Implemented', labelB = 'Unimplemented', unit = 'variations', 'data-testid': testId }: SegmentedSplitBarChartProps) {
+export function SegmentedSplitBarChart({ items: rawItems = [], itemsByEntity, onItemClick, selectedId, labelA = 'Implemented', labelB = 'Unimplemented', unit = 'variations', 'data-testid': testId }: SegmentedSplitBarChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
+  const selectedIdRef  = useRef(selectedId);
+  selectedIdRef.current = selectedId;
+
+  const handleClick = useCallback((id: string, data: TooltipContent | string) => {
+    const rawId = id.replace(/-impl$|-un$/, '');
+    const label = typeof data === 'object' ? (data.label ?? rawId) : rawId;
+    onItemClick?.(rawId, label);
+  }, [onItemClick]);
   const [showAll, setShowAll] = useState(false);
 
   const items = useMemo(
     () => (rawItems as unknown[]).filter((c): c is VariationRow => c != null && typeof c === 'object'),
     [rawItems],
   );
+
+  const isDrillMode = !!(selectedId && itemsByEntity?.[selectedId]);
+  const activeRawItems = isDrillMode ? itemsByEntity![selectedId!] : rawItems;
+  const activeItems = useMemo(
+    () => (activeRawItems as unknown[]).filter((c): c is VariationRow => c != null && typeof c === 'object'),
+    [activeRawItems],
+  );
+
   const visible = useMemo(
-    () => showAll ? items : items.slice(0, MAX_ITEMS),
-    [items, showAll],
+    () => showAll ? activeItems : activeItems.slice(0, MAX_ITEMS),
+    [activeItems, showAll],
   );
 
   const H = PAD_T + PAD_B + visible.length * (PAIR_H + PAIR_GAP) - PAIR_GAP;
 
-  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
+  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H, onClick: onItemClick ? handleClick : undefined });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -85,6 +102,7 @@ export function SegmentedSplitBarChart({ items: rawItems = [], labelA = 'Impleme
         const unimplId = `${c.id}-un`;
         const hpImpl  = hoverMap.current.get(implId) ?? 0;
         const hpUn    = hoverMap.current.get(unimplId) ?? 0;
+        const dimFactor = !isDrillMode && selectedIdRef.current && c.id !== selectedIdRef.current ? 0.2 : 1;
         const implW   = ((c.implemented   ?? 0) / maxVal) * trackW * localP;
         const unimplW = ((c.unimplemented ?? 0) / maxVal) * trackW * localP;
 
@@ -108,8 +126,8 @@ export function SegmentedSplitBarChart({ items: rawItems = [], labelA = 'Impleme
         if (implW > 0) {
           if (hpImpl > 0) drawGlow(ctx, padL + implW / 2, yImpl + BAR_H / 2, implW * 0.15, CC.green, 0.18 * hpImpl);
           const gImpl = ctx.createLinearGradient(padL, 0, padL + implW, 0);
-          gImpl.addColorStop(0, rgb(CC.green, 0.7));
-          gImpl.addColorStop(1, rgb(CC.green, 1.0));
+          gImpl.addColorStop(0, rgb(CC.green, 0.7 * dimFactor));
+          gImpl.addColorStop(1, rgb(CC.green, 1.0 * dimFactor));
           ctx.fillStyle = gImpl;
           ctx.beginPath();
           ctx.roundRect(padL, yImpl, implW, BAR_H, BAR_H / 2);
@@ -136,8 +154,8 @@ export function SegmentedSplitBarChart({ items: rawItems = [], labelA = 'Impleme
         if (unimplW > 0) {
           if (hpUn > 0) drawGlow(ctx, padL + unimplW / 2, yUniml + BAR_H / 2, unimplW * 0.15, CC.amber, 0.18 * hpUn);
           const gUn = ctx.createLinearGradient(padL, 0, padL + unimplW, 0);
-          gUn.addColorStop(0, rgb(CC.amber, 0.5));
-          gUn.addColorStop(1, rgb(CC.amber, 0.9));
+          gUn.addColorStop(0, rgb(CC.amber, 0.5 * dimFactor));
+          gUn.addColorStop(1, rgb(CC.amber, 0.9 * dimFactor));
           ctx.fillStyle = gUn;
           ctx.beginPath();
           ctx.roundRect(padL, yUniml, unimplW, BAR_H, BAR_H / 2);

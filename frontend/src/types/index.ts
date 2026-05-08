@@ -140,20 +140,20 @@ export type BaseVisualizationConfig =
       type: 'mini-bars';
       rows: MiniBarRow[];
     }
-  | { type: 'stacked-horizontal-bar-chart'; data: ContractData; items?: never }
-  | { type: 'stacked-horizontal-bar-chart'; items: ContractorRow[]; data?: never }
+  | { type: 'stacked-horizontal-bar-chart'; data: ContractData; items?: never; dataByEntity?: Record<string, ContractData> }
+  | { type: 'stacked-horizontal-bar-chart'; items: ContractorRow[]; data?: never; dataByEntity?: Record<string, ContractData> }
   | { type: 'multi-metric-constellation-chart'; items: ContractorRow[] }
-  | { type: 'progress-race-chart'; items: ContractorRow[] }
+  | { type: 'progress-race-chart'; items: ContractorRow[]; itemsByEntity?: Record<string, ContractorRow[]> }
   | { type: 'hub-and-spoke-radial-chart'; segments: EWStatusRow[]; title?: string; unitLabel?: string }
   | { type: 'dot-matrix-chart'; items: EWCategoryRow[]; title?: string }
   | { type: 'ranked-card-leaderboard'; items: EWOpenContractorRow[]; title?: string }
   | { type: 'proportional-band-chart'; severities: EWSeverityRow[]; title?: string }
-  | { type: 'radial-fan-tree-chart'; total: number; totalLabel?: string; items: NCEContractorRow[] }
-  | { type: 'semi-circular-gauge-chart'; confirmed: number; total: number; label?: string }
-  | { type: 'segmented-split-bar-chart'; items: VariationRow[]; labelA?: string; labelB?: string; unit?: string }
+  | { type: 'radial-fan-tree-chart'; total: number; totalLabel?: string; items: NCEContractorRow[]; dataByEntity?: Record<string, { total: number; totalLabel?: string; items: NCEContractorRow[] }> }
+  | { type: 'semi-circular-gauge-chart'; confirmed: number; total: number; label?: string; gaugeByEntity?: Record<string, { confirmed: number; total: number }> }
+  | { type: 'segmented-split-bar-chart'; items: VariationRow[]; labelA?: string; labelB?: string; unit?: string; itemsByEntity?: Record<string, VariationRow[]> }
   | { type: 'balance-scale-chart'; left: QuotationSide; right: QuotationSide; leftTitle?: string; rightTitle?: string; unit?: string }
   | { type: 'area-line-chart'; points: QuotationTrendPoint[] }
-  | { type: 'trend-view'; points: QuotationTrendPoint[] }
+  | { type: 'trend-view'; points: QuotationTrendPoint[]; pointsByEntity?: Record<string, QuotationTrendPoint[]> }
   | { type: 'weekly-flow'; items: ContractorRow[] }
   | { type: 'horizontal-bar-chart'; rows: HorizontalBarRow[]; valuePrefix?: string };
 
@@ -161,6 +161,8 @@ export type VisualizationRendererProps = {
   config: BaseVisualizationConfig;
   className?: string;
   colorOffset?: number;
+  onItemClick?: (id: string, label: string) => void;
+  selectedId?: string;
 };
 
 // ─── Contract Management Dashboard Types ─────────────────────────────────────
