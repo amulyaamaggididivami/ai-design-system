@@ -54,7 +54,7 @@ export function StackedHorizontalBarChart({ data, dataByEntity, onItemClick, sel
   const visibleItems = showAll ? sortedItems : sortedItems.slice(0, MAX_ITEMS);
   const n             = visibleItems.length;
   const maxCommitment = Math.max(...sortedItems.map(c => Math.abs(c.total ?? 0)), 1);
-  const BAR_GAP       = 24;
+  const BAR_GAP       = 38;
   const contentH      = n * BAR_H + Math.max(0, n - 1) * BAR_GAP;
   const dynamicH      = PAD.top + PAD.bottom + contentH;
   const barArea       = W - PAD.left - NAME_W - PAD.right;
@@ -108,32 +108,49 @@ export function StackedHorizontalBarChart({ data, dataByEntity, onItemClick, sel
           grad.addColorStop(1, rgb(CC.teal, 1.0 * dimFactor));
           ctx.fillStyle = grad;
           ctx.beginPath();
-          ctx.roundRect(x0, y, totalW, BAR_H, BAR_H / 2);
+          ctx.rect(x0, y, totalW, BAR_H);
           ctx.fill();
         }
 
-        // Unobtained area — faint teal gradient continuation
-        const unfilledW = ba - totalW * localP;
+        // Unobtained area — dark teal fills from end of filled bar to full track width
+        const animTrackW = barArea * localP;
+        const unfilledX  = x0 + totalW;
+        const unfilledW  = animTrackW - totalW;
         if (unfilledW > 2) {
-          const unfilledX = x0 + totalW * localP;
-          const unGrad = ctx.createLinearGradient(unfilledX, 0, x0 + ba, 0);
-          unGrad.addColorStop(0, rgb(CC.tealDark, 0.35 * dimFactor));
-          unGrad.addColorStop(1, rgb(CC.tealDark, 0.08 * dimFactor));
+          const unGrad = ctx.createLinearGradient(unfilledX, 0, x0 + animTrackW, 0);
+          unGrad.addColorStop(0, rgb(CC.tealDark, 0.55));
+          unGrad.addColorStop(1, rgb(CC.tealDark, 0.22));
           ctx.fillStyle = unGrad;
           ctx.beginPath();
-          ctx.roundRect(unfilledX, y, unfilledW, BAR_H, [0, BAR_H / 2, BAR_H / 2, 0]);
+          ctx.rect(unfilledX, y, unfilledW, BAR_H);
           ctx.fill();
         }
 
-        // Triangle ▲ — tip touches bar bottom edge, body below
+        // Separator + triangle ▲ at junction
         if (totalW > 4) {
-          const triX   = x0 + totalW * localP;
-          const tipY   = y + BAR_H;
-          ctx.fillStyle = rgb(CC.t1, localP * dimFactor);
+          const triX = x0 + totalW;
+          const tipY = y + BAR_H;
+
+          // Vertical dark separator line spanning full bar height
+          ctx.strokeStyle = rgb(CC.t4, 0.9 * localP);
+          ctx.lineWidth   = 4;
           ctx.beginPath();
-          ctx.moveTo(triX,     tipY);       // tip on bar bottom
-          ctx.lineTo(triX - 5, tipY + 9);  // bottom-left
-          ctx.lineTo(triX + 5, tipY + 9);  // bottom-right
+          ctx.moveTo(triX, y);
+          ctx.lineTo(triX, tipY);
+          ctx.stroke();
+
+          // Rounded triangle — proper 3-vertex arcTo approach, 2px corner radius
+          const tw = 10; const th = 12; const cr = 1;
+          const ty = tipY + 3;
+          const p1 = { x: triX,      y: ty };        // tip
+          const p2 = { x: triX + tw, y: ty + th };   // bottom-right
+          const p3 = { x: triX - tw, y: ty + th };   // bottom-left
+          ctx.fillStyle = rgb(CC.t1, localP);
+          ctx.beginPath();
+          ctx.moveTo((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+          ctx.arcTo(p2.x, p2.y, p3.x, p3.y, cr);
+          ctx.arcTo(p3.x, p3.y, p1.x, p1.y, cr);
+          ctx.arcTo(p1.x, p1.y, p2.x, p2.y, cr);
           ctx.closePath();
           ctx.fill();
         }
@@ -170,18 +187,18 @@ export function StackedHorizontalBarChart({ data, dataByEntity, onItemClick, sel
       swatchGrad.addColorStop(1, rgb(CC.teal, 1.0));
       ctx.fillStyle = swatchGrad;
       ctx.beginPath();
-      ctx.roundRect(PAD.left + NAME_W, ly - 3, 14, 6, 2);
+      ctx.rect(PAD.left + NAME_W, ly - 6, 12, 12);
       ctx.fill();
       ctx.fillStyle = LEGEND_LABEL.color;
-      ctx.fillText('base value', PAD.left + NAME_W + 18, ly);
+      ctx.fillText('base value', PAD.left + NAME_W + 16, ly);
 
       // Variation swatch
       ctx.fillStyle = rgb(CC.teal, 0.35);
       ctx.beginPath();
-      ctx.roundRect(PAD.left + NAME_W + 160, ly - 3, 14, 6, 2);
+      ctx.rect(PAD.left + NAME_W + 160, ly - 6, 12, 12);
       ctx.fill();
       ctx.fillStyle = LEGEND_LABEL.color;
-      ctx.fillText('approved variations', PAD.left + NAME_W + 178, ly);
+      ctx.fillText('approved variations', PAD.left + NAME_W + 176, ly);
 
       // Portfolio total right-aligned
       ctx.font      = LEGEND_LABEL.font;

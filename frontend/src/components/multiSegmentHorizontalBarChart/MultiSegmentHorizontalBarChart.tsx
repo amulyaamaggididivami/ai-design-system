@@ -176,7 +176,7 @@ export function MultiSegmentHorizontalBarChart({
 
       // Agreed swatch
       ctx.fillStyle = CC.green;
-      ctx.fillRect(PAD_L, legendY - 4, 12, 8);
+      ctx.fillRect(PAD_L, legendY - 6, 12, 12);
       ctx.fillStyle = LEGEND_LABEL.color;
       ctx.textAlign = 'left';
       ctx.fillText('Company agreed amount', PAD_L + 16, legendY);
@@ -184,7 +184,7 @@ export function MultiSegmentHorizontalBarChart({
       // Over-spent swatch
       const overLegendX = PAD_L + 210;
       ctx.fillStyle = OVERSPENT_COLOR;
-      ctx.fillRect(overLegendX, legendY - 4, 12, 8);
+      ctx.fillRect(overLegendX, legendY - 6, 12, 12);
       ctx.fillStyle = LEGEND_LABEL.color;
       ctx.fillText('Company over spent amount', overLegendX + 16, legendY);
 

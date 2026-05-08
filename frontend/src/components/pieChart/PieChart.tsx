@@ -125,11 +125,9 @@ export function PieChart({ rows = [], variant, className, colors }: PieChartProp
         const hp = hoverMap.current.get(row.id ?? `sl-${i}`) ?? 0;
         const y = legendStartY + i * legendItemH;
 
-        // Color dot
-        ctx.beginPath();
-        ctx.arc(dotR + 4, y, dotR, 0, Math.PI * 2);
+        // Color swatch — 12×12 square
         ctx.fillStyle = rgb(color, 0.8 + hp * 0.2);
-        ctx.fill();
+        ctx.fillRect(4, y - 6, 12, 12);
 
         // Vendor name
         ctx.font = `9px 'JetBrains Mono', monospace`;

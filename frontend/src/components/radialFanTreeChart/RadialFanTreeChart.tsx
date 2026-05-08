@@ -57,9 +57,14 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
     const rootX = 88;
     const rootY = fanH / 2;
     const rootR = 32;
+    const splitX = rootX + rootR + 60; // single stem ends here, branches fan out from this point
     const leafX = width - 200;
+    const maxCount = Math.max(...byContractor.map(c => c.count ?? 0), 1);
+    const maxLeafR = 22;
+    const minLeafR = 8;
     const leafSpacing = byContractor.length > 1 ? (fanH - 60) / (byContractor.length - 1) : 0;
     const leafStartY = 30;
+    const labelX = leafX + maxLeafR + 10; // fixed left-align for all leaf labels
 
     const leafPositions = byContractor.map((_, i) => ({
       x: leafX,
@@ -82,7 +87,20 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
 
       const color = CHART_PALETTE[colorOffset % CHART_PALETTE.length];
 
-      // Draw branches and leaves
+      // Single stem: root edge → splitX along rootY
+      const stemP = Math.min(1, progress * 2.5);
+      const stemEndX = (rootX + rootR) + (splitX - rootX - rootR) * stemP;
+      const stemGrad = ctx.createLinearGradient(rootX + rootR, 0, stemEndX, 0);
+      stemGrad.addColorStop(0, rgb(color, 0.8));
+      stemGrad.addColorStop(1, rgb(color, 0.7));
+      ctx.beginPath();
+      ctx.moveTo(rootX + rootR, rootY);
+      ctx.lineTo(stemEndX, rootY);
+      ctx.strokeStyle = stemGrad;
+      ctx.lineWidth = 1.33;
+      ctx.stroke();
+
+      // Draw branches from splitX → each leaf
       byContractor.forEach((c, i) => {
         const localP = stagger(progress, i, byContractor.length, easeOutCubic);
         const lpos = leafPositions[i];
@@ -91,37 +109,32 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
 
         if (localP < 0.01) return;
 
-        // Bezier branch — starts at circle edge, not center
-        const angle = Math.atan2(lpos.y - rootY, lpos.x - rootX);
-        const bStartX = rootX + Math.cos(angle) * rootR;
-        const bStartY = rootY + Math.sin(angle) * rootR;
-        const cp1x = bStartX + (leafX - bStartX) * 0.4;
-        const cp1y = bStartY;
-        const cp2x = bStartX + (leafX - bStartX) * 0.6;
+        // Curve from splitX/rootY → lpos
+        const cp1x = splitX + (leafX - splitX) * 0.35;
+        const cp1y = rootY;
+        const cp2x = splitX + (leafX - splitX) * 0.65;
         const cp2y = lpos.y;
 
         const steps = 40;
-        const limitT = localP;
         ctx.beginPath();
         for (let s = 0; s <= steps; s++) {
-          const t = (s / steps) * limitT;
-          const x = (1 - t) ** 3 * bStartX + 3 * (1 - t) ** 2 * t * cp1x + 3 * (1 - t) * t ** 2 * cp2x + t ** 3 * lpos.x;
-          const y = (1 - t) ** 3 * bStartY + 3 * (1 - t) ** 2 * t * cp1y + 3 * (1 - t) * t ** 2 * cp2y + t ** 3 * lpos.y;
+          const t = (s / steps) * localP;
+          const x = (1 - t) ** 3 * splitX + 3 * (1 - t) ** 2 * t * cp1x + 3 * (1 - t) * t ** 2 * cp2x + t ** 3 * lpos.x;
+          const y = (1 - t) ** 3 * rootY  + 3 * (1 - t) ** 2 * t * cp1y + 3 * (1 - t) * t ** 2 * cp2y + t ** 3 * lpos.y;
           if (s === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
-        // Gradient stroke: tealDark (#00818F) → teal (#69DFE9)
-        const branchGrad = ctx.createLinearGradient(bStartX, bStartY, lpos.x, lpos.y);
+        const branchGrad = ctx.createLinearGradient(splitX, rootY, lpos.x, lpos.y);
         branchGrad.addColorStop(0, rgb(color, (hp > 0 ? 1.0 : 0.8) * dimFactor));
         branchGrad.addColorStop(1, rgb(color, (hp > 0 ? 1.0 : 0.7) * dimFactor));
         ctx.strokeStyle = branchGrad;
         ctx.lineWidth = hp > 0 ? 2 : 1.33;
         ctx.stroke();
 
-        // Leaf node — fixed 20px radius (40×40px), solid teal
+        // Leaf node — radius scales with count
         if (localP > 0.85) {
           const leafFade = Math.min(1, (localP - 0.85) / 0.15);
-          const leafR = 20;
+          const leafR = minLeafR + ((c.count ?? 0) / maxCount) * (maxLeafR - minLeafR);
 
           drawGlow(ctx, lpos.x, lpos.y, leafR * 2, color, (0.2 + hp * 0.2) * leafFade * dimFactor);
           ctx.beginPath();
@@ -137,46 +150,33 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
             color,
           });
 
-          // Labels
+          // Labels — fixed labelX for consistent left alignment
           ctx.globalAlpha = leafFade * dimFactor;
           ctx.font = AXIS_LABEL.font;
           ctx.textAlign = 'left';
           const nameText = c.abbreviation ?? c.name?.slice(0, 6) ?? '';
           const countText = ` ${formatNumber(c.count ?? 0)}`;
-          const xLabel = lpos.x + leafR + 8;
           const yLabel = lpos.y + 4;
           ctx.fillStyle = hp > 0 ? color : rgb(CC.t2, 0.85);
-          ctx.fillText(nameText, xLabel, yLabel);
+          ctx.fillText(nameText, labelX, yLabel);
           const nameW = ctx.measureText(nameText).width;
           ctx.font = CHART_VALUE.font;
           ctx.fillStyle = hp > 0 ? color : CC.t1;
-          ctx.fillText(countText, xLabel + nameW, yLabel);
+          ctx.fillText(countText, labelX + nameW, yLabel);
           ctx.globalAlpha = 1;
         }
       });
 
-      // Root node (drawn on top) — Figma spec: fill #D9D9D9 1%, inner shadow blur=19.88 #69DFE9 60%
+      // Root node — radial gradient inner shadow (transparent center → vivid at edge)
       const rootDrawR = rootR * progress;
+      const rootGrad = ctx.createRadialGradient(rootX, rootY, 0, rootX, rootY, rootDrawR);
+      rootGrad.addColorStop(0,    rgb(color, 0.02 * progress));
+      rootGrad.addColorStop(0.55, rgb(color, 0.02 * progress));
+      rootGrad.addColorStop(1,    rgb(color, 0.15 * progress));
       ctx.beginPath();
       ctx.arc(rootX, rootY, rootDrawR, 0, Math.PI * 2);
-      ctx.fillStyle = rgb('#D9D9D9', 0.01 * progress);
+      ctx.fillStyle = rootGrad;
       ctx.fill();
-
-      // Inner shadow: clip to circle, draw transparent stroke with teal shadow
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(rootX, rootY, rootDrawR, 0, Math.PI * 2);
-      ctx.clip();
-      ctx.shadowColor = rgb(color, 0.60 * progress);
-      ctx.shadowBlur = 19.88;
-      ctx.strokeStyle = rgb(color, 0);
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.arc(rootX, rootY, rootDrawR, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.shadowColor = 'transparent';
-      ctx.shadowBlur = 0;
-      ctx.restore();
 
       // Outer border: 1px teal
       ctx.beginPath();

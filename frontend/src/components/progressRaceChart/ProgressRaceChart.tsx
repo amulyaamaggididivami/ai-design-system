@@ -105,8 +105,11 @@ export function ProgressRaceChart({ items: rawItems = [], itemsByEntity, onItemC
         const dimFactor = !isDrillMode && selectedIdRef.current && contractor.id !== selectedIdRef.current ? 0.2 : 1;
         const trackY = PAD_T + i * (TRACK_H + TRACK_GAP);
 
-        // Track background
-        ctx.fillStyle = rgb(CC.t4, (0.5 + hp * 0.1) * dimFactor);
+        // Track background — same gradient style as StackedHorizontalBarChart unfilled portion
+        const trackGrad = ctx.createLinearGradient(padL, 0, padL + trackW, 0);
+        trackGrad.addColorStop(0, rgb(CC.tealDark, 0.55 + hp * 0.1));
+        trackGrad.addColorStop(1, rgb(CC.tealDark, 0.22 + hp * 0.08));
+        ctx.fillStyle = trackGrad;
         ctx.beginPath();
         ctx.rect(padL, trackY, trackW, TRACK_H);
         ctx.fill();

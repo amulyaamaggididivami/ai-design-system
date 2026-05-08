@@ -77,7 +77,7 @@ export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 
       ctx.beginPath();
       ctx.arc(cx, cy, TRACK_R, startAngle, endAngle);
       ctx.strokeStyle = rgb(color, 0.28);
-      ctx.lineWidth = 10;
+      ctx.lineWidth = 4;
       ctx.lineCap = 'round';
       ctx.stroke();
       ctx.lineCap = 'butt';
@@ -103,7 +103,7 @@ export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 
       ctx.beginPath();
       ctx.arc(cx, cy, TRACK_R, startAngle, fillAngle);
       ctx.strokeStyle = arcGrad;
-      ctx.lineWidth = 10;
+      ctx.lineWidth = 4;
       ctx.lineCap = 'round';
       ctx.stroke();
       ctx.lineCap = 'butt';
@@ -163,7 +163,7 @@ export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 
         ctx.font      = `700 32px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle = CC.t1;
         ctx.textAlign = 'center';
-        ctx.fillText(`${Math.round(safeValue * needleP)}%`, cx, cy + 54);
+        ctx.fillText(`${Math.round(safeValue * needleP)}%`, cx, cy + 72);
         ctx.globalAlpha = 1;
       }
 
@@ -176,7 +176,7 @@ export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 
         ctx.textAlign = 'center';
         const statsText = `${activeConfirmed ?? 0} of ${activeTotal ?? 0} ${label}`;
         wrapText(ctx, statsText, W - 40).forEach((line, i) => {
-          ctx.fillText(line, cx, cy + 90 + i * LINE_H);
+          ctx.fillText(line, cx, cy + 112 + i * LINE_H);
         });
         ctx.globalAlpha = 1;
       }
