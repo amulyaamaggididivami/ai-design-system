@@ -96,23 +96,20 @@ export function ProportionalBandChart({ severities: rawSeverities = [], colorOff
             ctx.closePath();
           };
 
-          // 1 — Very dark fill
-          trapPath();
-          ctx.fillStyle = rgb(color, 0.06 + hp * 0.04);
-          ctx.fill();
-
-          // 2 — Inset shadow matching: 0px 0px 55px 0px #7CBBE14D inset
+          // 1 — Radial fill: dark transparent center → vivid color at edges
+          const midX   = runX + fullW / 2;
+          const midY   = padT + bandH / 2;
+          const radR   = Math.sqrt((fullW / 2) ** 2 + (bandH / 2) ** 2);
+          const radFill = ctx.createRadialGradient(midX, midY, 0, midX, midY, radR);
+          radFill.addColorStop(0,    rgb(color, (0.03 + hp * 0.02) * progress));
+          radFill.addColorStop(0.5,  rgb(color, (0.12 + hp * 0.04) * progress));
+          radFill.addColorStop(1,    rgb(color, (0.28 + hp * 0.08) * progress));
           ctx.save();
           trapPath();
           ctx.clip();
-          ctx.shadowColor = rgb(color, 0.302 * progress); // #4D = 77/255 ≈ 30%
-          ctx.shadowBlur  = 55;
-          ctx.strokeStyle = rgb(color, 0.302 * progress);
-          ctx.lineWidth   = 2;
           trapPath();
-          ctx.stroke();
-          ctx.shadowColor = 'transparent';
-          ctx.shadowBlur  = 0;
+          ctx.fillStyle = radFill;
+          ctx.fill();
           ctx.restore();
 
           // 3 — 1px border
