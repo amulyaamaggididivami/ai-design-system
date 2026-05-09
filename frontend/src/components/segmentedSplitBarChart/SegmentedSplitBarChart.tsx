@@ -163,31 +163,40 @@ export function SegmentedSplitBarChart({ items: rawItems = [], labelA = 'Impleme
 
       // ── Legend ──────────────────────────────────────────────────────────────
       const legendY  = startY + totalH + 28;
-      const trackCX  = padL + trackW / 2;
       ctx.font       = LEGEND_LABEL.font;
       ctx.textBaseline = 'middle';
+      ctx.textAlign  = 'left';
 
-      const swatchW = 12;
-      const gLegImpl = ctx.createLinearGradient(trackCX - 120, 0, trackCX - 120 + swatchW, 0);
+      const swatchW   = 12;
+      const swatchGap = 6;
+      const itemGap   = 24;
+      const labelAW   = ctx.measureText(labelA).width;
+      const labelBW   = ctx.measureText(labelB).width;
+      const itemAW    = swatchW + swatchGap + labelAW;
+      const itemBW    = swatchW + swatchGap + labelBW;
+      const totalLegW = itemAW + itemGap + itemBW;
+      const legendX   = (W - totalLegW) / 2;
+
+      const gLegImpl = ctx.createLinearGradient(legendX, 0, legendX + swatchW, 0);
       gLegImpl.addColorStop(0, rgb(CC.green, 0.7));
       gLegImpl.addColorStop(1, rgb(CC.green, 1.0));
       ctx.fillStyle = gLegImpl;
       ctx.beginPath();
-      ctx.rect(trackCX - 120, legendY - 6, swatchW, 12);
+      ctx.rect(legendX, legendY - 6, swatchW, 12);
       ctx.fill();
       ctx.fillStyle = LEGEND_LABEL.color;
-      ctx.textAlign = 'left';
-      ctx.fillText(labelA, trackCX - 120 + swatchW + 6, legendY);
+      ctx.fillText(labelA, legendX + swatchW + swatchGap, legendY);
 
-      const gLegUn = ctx.createLinearGradient(trackCX + 10, 0, trackCX + 10 + swatchW, 0);
+      const bX = legendX + itemAW + itemGap;
+      const gLegUn = ctx.createLinearGradient(bX, 0, bX + swatchW, 0);
       gLegUn.addColorStop(0, rgb(CC.amber, 0.5));
       gLegUn.addColorStop(1, rgb(CC.amber, 0.9));
       ctx.fillStyle = gLegUn;
       ctx.beginPath();
-      ctx.rect(trackCX + 10, legendY - 6, swatchW, 12);
+      ctx.rect(bX, legendY - 6, swatchW, 12);
       ctx.fill();
       ctx.fillStyle = LEGEND_LABEL.color;
-      ctx.fillText(labelB, trackCX + 10 + swatchW + 6, legendY);
+      ctx.fillText(labelB, bX + swatchW + swatchGap, legendY);
 
       ctx.textBaseline = 'alphabetic';
 
