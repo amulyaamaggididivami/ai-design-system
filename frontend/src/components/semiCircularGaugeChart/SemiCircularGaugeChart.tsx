@@ -3,6 +3,7 @@ import { useRef, useEffect } from 'react';
 import { setupCanvas, CHART_PALETTE } from '../../canvas/canvasUtils';
 import { CC, AXIS_LABEL, LEGEND_LABEL, rgb, drawGlow } from '../../canvas/canvasUtils';
 import { easeOutBack, easeOutCubic } from '../../canvas/easing';
+import { formatNumber } from '../../utils/numberFormat';
 import type { SemiCircularGaugeChartProps } from './types';
 
 const W = 480;
@@ -174,7 +175,7 @@ export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 
         ctx.font      = LEGEND_LABEL.font;
         ctx.fillStyle = LEGEND_LABEL.color;
         ctx.textAlign = 'center';
-        const statsText = `${activeConfirmed ?? 0} of ${activeTotal ?? 0} ${label}`;
+        const statsText = `${formatNumber(confirmed ?? 0)} of ${formatNumber(total ?? 0)} ${label}`;
         wrapText(ctx, statsText, W - 40).forEach((line, i) => {
           ctx.fillText(line, cx, cy + 112 + i * LINE_H);
         });

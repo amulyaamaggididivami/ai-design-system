@@ -7,6 +7,7 @@ import { easeOutCubic } from '../../canvas/easing';
 import { CC, CHART_PALETTE, AXIS_LABEL, CHART_VALUE, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import { ToggleButton } from '../common/ToggleButton';
+import { formatNumber } from '../../utils/numberFormat';
 import type { ContractorRow } from '../../types';
 import type { ProgressRaceChartProps } from './types';
 
@@ -70,7 +71,7 @@ export function ProgressRaceChart({ items: rawItems = [], itemsByEntity, onItemC
     frameRef.current = 0;
 
     const padL   = 150;
-    const padR   = 80;
+    const padR   = 100;
     const trackW = W - padL - padR;
 
     const color = CHART_PALETTE[colorOffset % CHART_PALETTE.length];
@@ -100,6 +101,8 @@ export function ProgressRaceChart({ items: rawItems = [], itemsByEntity, onItemC
 
       drawDust(ctx, W, H, T, 40, rgb(CC.blue, 0.04));
 
+      const maxTotal = Math.max(...visible.map(c => c.total ?? 0), 1);
+
       visible.forEach((contractor, i) => {
         const hp     = hoverMap.current.get(contractor.id) ?? 0;
         const dimFactor = !isDrillMode && selectedIdRef.current && contractor.id !== selectedIdRef.current ? 0.2 : 1;
@@ -115,7 +118,7 @@ export function ProgressRaceChart({ items: rawItems = [], itemsByEntity, onItemC
         ctx.fill();
 
         // Runner animation
-        const trackProgress = (contractor.percentage ?? 0) / 100;
+        const trackProgress = (contractor.total ?? 0) / maxTotal;
         const animProg = Math.min(trackProgress, trackProgress * easeOutCubic(Math.min(1, T * 0.005)));
         const runnerX  = padL + trackW * animProg;
 
@@ -137,8 +140,7 @@ export function ProgressRaceChart({ items: rawItems = [], itemsByEntity, onItemC
 
         const hitData = {
           label: contractor.name,
-          value: `${contractor.percentage ?? 0}%`,
-          sublabel: contractor.totalLabel ?? (contractor.total != null ? String(contractor.total) : undefined),
+          sublabel: contractor.totalLabel ?? (contractor.total != null ? formatNumber(contractor.total) : undefined),
           color,
         };
         registerHitRect(
@@ -164,7 +166,7 @@ export function ProgressRaceChart({ items: rawItems = [], itemsByEntity, onItemC
         ctx.fillStyle    = hp > 0 ? rgb(color, 1 * dimFactor) : rgb(CC.t1, 0.85 * dimFactor);
         ctx.textAlign    = 'left';
         ctx.textBaseline = 'middle';
-        ctx.fillText(`${contractor.percentage ?? 0}%`, padL + trackW + 32, trackY + TRACK_H / 2);
+        ctx.fillText(formatNumber(contractor.total ?? 0), padL + trackW + 12, trackY + TRACK_H / 2);
 
         // Left label: contractor name
         ctx.font      = AXIS_LABEL.font;
