@@ -175,30 +175,13 @@ export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 
         ctx.font      = LEGEND_LABEL.font;
         ctx.fillStyle = LEGEND_LABEL.color;
         ctx.textAlign = 'center';
-        const statsText = `${formatNumber(confirmed ?? 0)} of ${formatNumber(total ?? 0)} ${label}`;
+        const statsText = `${formatNumber(activeConfirmed ?? 0)} of ${formatNumber(activeTotal ?? 0)} ${label}`;
         wrapText(ctx, statsText, W - 40).forEach((line, i) => {
           ctx.fillText(line, cx, cy + 112 + i * LINE_H);
         });
         ctx.globalAlpha = 1;
       }
 
-      if (selectedId && progress > 0.7) {
-        const fade = Math.min(1, (progress - 0.7) / 0.3);
-        const badgeText = `Filtered to: ${selectedLabel ?? selectedId}`;
-        ctx.font = LEGEND_LABEL.font;
-        const bw = ctx.measureText(badgeText).width + 20;
-        const bh = 18;
-        const bx = cx - bw / 2;
-        const by = cy + 90 + LINE_H * 2;
-        ctx.globalAlpha = fade;
-        ctx.fillStyle = rgb(CC.blue, 0.15);
-        ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 4); ctx.fill();
-        ctx.strokeStyle = rgb(CC.blue, 0.4); ctx.lineWidth = 1; ctx.stroke();
-        ctx.fillStyle = rgb(CC.blue, 0.9);
-        ctx.textAlign = 'center';
-        ctx.fillText(badgeText, cx, by + 12);
-        ctx.globalAlpha = 1;
-      }
 
       raf = requestAnimationFrame(draw);
     };

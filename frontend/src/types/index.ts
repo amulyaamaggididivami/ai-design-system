@@ -151,7 +151,7 @@ export type BaseVisualizationConfig =
   | { type: 'radial-fan-tree-chart'; total: number; totalLabel?: string; items: NCEContractorRow[]; dataByEntity?: Record<string, { total: number; totalLabel?: string; items: NCEContractorRow[] }> }
   | { type: 'semi-circular-gauge-chart'; confirmed: number; total: number; label?: string; gaugeByEntity?: Record<string, { confirmed: number; total: number }> }
   | { type: 'segmented-split-bar-chart'; items: VariationRow[]; labelA?: string; labelB?: string; unit?: string; itemsByEntity?: Record<string, VariationRow[]> }
-  | { type: 'balance-scale-chart'; left: QuotationSide; right: QuotationSide; leftTitle?: string; rightTitle?: string; unit?: string }
+  | { type: 'balance-scale-chart'; left: QuotationSide; right: QuotationSide; leftTitle?: string; rightTitle?: string; unit?: string; dataByEntity?: Record<string, QuotationSummary> }
   | { type: 'area-line-chart'; points: QuotationTrendPoint[] }
   | { type: 'trend-view'; points: QuotationTrendPoint[]; pointsByEntity?: Record<string, QuotationTrendPoint[]> }
   | { type: 'weekly-flow'; items: ContractorRow[] }
@@ -163,6 +163,12 @@ export type VisualizationRendererProps = {
   colorOffset?: number;
   onItemClick?: (id: string, label: string) => void;
   selectedId?: string;
+};
+
+export type VisualizationGroupProps = {
+  items: BaseVisualizationConfig[];
+  colorOffset?: number;
+  'data-testid'?: string;
 };
 
 // ─── Contract Management Dashboard Types ─────────────────────────────────────

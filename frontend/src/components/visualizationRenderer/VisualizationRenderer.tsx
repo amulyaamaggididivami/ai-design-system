@@ -46,7 +46,7 @@ export function VisualizationRenderer({ config, className, colorOffset = 0, onIt
   if (config.type === 'radial-fan-tree-chart') return <RadialFanTreeChart total={config.total} totalLabel={config.totalLabel} items={config.items} dataByEntity={config.dataByEntity} colorOffset={colorOffset} onItemClick={onItemClick} selectedId={selectedId} />;
   if (config.type === 'semi-circular-gauge-chart') return <SemiCircularGaugeChart confirmed={config.confirmed} total={config.total} label={config.label} gaugeByEntity={config.gaugeByEntity} colorOffset={colorOffset} selectedId={selectedId} />;
   if (config.type === 'segmented-split-bar-chart') return <SegmentedSplitBarChart items={config.items} itemsByEntity={config.itemsByEntity} labelA={config.labelA} labelB={config.labelB} unit={config.unit} onItemClick={onItemClick} selectedId={selectedId} />;
-  if (config.type === 'balance-scale-chart') return <BalanceScaleChart left={config.left} right={config.right} leftTitle={config.leftTitle} rightTitle={config.rightTitle} unit={config.unit} />;
+  if (config.type === 'balance-scale-chart') return <BalanceScaleChart left={config.left} right={config.right} leftTitle={config.leftTitle} rightTitle={config.rightTitle} unit={config.unit} dataByEntity={config.dataByEntity} selectedId={selectedId} />;
   if (config.type === 'area-line-chart') return <AreaLineChart points={config.points} />;
   if (config.type === 'trend-view') return <Trend points={config.points} colorOffset={colorOffset} seriesByEntity={config.pointsByEntity} selectedId={selectedId} />;
   if (config.type === 'weekly-flow') return <WeeklyFlow items={config.items} />;

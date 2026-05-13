@@ -7,9 +7,13 @@ import type { BalanceScaleChartProps } from './types';
 const W = 780;
 const H = 420;
 
-export function BalanceScaleChart({ left, right, leftTitle = 'Accepted', rightTitle = 'Submitted', unit = 'quotations', 'data-testid': testId }: BalanceScaleChartProps) {
+export function BalanceScaleChart({ left, right, leftTitle = 'Accepted', rightTitle = 'Submitted', unit = 'quotations', selectedId, dataByEntity, 'data-testid': testId }: BalanceScaleChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
+
+  const activeData  = selectedId && dataByEntity?.[selectedId] ? dataByEntity[selectedId] : { left, right };
+  const activeLeft  = activeData.left;
+  const activeRight = activeData.right;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -24,10 +28,10 @@ export function BalanceScaleChart({ left, right, leftTitle = 'Accepted', rightTi
     const panW    = 99;
     const strLen  = 30;
 
-    const absLeft  = Math.abs(left.value  ?? 0);
-    const absRight = Math.abs(right.value ?? 0);
+    const absLeft  = Math.abs(activeLeft.value  ?? 0);
+    const absRight = Math.abs(activeRight.value ?? 0);
     const maxVal   = Math.max(absLeft, absRight, 1);
-    const rawTilt  = ((left.value - right.value) / (2 * maxVal)) * 14;
+    const rawTilt  = ((activeLeft.value - activeRight.value) / (2 * maxVal)) * 14;
     const tilt     = Math.max(-14, Math.min(14, rawTilt));
 
     const drawPan = (
@@ -156,22 +160,22 @@ export function BalanceScaleChart({ left, right, leftTitle = 'Accepted', rightTi
         // Left value
         ctx.font      = `700 34px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle = CC.t1;
-        ctx.fillText(left.label, leftEnd.x, leftPanBottom);
+        ctx.fillText(activeLeft.label, leftEnd.x, leftPanBottom);
 
         // Left sub-label
         ctx.font      = AXIS_LABEL.font;
         ctx.fillStyle = AXIS_LABEL.color;
-        ctx.fillText(`${leftTitle} ${left.count} ${unit}`, leftEnd.x, leftPanBottom + 42);
+        ctx.fillText(`${leftTitle} ${activeLeft.count} ${unit}`, leftEnd.x, leftPanBottom + 42);
 
         // Right value
         ctx.font      = `700 34px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle = CC.t1;
-        ctx.fillText(right.label, rightEnd.x, rightPanBottom);
+        ctx.fillText(activeRight.label, rightEnd.x, rightPanBottom);
 
         // Right sub-label
         ctx.font      = AXIS_LABEL.font;
         ctx.fillStyle = AXIS_LABEL.color;
-        ctx.fillText(`${rightTitle} ${right.count} ${unit}`, rightEnd.x, rightPanBottom + 42);
+        ctx.fillText(`${rightTitle} ${activeRight.count} ${unit}`, rightEnd.x, rightPanBottom + 42);
 
         ctx.globalAlpha  = 1;
         ctx.textBaseline = 'alphabetic';
@@ -182,7 +186,7 @@ export function BalanceScaleChart({ left, right, leftTitle = 'Accepted', rightTi
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [left, right]);
+  }, [activeLeft, activeRight]);
 
   return (
     <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>
