@@ -133,7 +133,7 @@ export function HorizontalBarChart({ rows, valuePrefix = '$', testID }: Horizont
   );
 
   if (validRows.length === 0) {
-    return <ChartEmptyState width={W} height={MIN_H} message="No data available" data-testid={testID} />;
+    return <ChartEmptyState width={W} height={MIN_H} message="No data available" testID={testID} />;
   }
 
   return (

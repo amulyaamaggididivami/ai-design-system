@@ -211,7 +211,7 @@ export function StackedHorizontalBarChart({ data, dataByEntity, onItemClick, sel
   );
 
   if (isEmpty) {
-    return <ChartEmptyState width={W} height={MIN_H} message="No contract data available" data-testid={testID} />;
+    return <ChartEmptyState width={W} height={MIN_H} message="No contract data available" testID={testID} />;
   }
 
   return (
