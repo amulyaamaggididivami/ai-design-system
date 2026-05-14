@@ -1,5 +1,11 @@
 import type { SankeyLinkData, SankeyNodeData } from './types';
 
+export const PAGE = {
+  PROJECT_DASHBOARD: 'project-dashboard',
+  CHART_GALLERY: 'chart-gallery',
+  INTERACTIVE_DEMO: 'interactive-demo',
+} as const;
+
 export const CHART_TYPE = {
   LINE: 'line',
   AREA: 'area',
