@@ -40,7 +40,7 @@ function fmtM(v: number, prefix: string): string {
 export function MultiSegmentHorizontalBarChart({
   rows: rawRows = [],
   valuePrefix = '$',
-  'data-testid': testId,
+  testID,
 }: MultiSegmentHorizontalBarChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef  = useRef(0);
@@ -198,11 +198,11 @@ export function MultiSegmentHorizontalBarChart({
   }, [visibleRows, H, maxTotal, valuePrefix]);
 
   if (rows.length === 0) {
-    return <ChartEmptyState width={W} height={160} data-testid={testId} />;
+    return <ChartEmptyState width={W} height={160} testID={testID} />;
   }
 
   return (
-    <div data-testid={testId} style={{ position: 'relative', width: W }}>
+    <div data-testid={testID} style={{ position: 'relative', width: W }}>
       <div style={{ position: 'relative', width: W, height: H }}>
         <canvas
           ref={canvasRef}

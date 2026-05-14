@@ -27,7 +27,7 @@ const PAIR_GAP   = 36;
 const PAD_T      = 16;
 const PAD_B      = 48;
 
-export function SegmentedSplitBarChart({ items: rawItems = [], itemsByEntity, onItemClick, selectedId, labelA = 'Implemented', labelB = 'Unimplemented', unit = 'variations', 'data-testid': testId }: SegmentedSplitBarChartProps) {
+export function SegmentedSplitBarChart({ items: rawItems = [], itemsByEntity, onItemClick, selectedId, labelA = 'Implemented', labelB = 'Unimplemented', unit = 'variations', testID }: SegmentedSplitBarChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
@@ -226,10 +226,10 @@ export function SegmentedSplitBarChart({ items: rawItems = [], itemsByEntity, on
   }, [visible, H]);
 
   const isEmpty = items.length === 0;
-  if (isEmpty) return <ChartEmptyState width={W} height={160} data-testid={testId} />;
+  if (isEmpty) return <ChartEmptyState width={W} height={160} data-testid={testID} />;
 
   return (
-    <div data-testid={testId} style={{ width: W }}>
+    <div data-testid={testID} style={{ width: W }}>
       <div style={{ position: 'relative', width: W, height: H }}>
         <canvas
           ref={canvasRef}

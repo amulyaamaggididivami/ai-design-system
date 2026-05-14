@@ -27,7 +27,7 @@ function truncate(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
 }
 
 
-export function ProgressRaceChart({ items: rawItems = [], itemsByEntity, onItemClick, selectedId, colorOffset = 0, 'data-testid': testId }: ProgressRaceChartProps) {
+export function ProgressRaceChart({ items: rawItems = [], itemsByEntity, onItemClick, selectedId, colorOffset = 0, testID }: ProgressRaceChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef  = useRef(0);
   const hoverMap  = useRef<Map<string, number>>(new Map());
@@ -185,10 +185,10 @@ drawScanline(ctx, W, H, T, 0.015);
   }, [visible, H, colorOffset]);
 
   const isEmpty = sorted.length === 0;
-  if (isEmpty) return <ChartEmptyState width={W} height={160} data-testid={testId} />;
+  if (isEmpty) return <ChartEmptyState width={W} height={160} data-testid={testID} />;
 
   return (
-    <div data-testid={testId} style={{ width: W }}>
+    <div data-testid={testID} style={{ width: W }}>
       <div style={{ position: 'relative' }}>
         <canvas
           ref={canvasRef}

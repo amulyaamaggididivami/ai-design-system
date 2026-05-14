@@ -8,5 +8,5 @@ export interface BalanceScaleChartProps {
   unit?: string;
   selectedId?: string;
   dataByEntity?: Record<string, QuotationSummary>;
-  'data-testid'?: string;
+  testID?: string;
 }

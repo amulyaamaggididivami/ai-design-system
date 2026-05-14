@@ -17,7 +17,8 @@
 - writing hardcoded `rgba()`, `px`, or hex values with intent to "fix later" — use `alpha()`, `theme.spacing()`, `theme.palette.*` from the first line
 - running the violation scan (grep for px/rgba/hex) once, fixing some matches, and moving on without re-running — the scan MUST loop until zero matches
 - excusing hardcoded values with rationalizations ("keyframes can't access theme", "it's just 1px", "the line was already partially fixed") — every violation has a fix
-- implementing a page or component without `data-testid` attributes and treating them as a follow-up task — they are part of the first draft
+- implementing a page or component without `testID` props (reusable) or `data-testid` attributes (page-level) and treating them as a follow-up task — they are part of the first draft
+- inlining config type strings (`'line'`, `'bar'`, `'progress-race-chart'`, etc.) at the call site instead of importing them from a `constants.ts` file — every discriminant string must be a named constant
 
 ## Web-Only Anti-patterns
 
@@ -70,7 +71,7 @@ During refactoring:
 - [ ] no raw Axios in UI components
 - [ ] no direct state mutation in Zustand
 - [ ] all required component files exist: `styles.ts`, `types.ts`, `index.ts`, `.test.tsx`, `.stories.tsx` _(hook — warning)_
-- [ ] **`data-testid` coverage verified** — every page section, interactive element, and repeated item has a `data-testid`. Must be added during first implementation, not as a follow-up. See `execution-flow.md` § Data Test ID Checklist.
+- [ ] **`testID` coverage verified** — every reusable component has a `testID` prop forwarded as `data-testid`; every page section and interactive element has `data-testid`. Must be added during first implementation, not as a follow-up. See `execution-flow.md` § Data Test ID Checklist.
 - [ ] accessibility verified
 - [ ] responsive behavior verified
 - [ ] all new types, services, stores, hooks, components, stories, and tests follow project structure

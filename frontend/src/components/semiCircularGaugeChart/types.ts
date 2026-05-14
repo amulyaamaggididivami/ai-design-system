@@ -11,5 +11,5 @@ export interface SemiCircularGaugeChartProps {
   selectedId?: string;
   selectedLabel?: string;
   gaugeByEntity?: Record<string, GaugeEntityData>;
-  'data-testid'?: string;
+  testID?: string;
 }

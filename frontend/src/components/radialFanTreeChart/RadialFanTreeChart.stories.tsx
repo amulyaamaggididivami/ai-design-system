@@ -14,6 +14,6 @@ export const Default: Story = {
   args: {
     total: nceCompensationData.total,
     items: nceByContractor,
-    'data-testid': 'nce-tree',
+    testID: 'nce-tree',
   },
 };

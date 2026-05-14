@@ -11,5 +11,5 @@ export default meta;
 type Story = StoryObj<typeof StackedHorizontalBarChart>;
 
 export const Default: Story = {
-  args: { data: contractData, 'data-testid': 'contract-value-orb' },
+  args: { data: contractData, testID: 'contract-value-orb' },
 };

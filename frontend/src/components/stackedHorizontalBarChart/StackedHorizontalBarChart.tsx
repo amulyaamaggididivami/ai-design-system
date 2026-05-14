@@ -34,7 +34,7 @@ function fmtValue(v: number): string {
   return `${sign}£${abs.toFixed(0)}`;
 }
 
-export function StackedHorizontalBarChart({ data, dataByEntity, onItemClick, selectedId, 'data-testid': testId }: StackedHorizontalBarChartProps) {
+export function StackedHorizontalBarChart({ data, dataByEntity, onItemClick, selectedId, testID }: StackedHorizontalBarChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap  = useRef<Map<string, number>>(new Map());
   const selectedIdRef  = useRef(selectedId);
@@ -211,11 +211,11 @@ export function StackedHorizontalBarChart({ data, dataByEntity, onItemClick, sel
   );
 
   if (isEmpty) {
-    return <ChartEmptyState width={W} height={MIN_H} message="No contract data available" data-testid={testId} />;
+    return <ChartEmptyState width={W} height={MIN_H} message="No contract data available" data-testid={testID} />;
   }
 
   return (
-    <div data-testid={testId} style={{ width: W, transition: 'all 0.25s ease' }}>
+    <div data-testid={testID} style={{ width: W, transition: 'all 0.25s ease' }}>
       <div style={{ position: 'relative' }}>
         <canvas
           ref={canvasRef}

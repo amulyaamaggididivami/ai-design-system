@@ -6,5 +6,5 @@ export interface ProgressRaceChartProps {
   onItemClick?: (id: string, label: string) => void;
   selectedId?: string;
   colorOffset?: number;
-  'data-testid'?: string;
+  testID?: string;
 }

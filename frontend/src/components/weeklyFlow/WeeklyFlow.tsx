@@ -23,7 +23,7 @@ const H = 360;
 
 export function WeeklyFlow({
   items: items = [],
-  "data-testid": testId,
+  testID,
 }: WeeklyFlowProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
@@ -346,7 +346,7 @@ export function WeeklyFlow({
 
   return (
     <div
-      data-testid={testId}
+      data-testid={testID}
       style={{ position: "relative", width: W, height: H }}
     >
       <canvas

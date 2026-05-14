@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { VisualizationRenderer } from '../visualizationRenderer/VisualizationRenderer';
 import type { BaseVisualizationConfig, VisualizationGroupProps } from '../../types';
 
-export function VisualizationGroup({ items, colorOffset = 0, 'data-testid': testId }: VisualizationGroupProps) {
+export function VisualizationGroup({ items, colorOffset = 0, testID }: VisualizationGroupProps) {
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   const [selectedLabel, setSelectedLabel] = useState<string | undefined>(undefined);
 
@@ -20,7 +20,7 @@ export function VisualizationGroup({ items, colorOffset = 0, 'data-testid': test
   }, []);
 
   return (
-    <div className="viz-group" data-testid={testId}>
+    <div className="viz-group" data-testid={testID}>
       <div className="viz-group__bar">
         {selectedId ? (
           <>

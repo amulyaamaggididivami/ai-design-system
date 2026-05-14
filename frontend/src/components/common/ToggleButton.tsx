@@ -3,7 +3,7 @@ export interface ToggleButtonProps {
   onToggle: () => void;
   labelExpanded?: string;
   labelCollapsed?: string;
-  'data-testid'?: string;
+  testID?: string;
 }
 
 export function ToggleButton({
@@ -11,12 +11,12 @@ export function ToggleButton({
   onToggle,
   labelExpanded = 'View Less',
   labelCollapsed = 'View More',
-  'data-testid': testId,
+  testID,
 }: ToggleButtonProps) {
   return (
     <button
       type="button"
-      data-testid={testId}
+      data-testid={testID}
       onClick={onToggle}
       style={{
         display: 'flex',

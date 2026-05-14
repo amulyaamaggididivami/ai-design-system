@@ -7,7 +7,7 @@ import type { BalanceScaleChartProps } from './types';
 const W = 780;
 const H = 420;
 
-export function BalanceScaleChart({ left, right, leftTitle = 'Accepted', rightTitle = 'Submitted', unit = 'quotations', selectedId, dataByEntity, 'data-testid': testId }: BalanceScaleChartProps) {
+export function BalanceScaleChart({ left, right, leftTitle = 'Accepted', rightTitle = 'Submitted', unit = 'quotations', selectedId, dataByEntity, testID }: BalanceScaleChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
 
@@ -189,7 +189,7 @@ export function BalanceScaleChart({ left, right, leftTitle = 'Accepted', rightTi
   }, [activeLeft, activeRight]);
 
   return (
-    <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>
+    <div data-testid={testID} style={{ position: 'relative', width: W, height: H }}>
       <canvas
         ref={canvasRef}
         role="img"

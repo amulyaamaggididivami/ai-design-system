@@ -8,5 +8,5 @@ export type HorizontalBarRow = {
 export type HorizontalBarChartProps = {
   rows: HorizontalBarRow[];
   valuePrefix?: string;
-  'data-testid'?: string;
+  testID?: string;
 };

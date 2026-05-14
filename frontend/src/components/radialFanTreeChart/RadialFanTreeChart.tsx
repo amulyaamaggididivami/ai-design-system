@@ -15,7 +15,7 @@ const MIN_H = 320;
 const PAD_V = 60;
 const MIN_LEAF_SPACING = 28;
 
-export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContractor = [], dataByEntity, onItemClick, selectedId, width = DEFAULT_W, colorOffset = 0, 'data-testid': testId }: RadialFanTreeChartProps) {
+export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContractor = [], dataByEntity, onItemClick, selectedId, width = DEFAULT_W, colorOffset = 0, testID }: RadialFanTreeChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
@@ -220,10 +220,10 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
   }, [activeTotal, activeTotalLabel, byContractor, fanH, width, isDrillMode]);
 
   const isEmpty = byContractor.length === 0;
-  if (isEmpty) return <ChartEmptyState width={width} height={MIN_H} data-testid={testId} />;
+  if (isEmpty) return <ChartEmptyState width={width} height={MIN_H} data-testid={testID} />;
 
   return (
-    <div data-testid={testId} style={{ position: 'relative', width, height: H }}>
+    <div data-testid={testID} style={{ position: 'relative', width, height: H }}>
       <canvas
         ref={canvasRef}
         role="img"

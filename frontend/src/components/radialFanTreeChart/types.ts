@@ -15,5 +15,5 @@ export interface RadialFanTreeChartProps {
   selectedId?: string;
   width?: number;
   colorOffset?: number;
-  'data-testid'?: string;
+  testID?: string;
 }

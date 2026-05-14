@@ -5,5 +5,5 @@ export interface TrendProps {
   selectedId?: string;
   seriesByEntity?: Record<string, QuotationTrendPoint[]>;
   colorOffset?: number;
-  'data-testid'?: string;
+  testID?: string;
 }

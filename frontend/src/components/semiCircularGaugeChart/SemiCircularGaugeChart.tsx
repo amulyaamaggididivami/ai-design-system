@@ -30,7 +30,7 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
   return lines;
 }
 
-export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 0, selectedId, selectedLabel, gaugeByEntity, 'data-testid': testId }: SemiCircularGaugeChartProps) {
+export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 0, selectedId, selectedLabel, gaugeByEntity, testID }: SemiCircularGaugeChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
 
@@ -191,7 +191,7 @@ export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 
   }, [activeConfirmed, activeTotal, label, colorOffset, selectedId, selectedLabel]);
 
   return (
-    <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>
+    <div data-testid={testID} style={{ position: 'relative', width: W, height: H }}>
       <canvas
         ref={canvasRef}
         role="img"

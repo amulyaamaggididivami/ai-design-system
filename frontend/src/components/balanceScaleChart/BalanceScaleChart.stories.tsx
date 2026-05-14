@@ -14,6 +14,6 @@ export const Default: Story = {
   args: {
     left: quotationSummary.accepted,
     right: quotationSummary.submitted,
-    'data-testid': 'quotation-balance',
+    testID: 'quotation-balance',
   },
 };

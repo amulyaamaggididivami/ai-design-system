@@ -11,5 +11,5 @@ export default meta;
 type Story = StoryObj<typeof ProgressRaceChart>;
 
 export const Default: Story = {
-  args: { items: contractData.items, 'data-testid': 'commitment-race' },
+  args: { items: contractData.items, testID: 'commitment-race' },
 };

@@ -5,5 +5,5 @@ export interface StackedHorizontalBarChartProps {
   dataByEntity?: Record<string, ContractData>;
   onItemClick?: (id: string, label: string) => void;
   selectedId?: string;
-  'data-testid'?: string;
+  testID?: string;
 }

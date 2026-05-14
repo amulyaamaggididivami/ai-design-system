@@ -8,5 +8,5 @@ export interface SegmentedSplitBarChartProps {
   labelA?: string;
   labelB?: string;
   unit?: string;
-  'data-testid'?: string;
+  testID?: string;
 }
