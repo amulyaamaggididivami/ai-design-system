@@ -226,7 +226,7 @@ export function SegmentedSplitBarChart({ items: rawItems = [], itemsByEntity, on
   }, [visible, H]);
 
   const isEmpty = items.length === 0;
-  if (isEmpty) return <ChartEmptyState width={W} height={160} data-testid={testID} />;
+  if (isEmpty) return <ChartEmptyState width={W} height={160} testID={testID} />;
 
   return (
     <div data-testid={testID} style={{ width: W }}>

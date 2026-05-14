@@ -220,7 +220,7 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
   }, [activeTotal, activeTotalLabel, byContractor, fanH, width, isDrillMode]);
 
   const isEmpty = byContractor.length === 0;
-  if (isEmpty) return <ChartEmptyState width={width} height={MIN_H} data-testid={testID} />;
+  if (isEmpty) return <ChartEmptyState width={width} height={MIN_H} testID={testID} />;
 
   return (
     <div data-testid={testID} style={{ position: 'relative', width, height: H }}>

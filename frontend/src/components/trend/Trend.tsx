@@ -263,7 +263,7 @@ export function Trend({ points: rawPoints = [], selectedId, seriesByEntity, colo
   }, [points, chartCanvasW, minStep, hitZonesRef, colorOffset]);
 
   const isEmpty = points.length < 2;
-  if (isEmpty) return <ChartEmptyState width={MIN_W} height={H} data-testid={testID} />;
+  if (isEmpty) return <ChartEmptyState width={MIN_W} height={H} testID={testID} />;
 
   return (
     <div data-testid={testID} style={{ position: 'relative', width: '100%', display: 'flex' }}>

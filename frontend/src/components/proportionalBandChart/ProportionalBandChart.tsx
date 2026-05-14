@@ -160,7 +160,7 @@ export function ProportionalBandChart({ severities: rawSeverities = [], colorOff
   }, [severities, dynamicW, colorOffset]);
 
   const isEmpty = severities.length === 0;
-  if (isEmpty) return <ChartEmptyState width={dynamicW} height={H} data-testid={testID} />;
+  if (isEmpty) return <ChartEmptyState width={dynamicW} height={H} testID={testID} />;
 
   return (
     <div data-testid={testID} style={{ position: 'relative', width: dynamicW, height: H }}>

@@ -136,7 +136,7 @@ export function DotMatrixChart({ items: rawCategories = [], testID }: DotMatrixC
   }, [categories]);
 
   const isEmpty = categories.length === 0;
-  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testID} />;
+  if (isEmpty) return <ChartEmptyState width={W} height={H} testID={testID} />;
 
   return (
     <div data-testid={testID} style={{ position: 'relative', width: W, height: H }}>

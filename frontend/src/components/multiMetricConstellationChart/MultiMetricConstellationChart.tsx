@@ -207,7 +207,7 @@ export function MultiMetricConstellationChart({ items: rawItems = [], testID }: 
   );
 
   const isEmpty = constellations.length === 0;
-  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testID} />;
+  if (isEmpty) return <ChartEmptyState width={W} height={H} testID={testID} />;
 
   return (
     <div data-testid={testID} style={{ position: 'relative', width: W, height: H }}>

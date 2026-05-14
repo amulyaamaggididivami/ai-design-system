@@ -185,7 +185,7 @@ drawScanline(ctx, W, H, T, 0.015);
   }, [visible, H, colorOffset]);
 
   const isEmpty = sorted.length === 0;
-  if (isEmpty) return <ChartEmptyState width={W} height={160} data-testid={testID} />;
+  if (isEmpty) return <ChartEmptyState width={W} height={160} testID={testID} />;
 
   return (
     <div data-testid={testID} style={{ width: W }}>

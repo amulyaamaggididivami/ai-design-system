@@ -186,7 +186,7 @@ export function AreaLineChart({ points: rawTrend = [], testID }: AreaLineChartPr
   }, [trend]);
 
   const isEmpty = trend.length < 2;
-  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testID} />;
+  if (isEmpty) return <ChartEmptyState width={W} height={H} testID={testID} />;
 
   return (
     <div
