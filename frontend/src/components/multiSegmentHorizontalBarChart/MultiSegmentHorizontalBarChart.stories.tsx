@@ -15,7 +15,7 @@ export const Default: Story = {
   args: {
     rows: dualSegmentBarRows,
     valuePrefix: '$',
-    'data-testid': 'multi-segment-bar',
+    testID: 'multi-segment-bar',
   },
 };
 
@@ -23,13 +23,13 @@ export const AgreedOnly: Story = {
   args: {
     rows: dualSegmentBarRows.map(({ secondaryValue: _, ...r }) => r),
     valuePrefix: '$',
-    'data-testid': 'multi-segment-bar-agreed-only',
+    testID: 'multi-segment-bar-agreed-only',
   },
 };
 
 export const Empty: Story = {
   args: {
     rows: [],
-    'data-testid': 'multi-segment-bar-empty',
+    testID: 'multi-segment-bar-empty',
   },
 };

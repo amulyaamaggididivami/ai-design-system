@@ -17,7 +17,7 @@ const STATUS_COLORS: Record<string, string> = {
   Closed: CC.green,
 };
 
-export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, unitLabel = '', 'data-testid': testId }: HubAndSpokeRadialChartProps) {
+export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, unitLabel = '', testID }: HubAndSpokeRadialChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
   const hoverMap = useRef<Map<string, number>>(new Map());
@@ -189,10 +189,10 @@ export function HubAndSpokeRadialChart({ segments: rawSegments = [], title, unit
   }, [segments, title, unitLabel]);
 
   const isEmpty = segments.length === 0;
-  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testId} />;
+  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testID} />;
 
   return (
-    <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>
+    <div data-testid={testID} style={{ position: 'relative', width: W, height: H }}>
       <canvas
         ref={canvasRef}
         role="img"

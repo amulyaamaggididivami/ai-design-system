@@ -11,5 +11,5 @@ export default meta;
 type Story = StoryObj<typeof DotMatrixChart>;
 
 export const Default: Story = {
-  args: { items: ewCategoryData, 'data-testid': 'ew-category' },
+  args: { items: ewCategoryData, testID: 'ew-category' },
 };

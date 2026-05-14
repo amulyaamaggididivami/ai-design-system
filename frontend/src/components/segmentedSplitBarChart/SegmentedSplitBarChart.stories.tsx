@@ -11,5 +11,5 @@ export default meta;
 type Story = StoryObj<typeof SegmentedSplitBarChart>;
 
 export const Default: Story = {
-  args: { items: variationByContractor, 'data-testid': 'variation-split' },
+  args: { items: variationByContractor, testID: 'variation-split' },
 };

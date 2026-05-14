@@ -11,5 +11,5 @@ export default meta;
 type Story = StoryObj<typeof RankedCardLeaderboard>;
 
 export const Default: Story = {
-  args: { items: ewOpenByContractor, 'data-testid': 'contractor-rank' },
+  args: { items: ewOpenByContractor, testID: 'contractor-rank' },
 };

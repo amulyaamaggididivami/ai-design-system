@@ -8,6 +8,7 @@
 - Prioritize self-explanatory code over comments
 - Follow best security practices (input validation, no hardcoded secrets)
 - Use consistent formatting and follow project-specific linting rules
+- **ALWAYS use constants for config type strings** — any string literal used as a type discriminant, config key, chart type, or route identifier must be defined in a `constants.ts` file and imported by name. Never inline the string at the call site. This applies to discriminant unions, `switch`/`if` comparisons, and object keys alike.
 
 ---
 
@@ -52,7 +53,7 @@
 - **ALWAYS** include blank lines between import groups
 - **ALWAYS** keep import order and grouping compatible with ESLint rules
 - **ALWAYS** ensure accessibility: semantic controls, valid labels, alt text, keyboard support
-- **ALWAYS** use a prop for reusable components, and hardcode `data-testid` only in page-level or one-off UI
+- **ALWAYS** use a `testID` prop for reusable components (forwarded as `data-testid` on the root element), and hardcode `data-testid` only in page-level or one-off UI
 - **NEVER** use `dangerouslySetInnerHTML` — XSS attack vector; use a sanitization library if raw HTML is absolutely required
 - **NEVER** use `eval()`, `Function()`, or `new Function()` — dynamic code execution is a security risk
 - **NEVER** add a new dependency without running `pnpm audit` to check for known vulnerabilities

@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { CHART_TYPE } from '../constants';
+
 export type VisualizationFrameProps = {
   className?: string;
 };
@@ -125,42 +127,50 @@ export type ChartFrameProps = {
 
 export type BaseVisualizationConfig =
   | {
-      type: 'line' | 'area' | 'bar' | 'pie' | 'donut' | 'sankey';
+      type: typeof CHART_TYPE.LINE | typeof CHART_TYPE.AREA | typeof CHART_TYPE.BAR | typeof CHART_TYPE.PIE | typeof CHART_TYPE.DONUT | typeof CHART_TYPE.SANKEY;
       rows: VizRow[];
     }
   | {
-      type: 'flow';
+      type: typeof CHART_TYPE.FLOW;
       selectedEntity?: string | null;
     }
   | {
-      type: 'trend';
+      type: typeof CHART_TYPE.TREND;
       points: PointPair[];
     }
   | {
-      type: 'mini-bars';
+      type: typeof CHART_TYPE.MINI_BARS;
       rows: MiniBarRow[];
     }
-  | { type: 'stacked-horizontal-bar-chart'; data: ContractData; items?: never }
-  | { type: 'stacked-horizontal-bar-chart'; items: ContractorRow[]; data?: never }
-  | { type: 'multi-metric-constellation-chart'; items: ContractorRow[] }
-  | { type: 'progress-race-chart'; items: ContractorRow[] }
-  | { type: 'hub-and-spoke-radial-chart'; segments: EWStatusRow[]; title?: string; unitLabel?: string }
-  | { type: 'dot-matrix-chart'; items: EWCategoryRow[]; title?: string }
-  | { type: 'ranked-card-leaderboard'; items: EWOpenContractorRow[]; title?: string }
-  | { type: 'proportional-band-chart'; severities: EWSeverityRow[]; title?: string }
-  | { type: 'radial-fan-tree-chart'; total: number; totalLabel?: string; items: NCEContractorRow[] }
-  | { type: 'semi-circular-gauge-chart'; confirmed: number; total: number; label?: string }
-  | { type: 'segmented-split-bar-chart'; items: VariationRow[]; labelA?: string; labelB?: string; unit?: string }
-  | { type: 'balance-scale-chart'; left: QuotationSide; right: QuotationSide; leftTitle?: string; rightTitle?: string; unit?: string }
-  | { type: 'area-line-chart'; points: QuotationTrendPoint[] }
-  | { type: 'trend-view'; points: QuotationTrendPoint[] }
-  | { type: 'weekly-flow'; items: ContractorRow[] }
-  | { type: 'horizontal-bar-chart'; rows: HorizontalBarRow[]; valuePrefix?: string };
+  | { type: typeof CHART_TYPE.STACKED_HORIZONTAL_BAR; data: ContractData; items?: never; dataByEntity?: Record<string, ContractData> }
+  | { type: typeof CHART_TYPE.STACKED_HORIZONTAL_BAR; items: ContractorRow[]; data?: never; dataByEntity?: Record<string, ContractData> }
+  | { type: typeof CHART_TYPE.MULTI_METRIC_CONSTELLATION; items: ContractorRow[] }
+  | { type: typeof CHART_TYPE.PROGRESS_RACE; items: ContractorRow[]; itemsByEntity?: Record<string, ContractorRow[]> }
+  | { type: typeof CHART_TYPE.HUB_AND_SPOKE_RADIAL; segments: EWStatusRow[]; title?: string; unitLabel?: string }
+  | { type: typeof CHART_TYPE.DOT_MATRIX; items: EWCategoryRow[]; title?: string }
+  | { type: typeof CHART_TYPE.RANKED_CARD_LEADERBOARD; items: EWOpenContractorRow[]; title?: string }
+  | { type: typeof CHART_TYPE.PROPORTIONAL_BAND; severities: EWSeverityRow[]; title?: string }
+  | { type: typeof CHART_TYPE.RADIAL_FAN_TREE; total: number; totalLabel?: string; items: NCEContractorRow[]; dataByEntity?: Record<string, { total: number; totalLabel?: string; items: NCEContractorRow[] }> }
+  | { type: typeof CHART_TYPE.SEMI_CIRCULAR_GAUGE; confirmed: number; total: number; label?: string; gaugeByEntity?: Record<string, { confirmed: number; total: number }> }
+  | { type: typeof CHART_TYPE.SEGMENTED_SPLIT_BAR; items: VariationRow[]; labelA?: string; labelB?: string; unit?: string; itemsByEntity?: Record<string, VariationRow[]> }
+  | { type: typeof CHART_TYPE.BALANCE_SCALE; left: QuotationSide; right: QuotationSide; leftTitle?: string; rightTitle?: string; unit?: string; dataByEntity?: Record<string, QuotationSummary> }
+  | { type: typeof CHART_TYPE.AREA_LINE; points: QuotationTrendPoint[] }
+  | { type: typeof CHART_TYPE.TREND_VIEW; points: QuotationTrendPoint[]; pointsByEntity?: Record<string, QuotationTrendPoint[]> }
+  | { type: typeof CHART_TYPE.WEEKLY_FLOW; items: ContractorRow[] }
+  | { type: typeof CHART_TYPE.HORIZONTAL_BAR; rows: HorizontalBarRow[]; valuePrefix?: string };
 
 export type VisualizationRendererProps = {
   config: BaseVisualizationConfig;
   className?: string;
   colorOffset?: number;
+  onItemClick?: (id: string, label: string) => void;
+  selectedId?: string;
+};
+
+export type VisualizationGroupProps = {
+  items: BaseVisualizationConfig[];
+  colorOffset?: number;
+  'data-testid'?: string;
 };
 
 // ─── Contract Management Dashboard Types ─────────────────────────────────────

@@ -17,7 +17,7 @@ const COLORS    = [CC.blue, CC.amber, CC.purple, CC.green];
 const KPI_NAMES = ['Base Value', 'Variations', 'Commitment'];
 const KPI_SHORT = ['Base',       'Var',        'Commit'   ];
 
-export function MultiMetricConstellationChart({ items: rawItems = [], 'data-testid': testId }: MultiMetricConstellationChartProps) {
+export function MultiMetricConstellationChart({ items: rawItems = [], testID }: MultiMetricConstellationChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap  = useRef<Map<string, number>>(new Map());
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: H });
@@ -207,10 +207,10 @@ export function MultiMetricConstellationChart({ items: rawItems = [], 'data-test
   );
 
   const isEmpty = constellations.length === 0;
-  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testId} />;
+  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testID} />;
 
   return (
-    <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>
+    <div data-testid={testID} style={{ position: 'relative', width: W, height: H }}>
       <canvas
         ref={canvasRef}
         role="img"

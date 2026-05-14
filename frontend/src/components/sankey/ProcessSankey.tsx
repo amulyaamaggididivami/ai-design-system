@@ -1,5 +1,5 @@
 import { CausalFlowCanvas } from '../../canvas/CausalFlowCanvas';
-import { flowGraph } from '../constants';
+import { flowGraph } from '../../constants';
 import type { ProcessSankeyProps } from '../../types';
 
 export function ProcessSankey({ selectedEntity, colors: _colors }: ProcessSankeyProps) {

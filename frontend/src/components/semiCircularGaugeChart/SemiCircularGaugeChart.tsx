@@ -30,9 +30,13 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
   return lines;
 }
 
-export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 0, 'data-testid': testId }: SemiCircularGaugeChartProps) {
+export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 0, selectedId, selectedLabel, gaugeByEntity, testID }: SemiCircularGaugeChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
+
+  const activeData      = selectedId && gaugeByEntity?.[selectedId] ? gaugeByEntity[selectedId] : { confirmed, total };
+  const activeConfirmed = activeData.confirmed;
+  const activeTotal     = activeData.total;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -67,7 +71,7 @@ export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 
       const progress = easeOutCubic(rawP);
       const needleP  = easeOutBack(Math.min(T / NEEDLE_DURATION, 1));
 
-      const safeValue = Math.round(((confirmed ?? 0) / (total || 1)) * 100);
+      const safeValue = Math.round(((activeConfirmed ?? 0) / (activeTotal || 1)) * 100);
       const fillAngle = startAngle + (safeValue / 100) * totalSpan * progress;
 
       // ── Dim track — full semicircle background ──────────────────────────────
@@ -171,26 +175,27 @@ export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 
         ctx.font      = LEGEND_LABEL.font;
         ctx.fillStyle = LEGEND_LABEL.color;
         ctx.textAlign = 'center';
-        const statsText = `${formatNumber(confirmed ?? 0)} of ${formatNumber(total ?? 0)} ${label}`;
+        const statsText = `${formatNumber(activeConfirmed ?? 0)} of ${formatNumber(activeTotal ?? 0)} ${label}`;
         wrapText(ctx, statsText, W - 40).forEach((line, i) => {
           ctx.fillText(line, cx, cy + 112 + i * LINE_H);
         });
         ctx.globalAlpha = 1;
       }
 
+
       raf = requestAnimationFrame(draw);
     };
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [confirmed, total, label, colorOffset]);
+  }, [activeConfirmed, activeTotal, label, colorOffset, selectedId, selectedLabel]);
 
   return (
-    <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>
+    <div data-testid={testID} style={{ position: 'relative', width: W, height: H }}>
       <canvas
         ref={canvasRef}
         role="img"
-        aria-label={`Compensation event gauge — ${Math.round(((confirmed ?? 0) / (total || 1)) * 100)}% of NCEs confirmed as compensation events`}
+        aria-label={`Compensation event gauge — ${Math.round(((activeConfirmed ?? 0) / (activeTotal || 1)) * 100)}% of NCEs confirmed as compensation events`}
         style={{ width: W, height: H, display: 'block' }}
       />
     </div>

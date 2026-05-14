@@ -11,7 +11,7 @@ import type { DotMatrixChartProps } from './types';
 const W = 680;
 const H = 260;
 
-export function DotMatrixChart({ items: rawCategories = [], 'data-testid': testId }: DotMatrixChartProps) {
+export function DotMatrixChart({ items: rawCategories = [], testID }: DotMatrixChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
   const hoverMap = useRef<Map<string, number>>(new Map());
@@ -136,10 +136,10 @@ export function DotMatrixChart({ items: rawCategories = [], 'data-testid': testI
   }, [categories]);
 
   const isEmpty = categories.length === 0;
-  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testId} />;
+  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testID} />;
 
   return (
-    <div data-testid={testId} style={{ position: 'relative', width: W, height: H }}>
+    <div data-testid={testID} style={{ position: 'relative', width: W, height: H }}>
       <canvas
         ref={canvasRef}
         role="img"

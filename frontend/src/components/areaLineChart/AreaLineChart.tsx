@@ -11,7 +11,7 @@ import type { AreaLineChartProps } from './types';
 const W = 780;
 const H = 360;
 
-export function AreaLineChart({ points: rawTrend = [], 'data-testid': testId }: AreaLineChartProps) {
+export function AreaLineChart({ points: rawTrend = [], testID }: AreaLineChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
@@ -186,11 +186,11 @@ export function AreaLineChart({ points: rawTrend = [], 'data-testid': testId }: 
   }, [trend]);
 
   const isEmpty = trend.length < 2;
-  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testId} />;
+  if (isEmpty) return <ChartEmptyState width={W} height={H} data-testid={testID} />;
 
   return (
     <div
-      data-testid={testId}
+      data-testid={testID}
       className="trend-scroll"
       style={{ width: '100%', overflowX: 'auto' }}
     >

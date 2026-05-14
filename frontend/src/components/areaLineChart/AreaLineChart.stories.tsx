@@ -11,5 +11,5 @@ export default meta;
 type Story = StoryObj<typeof AreaLineChart>;
 
 export const Default: Story = {
-  args: { points: quotationTrend, 'data-testid': 'quotation-trend' },
+  args: { points: quotationTrend, testID: 'quotation-trend' },
 };

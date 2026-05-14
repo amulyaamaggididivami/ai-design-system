@@ -21,36 +21,37 @@ import { SegmentedSplitBarChart } from '../segmentedSplitBarChart';
 import { WeeklyFlow } from '../weeklyFlow';
 import { HorizontalBarChart } from '../horizontalBarChart';
 import type { VisualizationRendererProps } from '../../types';
+import { CHART_TYPE } from '../../constants';
 
-export function VisualizationRenderer({ config, className, colorOffset = 0 }: VisualizationRendererProps) {
-  if (config.type === 'line') return <LineChart rows={config.rows} className={className} />;
-  if (config.type === 'area') return <AreaChart rows={config.rows} className={className} />;
-  if (config.type === 'bar') return <BarChart rows={config.rows} className={className} />;
-  if (config.type === 'pie') return <PieChart rows={config.rows} variant="pie" className={className} />;
-  if (config.type === 'donut') return <PieChart rows={config.rows} variant="donut" className={className} />;
-  if (config.type === 'sankey') return <RankingSankey rows={config.rows} className={className} />;
-  if (config.type === 'flow') return <ProcessSankey selectedEntity={config.selectedEntity} className={className} />;
-  if (config.type === 'trend') return <TrendChart points={config.points} className={className} />;
-  if (config.type === 'mini-bars') return <MiniBars rows={config.rows} className={className} />;
+export function VisualizationRenderer({ config, className, colorOffset = 0, onItemClick, selectedId }: VisualizationRendererProps) {
+  if (config.type === CHART_TYPE.LINE) return <LineChart rows={config.rows} className={className} />;
+  if (config.type === CHART_TYPE.AREA) return <AreaChart rows={config.rows} className={className} />;
+  if (config.type === CHART_TYPE.BAR) return <BarChart rows={config.rows} className={className} />;
+  if (config.type === CHART_TYPE.PIE) return <PieChart rows={config.rows} variant="pie" className={className} />;
+  if (config.type === CHART_TYPE.DONUT) return <PieChart rows={config.rows} variant="donut" className={className} />;
+  if (config.type === CHART_TYPE.SANKEY) return <RankingSankey rows={config.rows} className={className} />;
+  if (config.type === CHART_TYPE.FLOW) return <ProcessSankey selectedEntity={config.selectedEntity} className={className} />;
+  if (config.type === CHART_TYPE.TREND) return <TrendChart points={config.points} className={className} />;
+  if (config.type === CHART_TYPE.MINI_BARS) return <MiniBars rows={config.rows} className={className} />;
 
-  if (config.type === 'stacked-horizontal-bar-chart') {
+  if (config.type === CHART_TYPE.STACKED_HORIZONTAL_BAR) {
     const data = config.data ?? { items: config.items ?? [] };
-    return <StackedHorizontalBarChart data={data} />;
+    return <StackedHorizontalBarChart data={data} dataByEntity={config.dataByEntity} onItemClick={onItemClick} selectedId={selectedId} />;
   }
-  if (config.type === 'multi-metric-constellation-chart') return <MultiMetricConstellationChart items={config.items} />;
-  if (config.type === 'progress-race-chart') return <ProgressRaceChart items={config.items} colorOffset={colorOffset} />;
-  if (config.type === 'hub-and-spoke-radial-chart') return <HubAndSpokeRadialChart segments={config.segments} title={config.title} unitLabel={config.unitLabel} />;
-  if (config.type === 'dot-matrix-chart') return <DotMatrixChart items={config.items} />;
-  if (config.type === 'ranked-card-leaderboard') return <RankedCardLeaderboard items={config.items} />;
-  if (config.type === 'proportional-band-chart') return <ProportionalBandChart severities={config.severities} colorOffset={colorOffset} />;
-  if (config.type === 'radial-fan-tree-chart') return <RadialFanTreeChart total={config.total} totalLabel={config.totalLabel} items={config.items} colorOffset={colorOffset} />;
-  if (config.type === 'semi-circular-gauge-chart') return <SemiCircularGaugeChart confirmed={config.confirmed} total={config.total} label={config.label} colorOffset={colorOffset} />;
-  if (config.type === 'segmented-split-bar-chart') return <SegmentedSplitBarChart items={config.items} labelA={config.labelA} labelB={config.labelB} unit={config.unit} />;
-  if (config.type === 'balance-scale-chart') return <BalanceScaleChart left={config.left} right={config.right} leftTitle={config.leftTitle} rightTitle={config.rightTitle} unit={config.unit} />;
-  if (config.type === 'area-line-chart') return <AreaLineChart points={config.points} />;
-  if (config.type === 'trend-view') return <Trend points={config.points} colorOffset={colorOffset} />;
-  if (config.type === 'weekly-flow') return <WeeklyFlow items={config.items} />;
-  if (config.type === 'horizontal-bar-chart') return <HorizontalBarChart rows={config.rows} valuePrefix={config.valuePrefix} />;
+  if (config.type === CHART_TYPE.MULTI_METRIC_CONSTELLATION) return <MultiMetricConstellationChart items={config.items} />;
+  if (config.type === CHART_TYPE.PROGRESS_RACE) return <ProgressRaceChart items={config.items} itemsByEntity={config.itemsByEntity} colorOffset={colorOffset} onItemClick={onItemClick} selectedId={selectedId} />;
+  if (config.type === CHART_TYPE.HUB_AND_SPOKE_RADIAL) return <HubAndSpokeRadialChart segments={config.segments} title={config.title} unitLabel={config.unitLabel} />;
+  if (config.type === CHART_TYPE.DOT_MATRIX) return <DotMatrixChart items={config.items} />;
+  if (config.type === CHART_TYPE.RANKED_CARD_LEADERBOARD) return <RankedCardLeaderboard items={config.items} />;
+  if (config.type === CHART_TYPE.PROPORTIONAL_BAND) return <ProportionalBandChart severities={config.severities} colorOffset={colorOffset} />;
+  if (config.type === CHART_TYPE.RADIAL_FAN_TREE) return <RadialFanTreeChart total={config.total} totalLabel={config.totalLabel} items={config.items} dataByEntity={config.dataByEntity} colorOffset={colorOffset} onItemClick={onItemClick} selectedId={selectedId} />;
+  if (config.type === CHART_TYPE.SEMI_CIRCULAR_GAUGE) return <SemiCircularGaugeChart confirmed={config.confirmed} total={config.total} label={config.label} gaugeByEntity={config.gaugeByEntity} colorOffset={colorOffset} selectedId={selectedId} />;
+  if (config.type === CHART_TYPE.SEGMENTED_SPLIT_BAR) return <SegmentedSplitBarChart items={config.items} itemsByEntity={config.itemsByEntity} labelA={config.labelA} labelB={config.labelB} unit={config.unit} onItemClick={onItemClick} selectedId={selectedId} />;
+  if (config.type === CHART_TYPE.BALANCE_SCALE) return <BalanceScaleChart left={config.left} right={config.right} leftTitle={config.leftTitle} rightTitle={config.rightTitle} unit={config.unit} dataByEntity={config.dataByEntity} selectedId={selectedId} />;
+  if (config.type === CHART_TYPE.AREA_LINE) return <AreaLineChart points={config.points} />;
+  if (config.type === CHART_TYPE.TREND_VIEW) return <Trend points={config.points} colorOffset={colorOffset} seriesByEntity={config.pointsByEntity} selectedId={selectedId} />;
+  if (config.type === CHART_TYPE.WEEKLY_FLOW) return <WeeklyFlow items={config.items} />;
+  if (config.type === CHART_TYPE.HORIZONTAL_BAR) return <HorizontalBarChart rows={config.rows} valuePrefix={config.valuePrefix} />;
 
   return <div className="viz-empty">Visualization unavailable</div>;
 }

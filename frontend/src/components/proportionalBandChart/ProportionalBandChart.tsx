@@ -22,7 +22,7 @@ function truncateToWidth(ctx: CanvasRenderingContext2D, text: string, maxW: numb
   return `${t}…`;
 }
 
-export function ProportionalBandChart({ severities: rawSeverities = [], colorOffset = 0, 'data-testid': testId }: ProportionalBandChartProps) {
+export function ProportionalBandChart({ severities: rawSeverities = [], colorOffset = 0, testID }: ProportionalBandChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
@@ -160,10 +160,10 @@ export function ProportionalBandChart({ severities: rawSeverities = [], colorOff
   }, [severities, dynamicW, colorOffset]);
 
   const isEmpty = severities.length === 0;
-  if (isEmpty) return <ChartEmptyState width={dynamicW} height={H} data-testid={testId} />;
+  if (isEmpty) return <ChartEmptyState width={dynamicW} height={H} data-testid={testID} />;
 
   return (
-    <div data-testid={testId} style={{ position: 'relative', width: dynamicW, height: H }}>
+    <div data-testid={testID} style={{ position: 'relative', width: dynamicW, height: H }}>
       <canvas
         ref={canvasRef}
         role="img"

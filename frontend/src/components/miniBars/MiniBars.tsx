@@ -1,4 +1,4 @@
-import { palette } from '../constants';
+import { palette } from '../../constants';
 import type { MiniBarsProps } from '../../types';
 
 export function MiniBars({ rows = [], className, colors }: MiniBarsProps) {

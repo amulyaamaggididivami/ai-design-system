@@ -8,10 +8,10 @@ Before making changes, the agent MUST:
    - `apps/mobile/src/` — (when applicable)
 2. Reuse an existing pattern if one exists — never duplicate
 3. List which files must be created or updated
-4. Implement code following all rules — including `data-testid` attributes on every section and interactive element during the **first draft**, not as a follow-up
+4. Implement code following all rules — including `testID` props (rendered as `data-testid`) on every section and interactive element during the **first draft**, not as a follow-up
 5. Verify all non-negotiable rules
 6. **Loop-until-clean audit (MANDATORY)** — scan all `styles.ts` **and `.tsx`** files for violations. This is NOT a single pass. See § Violation Audit Loop below.
-   6b. **`data-testid` audit (MANDATORY)** — verify every page section, interactive element, and repeated item has a `data-testid`. See § Data Test ID Checklist below.
+   6b. **`testID` audit (MANDATORY)** — verify every page section, interactive element, and repeated item has a `data-testid`. See § Data Test ID Checklist below.
 7. **Never copy Figma output layout values blindly** — Figma-generated code (e.g., `items-start`, absolute widths, fixed positions) reflects Figma's rendering model, not MUI's component behavior. Always validate each layout property against how the actual MUI components behave (e.g., MUI `Card` doesn't default to full width, so a flex container needs `alignItems: "stretch"`, not `"flex-start"` copied from Figma)
 8. Run `pnpm typecheck` and confirm zero TypeScript errors
 9. Run final validation checks
@@ -116,14 +116,14 @@ Scan ALL files touched in the feature, including:
 
 ## Data Test ID Checklist (MANDATORY)
 
-Every page and component MUST include `data-testid` attributes **during the first implementation** — not as a follow-up fix. These are required for testing and must be part of the initial code.
+Every page and component MUST include `testID` props (rendered as `data-testid` on the root element) **during the first implementation** — not as a follow-up fix. These are required for testing and must be part of the initial code.
 
-### What needs a `data-testid`
+### What needs a `testID`
 
-- **Page root container** — e.g., `data-testid="splash-screen"`
+- **Page root container** — e.g., `data-testid="splash-screen"` on root, or `testID="splash-screen"` via prop
 - **Every major section/panel** — e.g., `data-testid="splash-welcome-section"`, `data-testid="splash-community-grid"`
-- **Every interactive element** — buttons, links, inputs, toggles — e.g., `data-testid="splash-signup-button"`
-- **Every repeated/mapped item** — use a dynamic suffix — e.g., `data-testid={`splash-feature-${feature.icon}`}`
+- **Every interactive element** — buttons, links, inputs, toggles — e.g., `testID="splash-signup-button"`
+- **Every repeated/mapped item** — use a dynamic suffix — e.g., `testID={`splash-feature-${feature.icon}`}`
 - **Key visual landmarks** — logo, powered-by, trust section
 
 ### Naming convention
@@ -135,38 +135,38 @@ Every page and component MUST include `data-testid` attributes **during the firs
 ### Rules
 
 - **Page-level / one-off UI**: hardcode `data-testid` directly on the root and key elements
-- **Reusable components**: MUST accept `data-testid` as a prop typed in `types.ts` and forward it to the root element — never hardcode inside a reusable component
+- **Reusable components**: MUST accept `testID` as a prop typed in `types.ts` and forward it to the root element as `data-testid` — never hardcode inside a reusable component
 
-### Reusable component `data-testid` pattern (REQUIRED)
+### Reusable component `testID` pattern (REQUIRED)
 
-Every reusable component's props interface in `types.ts` MUST include `data-testid`:
+Every reusable component's props interface in `types.ts` MUST include `testID`:
 
 ```typescript
 // types.ts
 export interface ButtonProps {
   // ... other props
-  'data-testid'?: string;
+  testID?: string;
 }
 ```
 
-Forward it to the root element in the component:
+Forward it to the root element as `data-testid` in the component:
 
 ```tsx
 // Button.tsx
-export function Button({ children, onClick, 'data-testid': testId, ...rest }: ButtonProps) {
+export function Button({ children, onClick, testID, ...rest }: ButtonProps) {
   return (
-    <StyledButton onClick={onClick} data-testid={testId} {...rest}>
+    <StyledButton onClick={onClick} data-testid={testID} {...rest}>
       {children}
     </StyledButton>
   );
 }
 ```
 
-Consumers (pages) pass the `data-testid` when using the component:
+Consumers (pages) pass `testID` when using the component:
 
 ```tsx
 // ProfileSetupScreen.tsx (page-level — hardcoded)
-<Button data-testid="profile-continue-button" onClick={handleContinue}>
+<Button testID="profile-continue-button" onClick={handleContinue}>
   Continue
 </Button>
 ```
@@ -176,7 +176,7 @@ Consumers (pages) pass the `data-testid` when using the component:
 After implementation, grep the component file to verify coverage:
 
 ```bash
-grep -c "data-testid" <file.tsx>
+grep -c "testID\|data-testid" <file.tsx>
 ```
 
 If the count is low relative to the number of sections and interactive elements, IDs are missing.

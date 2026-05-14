@@ -11,5 +11,5 @@ export default meta;
 type Story = StoryObj<typeof MultiMetricConstellationChart>;
 
 export const Default: Story = {
-  args: { items: contractData.items, 'data-testid': 'contract-bars' },
+  args: { items: contractData.items, testID: 'contract-bars' },
 };

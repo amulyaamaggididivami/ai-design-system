@@ -32,7 +32,7 @@ function fmtValue(v: number, prefix: string): string {
   return `${sign}${prefix}${abs.toFixed(0)}`;
 }
 
-export function HorizontalBarChart({ rows, valuePrefix = '$', 'data-testid': testId }: HorizontalBarChartProps) {
+export function HorizontalBarChart({ rows, valuePrefix = '$', testID }: HorizontalBarChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap  = useRef<Map<string, number>>(new Map());
   const [showAll, setShowAll] = useState(false);
@@ -133,11 +133,11 @@ export function HorizontalBarChart({ rows, valuePrefix = '$', 'data-testid': tes
   );
 
   if (validRows.length === 0) {
-    return <ChartEmptyState width={W} height={MIN_H} message="No data available" data-testid={testId} />;
+    return <ChartEmptyState width={W} height={MIN_H} message="No data available" data-testid={testID} />;
   }
 
   return (
-    <div data-testid={testId} style={{ width: W }}>
+    <div data-testid={testID} style={{ width: W }}>
       <div style={{ position: 'relative' }}>
         <canvas
           ref={canvasRef}

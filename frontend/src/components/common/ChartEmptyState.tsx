@@ -2,18 +2,18 @@ interface ChartEmptyStateProps {
   width: number;
   height: number;
   message?: string;
-  'data-testid'?: string;
+  testID?: string;
 }
 
 export function ChartEmptyState({
   width,
   height,
   message = 'No data available',
-  'data-testid': testId,
+  testID,
 }: ChartEmptyStateProps) {
   return (
     <div
-      data-testid={testId}
+      data-testid={testID}
       style={{
         width,
         height,

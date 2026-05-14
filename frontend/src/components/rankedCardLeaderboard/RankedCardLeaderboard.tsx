@@ -31,7 +31,7 @@ const CARD_W = (MAX_W - 2 * CARD_PAD - (MAX_COLS - 1) * CARD_GAP) / MAX_COLS;
 
 export function RankedCardLeaderboard({
   items: rawItems = [],
-  "data-testid": testId,
+  testID,
 }: RankedCardLeaderboardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
@@ -219,11 +219,11 @@ export function RankedCardLeaderboard({
 
   const isEmpty = sorted.length === 0;
   if (isEmpty)
-    return <ChartEmptyState width={dynamicW} height={H} data-testid={testId} />;
+    return <ChartEmptyState width={dynamicW} height={H} testID={testID} />;
 
   return (
     <div
-      data-testid={testId}
+      data-testid={testID}
       style={{ position: "relative", width: dynamicW, height: H }}
     >
       <canvas

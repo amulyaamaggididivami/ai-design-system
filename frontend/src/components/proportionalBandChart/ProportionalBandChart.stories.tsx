@@ -11,5 +11,5 @@ export default meta;
 type Story = StoryObj<typeof ProportionalBandChart>;
 
 export const Default: Story = {
-  args: { severities: ewSeverityData, 'data-testid': 'severity-bands' },
+  args: { severities: ewSeverityData, testID: 'severity-bands' },
 };

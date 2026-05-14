@@ -2,5 +2,8 @@ import type { ContractData } from '../../types';
 
 export interface StackedHorizontalBarChartProps {
   data: ContractData;
-  'data-testid'?: string;
+  dataByEntity?: Record<string, ContractData>;
+  onItemClick?: (id: string, label: string) => void;
+  selectedId?: string;
+  testID?: string;
 }

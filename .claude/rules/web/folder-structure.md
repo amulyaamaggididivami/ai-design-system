@@ -100,7 +100,7 @@ componentName/
 
 **Missing any file = incomplete component.**
 
-Every component's `types.ts` MUST include `'data-testid'?: string` in the props interface, and the component MUST forward it to its root element. See `execution-flow.md` § Reusable component `data-testid` pattern.
+Every component's `types.ts` MUST include `testID?: string` in the props interface, and the component MUST forward it to its root element as `data-testid={testID}`. See `execution-flow.md` § Reusable component `testID` pattern.
 
 Pages require `styles.ts`, `types.ts`, `PageName.test.tsx`, and `index.ts` — but NO stories.
 

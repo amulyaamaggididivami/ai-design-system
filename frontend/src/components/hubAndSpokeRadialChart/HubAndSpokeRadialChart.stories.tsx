@@ -11,9 +11,9 @@ export default meta;
 type Story = StoryObj<typeof HubAndSpokeRadialChart>;
 
 export const EWStatus: Story = {
-  args: { segments: ewStatusData, title: 'Early Warning Status Split', 'data-testid': 'status-arc-ew' },
+  args: { segments: ewStatusData, title: 'Early Warning Status Split', testID: 'status-arc-ew' },
 };
 
 export const Severity: Story = {
-  args: { segments: ewSeverityData, title: 'EW Severity Distribution', 'data-testid': 'status-arc-severity' },
+  args: { segments: ewSeverityData, title: 'EW Severity Distribution', testID: 'status-arc-severity' },
 };

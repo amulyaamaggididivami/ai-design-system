@@ -15,6 +15,6 @@ export const Default: Story = {
     pct: nceCompensationData.pctConfirmed,
     confirmed: nceCompensationData.confirmed,
     total: nceCompensationData.total,
-    'data-testid': 'compensation-gauge',
+    testID: 'compensation-gauge',
   },
 };
