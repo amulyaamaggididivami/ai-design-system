@@ -50,10 +50,10 @@ export function StackedHorizontalBarChart({ data, dataByEntity, onItemClick, sel
   const activeData    = isDrillMode ? dataByEntity![selectedId!] : data;
   const { items: items = [], totals } = activeData;
   const validItems   = items.filter((c): c is ContractorRow => c != null && typeof c === 'object');
-  const sortedItems  = [...validItems].sort((a, b) => (b.total ?? 0) - (a.total ?? 0));
+  const sortedItems  = [...validItems].sort((a, b) => Number(b.total ?? 0) - Number(a.total ?? 0));
   const visibleItems = showAll ? sortedItems : sortedItems.slice(0, MAX_ITEMS);
   const n             = visibleItems.length;
-  const maxCommitment = Math.max(...sortedItems.map(c => Math.abs(c.total ?? 0)), 1);
+  const maxCommitment = Math.max(...sortedItems.map(c => Math.abs(Number(c.total ?? 0))), 1);
   const BAR_GAP       = 38;
   const contentH      = n * BAR_H + Math.max(0, n - 1) * BAR_GAP;
   const dynamicH      = PAD.top + PAD.bottom + contentH;
@@ -83,7 +83,7 @@ export function StackedHorizontalBarChart({ data, dataByEntity, onItemClick, sel
         const x0     = PAD.left + NAME_W;
         const hp     = hoverMap.current.get(con.id) ?? 0;
         const dimFactor = !drill && selectedIdRef.current && con.id !== selectedIdRef.current ? 0.2 : 1;
-        const totalW = (Math.max(con.total ?? 0, 0) / mc) * ba * localP;
+        const totalW = (Math.max(Number(con.total ?? 0), 0) / mc) * ba * localP;
 
         // Contractor name  y-axis
         ctx.font         = AXIS_LABEL.font;
@@ -95,8 +95,8 @@ export function StackedHorizontalBarChart({ data, dataByEntity, onItemClick, sel
         // Register hit on label area — same id as bar so hover effect + tooltip both trigger
         registerHitRect(hitZonesRef.current, con.id, 0, y, x0, BAR_H, {
           label   : con.name,
-          value   : `${con.totalLabel ?? fmtValue(con.total ?? 0)} total`,
-          sublabel: `Base ${con.baseLabel ?? fmtValue(con.base ?? 0)} + Var ${con.variationLabel ?? fmtValue(con.variation ?? 0)}`,
+          value   : `${con.totalLabel ?? fmtValue(Number(con.total ?? 0))} total`,
+          sublabel: `Base ${con.baseLabel ?? fmtValue(Number(con.base ?? 0))} + Var ${con.variationLabel ?? fmtValue(con.variation ?? 0)}`,
           color,
         });
 
@@ -163,14 +163,14 @@ export function StackedHorizontalBarChart({ data, dataByEntity, onItemClick, sel
           ctx.fillStyle    = hp > 0 ? color : CHART_VALUE.color;
           ctx.textAlign    = 'left';
           ctx.textBaseline = 'middle';
-          ctx.fillText(con.totalLabel ?? fmtValue(con.total ?? 0), x0 + ba + 28, y + BAR_H / 2);
+          ctx.fillText(con.totalLabel ?? fmtValue(Number(con.total ?? 0)), x0 + ba + 28, y + BAR_H / 2);
           ctx.globalAlpha = 1;
         }
 
         registerHitRect(hitZonesRef.current, con.id, x0, y, Math.max(totalW, 1), BAR_H, {
           label   : con.name,
-          value   : con.totalLabel ?? fmtValue(con.total ?? 0),
-          sublabel: `${con.baseLabel ?? fmtValue(con.base ?? 0)} + ${con.variationLabel ?? fmtValue(con.variation ?? 0)}`,
+          value   : con.totalLabel ?? fmtValue(Number(con.total ?? 0)),
+          sublabel: `${con.baseLabel ?? fmtValue(Number(con.base ?? 0))} + ${con.variationLabel ?? fmtValue(con.variation ?? 0)}`,
           color,
         });
       });

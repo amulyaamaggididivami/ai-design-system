@@ -179,9 +179,9 @@ export type ContractorRow = {
   id: string;
   name: string;
   abbreviation?: string;
-  base?: number;
+  base?: number | string;
   variation?: number;
-  total?: number;
+  total?: number | string;
   percentage?: number;
   baseLabel?: string;
   variationLabel?: string;

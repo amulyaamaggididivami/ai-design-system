@@ -50,9 +50,9 @@ export function WeeklyFlow({
     const padB = 26;
     const nodeGap = 6; // gap between contractor nodes
 
-    const totalBase = items.reduce((s, c) => s + (c.base ?? 0), 0);
+    const totalBase = items.reduce((s, c) => s + Number(c.base ?? 0), 0);
     const totalVar = items.reduce((s, c) => s + (c.variation ?? 0), 0);
-    const grandTotal = items.reduce((s, c) => s + (c.total ?? 0), 0);
+    const grandTotal = items.reduce((s, c) => s + Number(c.total ?? 0), 0);
 
     // ── Contractor nodes — proportional heights (Sankey) ─────────────────────
     const availH = H - padT - padB;
@@ -61,7 +61,7 @@ export function WeeklyFlow({
 
     let cumNodeY = padT;
     const contNodes = items.map((c, i) => {
-      const nh = Math.max(24, ((c.total ?? 0) / (grandTotal || 1)) * flowableH);
+      const nh = Math.max(24, (Number(c.total ?? 0) / (grandTotal || 1)) * flowableH);
       const node = {
         x: col1X - nodeW / 2,
         y: cumNodeY,
@@ -124,8 +124,8 @@ export function WeeklyFlow({
         if (localP < 0.01) return;
 
         // Proportional bands within the contractor node
-        const baseFrac = (c.base ?? 0) / (c.total || 1);
-        const varFrac = (c.variation ?? 0) / (c.total || 1);
+        const baseFrac = Number(c.base ?? 0) / (Number(c.total) || 1);
+        const varFrac = (c.variation ?? 0) / (Number(c.total) || 1);
         const baseBandH = cn.h * baseFrac;
         const varBandH = cn.h * varFrac;
 
@@ -134,13 +134,13 @@ export function WeeklyFlow({
         const varSourceY = cn.y + baseBandH + varBandH / 2;
 
         // Destination Y: proportional slice within mid nodes
-        const baseFlowH = Math.max(2, ((c.base ?? 0) / totalBase) * baseH);
+        const baseFlowH = Math.max(2, (Number(c.base ?? 0) / totalBase) * baseH);
         const varFlowH = Math.max(2, ((c.variation ?? 0) / totalVar) * varH);
         const bActualEndY =
           baseNode.y +
           items
             .slice(0, i)
-            .reduce((s, cc) => s + ((cc.base ?? 0) / totalBase) * baseH, 0) +
+            .reduce((s, cc) => s + (Number(cc.base ?? 0) / totalBase) * baseH, 0) +
           baseFlowH / 2;
         const vActualEndY =
           varNode.y +

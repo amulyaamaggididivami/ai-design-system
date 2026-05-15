@@ -26,6 +26,18 @@ function truncate(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
   return t + '…';
 }
 
+function parseFormattedValue(v: number | string | undefined): number {
+  if (v == null) return 0;
+  if (typeof v === 'number') return v;
+  const digits = parseFloat(v.replace(/[^0-9.-]/g, ''));
+  if (isNaN(digits)) return 0;
+  const u = v.toUpperCase();
+  if (u.includes('CR')) return digits * 10_000_000;
+  if (u.includes('M')) return digits * 1_000_000;
+  if (u.includes('K')) return digits * 1_000;
+  return digits;
+}
+
 
 export function ProgressRaceChart({ items: rawItems = [], itemsByEntity, onItemClick, selectedId, colorOffset = 0, testID }: ProgressRaceChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -101,7 +113,7 @@ export function ProgressRaceChart({ items: rawItems = [], itemsByEntity, onItemC
 
       drawDust(ctx, W, H, T, 40, rgb(CC.blue, 0.04));
 
-      const maxTotal = Math.max(...visible.map(c => c.total ?? 0), 1);
+      const maxTotal = Math.max(...visible.map(c => parseFormattedValue(c.total)), 1);
 
       visible.forEach((contractor, i) => {
         const hp     = hoverMap.current.get(contractor.id) ?? 0;
@@ -118,7 +130,7 @@ export function ProgressRaceChart({ items: rawItems = [], itemsByEntity, onItemC
         ctx.fill();
 
         // Runner animation
-        const trackProgress = (contractor.total ?? 0) / maxTotal;
+        const trackProgress = parseFormattedValue(contractor.total) / maxTotal;
         const animProg = Math.min(trackProgress, trackProgress * easeOutCubic(Math.min(1, T * 0.005)));
         const runnerX  = padL + trackW * animProg;
 
@@ -138,9 +150,12 @@ export function ProgressRaceChart({ items: rawItems = [], itemsByEntity, onItemC
           drawGlow(ctx, runnerX, trackY + TRACK_H / 2, 12 * hp, color, 0.35 * hp);
         }
 
+        const totalDisplay = contractor.total != null ? String(contractor.total) : undefined;
         const hitData = {
           label: contractor.name,
-          sublabel: contractor.totalLabel ?? (contractor.total != null ? formatNumber(contractor.total) : undefined),
+          sublabel: contractor.totalLabel && totalDisplay
+            ? `${contractor.totalLabel}: ${totalDisplay}`
+            : contractor.totalLabel ?? totalDisplay,
           color,
         };
         registerHitRect(
@@ -161,12 +176,12 @@ export function ProgressRaceChart({ items: rawItems = [], itemsByEntity, onItemC
           hitData,
         );
 
-        // Percentage label — fixed at right edge
+        // Value label — fixed at right edge
         ctx.font         = CHART_VALUE.font;
         ctx.fillStyle    = hp > 0 ? rgb(color, 1 * dimFactor) : rgb(CC.t1, 0.85 * dimFactor);
         ctx.textAlign    = 'left';
         ctx.textBaseline = 'middle';
-        ctx.fillText(formatNumber(contractor.total ?? 0), padL + trackW + 12, trackY + TRACK_H / 2);
+        ctx.fillText(totalDisplay ?? '', padL + trackW + 12, trackY + TRACK_H / 2);
 
         // Left label: contractor name
         ctx.font      = AXIS_LABEL.font;
