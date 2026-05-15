@@ -191,12 +191,12 @@ export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 
   }, [activeConfirmed, activeTotal, label, colorOffset, selectedId, selectedLabel]);
 
   return (
-    <div data-testid={testID} style={{ position: 'relative', width: W, height: H }}>
+    <div data-testid={testID} style={{ position: 'relative', width: '100%', maxWidth: W }}>
       <canvas
         ref={canvasRef}
         role="img"
         aria-label={`Compensation event gauge — ${Math.round(((activeConfirmed ?? 0) / (activeTotal || 1)) * 100)}% of NCEs confirmed as compensation events`}
-        style={{ width: W, height: H, display: 'block' }}
+        style={{ width: '100%', aspectRatio: `${W} / ${H}`, display: 'block' }}
       />
     </div>
   );

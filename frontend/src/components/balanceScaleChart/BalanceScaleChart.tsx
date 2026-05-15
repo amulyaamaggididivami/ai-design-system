@@ -189,12 +189,12 @@ export function BalanceScaleChart({ left, right, leftTitle = 'Accepted', rightTi
   }, [activeLeft, activeRight]);
 
   return (
-    <div data-testid={testID} style={{ position: 'relative', width: W, height: H }}>
+    <div data-testid={testID} style={{ position: 'relative', width: '100%', maxWidth: W }}>
       <canvas
         ref={canvasRef}
         role="img"
         aria-label="Quotation balance — accepted vs submitted quotation value"
-        style={{ width: W, height: H, display: 'block', borderRadius: 8 }}
+        style={{ width: '100%', aspectRatio: `${W} / ${H}`, display: 'block', borderRadius: 8 }}
       />
     </div>
   );

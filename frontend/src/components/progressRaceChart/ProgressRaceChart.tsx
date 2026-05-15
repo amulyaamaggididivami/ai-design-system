@@ -5,13 +5,14 @@ import { useCanvasInteraction, registerHitCircle, registerHitRect } from '../../
 import type { TooltipContent } from '../../canvas/useCanvasInteraction';
 import { easeOutCubic } from '../../canvas/easing';
 import { CC, CHART_PALETTE, AXIS_LABEL, CHART_VALUE, rgb, drawGlow, drawDust, drawScanline, setupCanvas } from '../../canvas/canvasUtils';
+import { useContainerWidth } from '../../canvas/useContainerWidth';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import { ToggleButton } from '../common/ToggleButton';
 import { formatNumber } from '../../utils/numberFormat';
 import type { ContractorRow } from '../../types';
 import type { ProgressRaceChartProps } from './types';
 
-const W          = 660;
+const DEFAULT_W  = 660;
 const TRACK_H    = 6;
 const TRACK_GAP  = 30;
 const PAD_T      = 24;
@@ -28,6 +29,7 @@ function truncate(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
 
 
 export function ProgressRaceChart({ items: rawItems = [], itemsByEntity, onItemClick, selectedId, colorOffset = 0, testID }: ProgressRaceChartProps) {
+  const [containerRef, W] = useContainerWidth(DEFAULT_W);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef  = useRef(0);
   const hoverMap  = useRef<Map<string, number>>(new Map());
@@ -182,19 +184,25 @@ drawScanline(ctx, W, H, T, 0.015);
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [visible, H, colorOffset]);
+  }, [visible, H, colorOffset, W]);
 
   const isEmpty = sorted.length === 0;
-  if (isEmpty) return <ChartEmptyState width={W} height={160} testID={testID} />;
+  if (isEmpty) {
+    return (
+      <div ref={containerRef} style={{ width: '100%' }}>
+        <ChartEmptyState width={W} height={160} testID={testID} />
+      </div>
+    );
+  }
 
   return (
-    <div data-testid={testID} style={{ width: W }}>
+    <div ref={containerRef} data-testid={testID} style={{ width: '100%' }}>
       <div style={{ position: 'relative' }}>
         <canvas
           ref={canvasRef}
           role="img"
           aria-label="Commitment race — contractors ranked by commitment percentage"
-          style={{ width: W, height: H, display: 'block', borderRadius: 8 }}
+          style={{ width: '100%', height: H, display: 'block', borderRadius: 8 }}
         />
         <CanvasTooltip {...tooltip} parentW={W} parentH={H} />
       </div>

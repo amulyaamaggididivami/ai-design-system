@@ -5,6 +5,7 @@ import { useCanvasInteraction, registerHitCircle } from '../../canvas/useCanvasI
 import type { TooltipContent } from '../../canvas/useCanvasInteraction';
 import { stagger, tickHoverProgress, easeOutCubic } from '../../canvas/easing';
 import { CC, CHART_PALETTE, AXIS_LABEL, CHART_VALUE, rgb, drawGlow, setupCanvas } from '../../canvas/canvasUtils';
+import { useContainerWidth } from '../../canvas/useContainerWidth';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import { formatNumber } from '../../utils/numberFormat';
 import type { NCEContractorRow } from '../../types';
@@ -15,7 +16,8 @@ const MIN_H = 320;
 const PAD_V = 60;
 const MIN_LEAF_SPACING = 28;
 
-export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContractor = [], dataByEntity, onItemClick, selectedId, width = DEFAULT_W, colorOffset = 0, testID }: RadialFanTreeChartProps) {
+export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContractor = [], dataByEntity, onItemClick, selectedId, colorOffset = 0, testID }: RadialFanTreeChartProps) {
+  const [containerRef, W] = useContainerWidth(DEFAULT_W);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
@@ -45,12 +47,12 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
   );
   const H = fanH;
 
-  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width, height: fanH, onClick: onItemClick ? handleClick : undefined });
+  const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, { width: W, height: fanH, onClick: onItemClick ? handleClick : undefined });
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = setupCanvas(canvas, width, H);
+    const ctx = setupCanvas(canvas, W, H);
     frameRef.current = 0;
     const DURATION = 72;
 
@@ -58,7 +60,7 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
     const rootY = fanH / 2;
     const rootR = 32;
     const splitX = rootX + rootR + 60; // single stem ends here, branches fan out from this point
-    const leafX = width - 200;
+    const leafX = W - 200;
     const maxCount = Math.max(...byContractor.map(c => c.count ?? 0), 1);
     const maxLeafR = 22;
     const minLeafR = 8;
@@ -76,7 +78,7 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
     const draw = () => {
       frameRef.current++;
       const T = frameRef.current;
-      ctx.clearRect(0, 0, width, H);
+      ctx.clearRect(0, 0, W, H);
       ctx.letterSpacing = AXIS_LABEL.letterSpacing;
 
       const rawP = Math.min(T / DURATION, 1);
@@ -217,20 +219,26 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [activeTotal, activeTotalLabel, byContractor, fanH, width, isDrillMode]);
+  }, [activeTotal, activeTotalLabel, byContractor, fanH, W, isDrillMode]);
 
   const isEmpty = byContractor.length === 0;
-  if (isEmpty) return <ChartEmptyState width={width} height={MIN_H} testID={testID} />;
+  if (isEmpty) {
+    return (
+      <div ref={containerRef} style={{ width: '100%' }}>
+        <ChartEmptyState width={W} height={MIN_H} testID={testID} />
+      </div>
+    );
+  }
 
   return (
-    <div data-testid={testID} style={{ position: 'relative', width, height: H }}>
+    <div ref={containerRef} data-testid={testID} style={{ position: 'relative', width: '100%', height: H }}>
       <canvas
         ref={canvasRef}
         role="img"
         aria-label="NCE fault tree — NCEs per contractor as branching tree"
-        style={{ width, height: H, display: 'block' }}
+        style={{ width: '100%', height: H, display: 'block' }}
       />
-      <CanvasTooltip {...tooltip} parentW={width} parentH={H} />
+      <CanvasTooltip {...tooltip} parentW={W} parentH={H} />
     </div>
   );
 }

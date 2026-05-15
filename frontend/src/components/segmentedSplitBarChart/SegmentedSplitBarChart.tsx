@@ -5,6 +5,7 @@ import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInt
 import type { TooltipContent } from '../../canvas/useCanvasInteraction';
 import { stagger, tickHoverProgress, easeOutQuart } from '../../canvas/easing';
 import { CC, LEGEND_LABEL, CHART_VALUE, rgb, drawGlow, setupCanvas, AXIS_LABEL } from '../../canvas/canvasUtils';
+import { useContainerWidth } from '../../canvas/useContainerWidth';
 import { ChartEmptyState } from '../common/ChartEmptyState';
 import { ToggleButton } from '../common/ToggleButton';
 import { formatNumber } from '../../utils/numberFormat';
@@ -18,7 +19,7 @@ function truncate(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
   return t + '…';
 }
 
-const W          = 680;
+const DEFAULT_W  = 680;
 const MAX_ITEMS  = 8;
 const BAR_H      = 6;
 const INNER_GAP  = 8;
@@ -28,6 +29,7 @@ const PAD_T      = 16;
 const PAD_B      = 48;
 
 export function SegmentedSplitBarChart({ items: rawItems = [], itemsByEntity, onItemClick, selectedId, labelA = 'Implemented', labelB = 'Unimplemented', unit = 'variations', testID }: SegmentedSplitBarChartProps) {
+  const [containerRef, W] = useContainerWidth(DEFAULT_W);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
@@ -223,19 +225,25 @@ export function SegmentedSplitBarChart({ items: rawItems = [], itemsByEntity, on
 
     draw();
     return () => cancelAnimationFrame(raf);
-  }, [visible, H]);
+  }, [visible, H, W]);
 
   const isEmpty = items.length === 0;
-  if (isEmpty) return <ChartEmptyState width={W} height={160} testID={testID} />;
+  if (isEmpty) {
+    return (
+      <div ref={containerRef} style={{ width: '100%' }}>
+        <ChartEmptyState width={W} height={160} testID={testID} />
+      </div>
+    );
+  }
 
   return (
-    <div data-testid={testID} style={{ width: W }}>
-      <div style={{ position: 'relative', width: W, height: H }}>
+    <div ref={containerRef} data-testid={testID} style={{ width: '100%' }}>
+      <div style={{ position: 'relative', height: H }}>
         <canvas
           ref={canvasRef}
           role="img"
           aria-label="Implemented vs unimplemented variations per contractor — split bar"
-          style={{ width: W, height: H, display: 'block' }}
+          style={{ width: '100%', height: H, display: 'block' }}
         />
         <CanvasTooltip {...tooltip} parentW={W} parentH={H} />
       </div>
