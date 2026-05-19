@@ -10,7 +10,7 @@ function normalizeId(id: string): string {
 const W = 56;   // connector column width (px)
 const MID = 28; // horizontal midpoint
 
-export function VisualizationGroup({ items, colorOffset = 0, 'data-testid': testID }: VisualizationGroupProps) {
+export function VisualizationGroup({ items, colorOffset = 0, title, 'data-testid': testID }: VisualizationGroupProps) {
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   const [selectedLabel, setSelectedLabel] = useState<string | undefined>(undefined);
   const [listenerItems, setListenerItems] = useState<SubentityPayload | null>(null);
@@ -84,6 +84,7 @@ export function VisualizationGroup({ items, colorOffset = 0, 'data-testid': test
 
   return (
     <div className="viz-group" data-testid={testID}>
+      {title && <div className="viz-group__title">{title}</div>}
       <div className="viz-group__bar">
         {selectedId ? (
           <>
@@ -107,7 +108,7 @@ export function VisualizationGroup({ items, colorOffset = 0, 'data-testid': test
       </div>
       <div ref={chartsContainerRef} className="viz-group__charts">
         {items.flatMap((config: BaseVisualizationConfig, i: number) => {
-          const isListener = broadcasterIndex !== null && i !== broadcasterIndex && listenerItems !== null;
+          const isListener = broadcasterIndex !== null ? i !== broadcasterIndex : i === items.length - 1;
           const chart = (
             <div key={i} className={`viz-group__chart viz-group__chart--${config.type}${isListener ? ' viz-group__chart--listener' : ''}`}>
               <VisualizationRenderer

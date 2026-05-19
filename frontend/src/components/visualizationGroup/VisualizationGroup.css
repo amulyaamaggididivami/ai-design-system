@@ -2,6 +2,16 @@
   width: 100%;
 }
 
+.viz-group__title {
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: #F7F9FA;
+  white-space: nowrap;
+  margin: 0 0 12px 4px;
+}
+
 .viz-group__bar {
   display: flex;
   align-items: center;
@@ -55,12 +65,22 @@
 .viz-group__chart {
   flex: 1 1 0;
   min-width: 0;
+  padding: 16px 0;
 }
 
 .viz-group__chart--listener {
-  outline: 1.5px solid rgba(179, 181, 182, 0.35);
+  align-self: stretch;
+  position: relative;
+}
+
+.viz-group__chart--listener::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid rgba(179, 181, 182, 0.35);
   border-radius: 6px;
-  transition: outline-color 0.3s ease;
+  pointer-events: none;
+  z-index: 2;
 }
 
 /* ── Broadcaster → Listener connector ── */

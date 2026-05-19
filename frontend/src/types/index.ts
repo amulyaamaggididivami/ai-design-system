@@ -177,6 +177,7 @@ export type VisualizationRendererProps = {
 export type VisualizationGroupProps = {
   items: BaseVisualizationConfig[];
   colorOffset?: number;
+  title?: string;
   'data-testid'?: string;
 };
 
