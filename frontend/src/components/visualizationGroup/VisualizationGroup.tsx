@@ -48,8 +48,7 @@ export function VisualizationGroup({ items, colorOffset = 0, 'data-testid': test
     const chartDivs = Array.from(container.children).filter((_, idx) => idx % 2 === 0) as HTMLElement[];
     const listenerDiv = chartDivs[lIdx];
     if (!listenerDiv) return;
-    const target = listenerDiv.querySelector('canvas') ?? listenerDiv;
-    const lr = target.getBoundingClientRect();
+    const lr = listenerDiv.getBoundingClientRect();
     const rect = container.getBoundingClientRect();
     setEndY(lr.top + lr.height / 2 - rect.top);
   }, [listenerItems, broadcasterIndex]);
@@ -108,8 +107,9 @@ export function VisualizationGroup({ items, colorOffset = 0, 'data-testid': test
       </div>
       <div ref={chartsContainerRef} className="viz-group__charts">
         {items.flatMap((config: BaseVisualizationConfig, i: number) => {
+          const isListener = broadcasterIndex !== null && i !== broadcasterIndex && listenerItems !== null;
           const chart = (
-            <div key={i} className={`viz-group__chart viz-group__chart--${config.type}`}>
+            <div key={i} className={`viz-group__chart viz-group__chart--${config.type}${isListener ? ' viz-group__chart--listener' : ''}`}>
               <VisualizationRenderer
                 config={config}
                 colorOffset={colorOffset + i}

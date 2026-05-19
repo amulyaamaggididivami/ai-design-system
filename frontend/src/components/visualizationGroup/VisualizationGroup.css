@@ -57,6 +57,12 @@
   min-width: 0;
 }
 
+.viz-group__chart--listener {
+  outline: 1.5px solid rgba(179, 181, 182, 0.35);
+  border-radius: 6px;
+  transition: outline-color 0.3s ease;
+}
+
 /* ── Broadcaster → Listener connector ── */
 .viz-group__connector {
   flex: 0 0 56px;
