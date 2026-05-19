@@ -44,7 +44,8 @@ export function StackedHorizontalBarChart({ data, dataByEntity, onItemClick, sel
 
   const handleClick = useCallback((id: string, data: TooltipContent | string) => {
     const label = typeof data === 'object' ? (data.label ?? id) : id;
-    onItemClick?.(id, label);
+    const item = drawStateRef.current.visibleItems.find(c => c.id === id);
+    onItemClick?.(id, label, item?.subentity);
   }, [onItemClick]);
   const [showAll, setShowAll] = useState(false);
 

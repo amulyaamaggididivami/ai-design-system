@@ -36,10 +36,13 @@ export function SegmentedSplitBarChart({ items: rawItems = [], itemsByEntity, on
   const selectedIdRef  = useRef(selectedId);
   selectedIdRef.current = selectedId;
 
+  const visibleRef = useRef<VariationRow[]>([]);
+
   const handleClick = useCallback((id: string, data: TooltipContent | string) => {
     const rawId = id.replace(/-impl$|-un$/, '');
     const label = typeof data === 'object' ? (data.label ?? rawId) : rawId;
-    onItemClick?.(rawId, label);
+    const item = visibleRef.current.find(c => c.id === rawId);
+    onItemClick?.(rawId, label, item?.subentity);
   }, [onItemClick]);
   const [showAll, setShowAll] = useState(false);
 
@@ -59,6 +62,7 @@ export function SegmentedSplitBarChart({ items: rawItems = [], itemsByEntity, on
     () => showAll ? activeItems : activeItems.slice(0, MAX_ITEMS),
     [activeItems, showAll],
   );
+  visibleRef.current = visible;
 
   const H = PAD_T + PAD_B + visible.length * (PAIR_H + PAIR_GAP) - PAIR_GAP;
 
@@ -71,8 +75,8 @@ export function SegmentedSplitBarChart({ items: rawItems = [], itemsByEntity, on
     frameRef.current = 0;
     const DURATION = 60;
 
-    const padL   = 150;
-    const padR   = 100;
+    const padL   = 110;
+    const padR   = 80;
     const trackW = W - padL - padR;
     const maxVal = Math.max(
       ...visible.map(c => c.implemented   ?? 0),

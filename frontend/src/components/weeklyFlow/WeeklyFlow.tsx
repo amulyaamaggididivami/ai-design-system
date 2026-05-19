@@ -1,10 +1,11 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
 
 import { CanvasTooltip } from "../../canvas/CanvasTooltip";
 import {
   useCanvasInteraction,
   registerHitRect,
 } from "../../canvas/useCanvasInteraction";
+import type { TooltipContent } from "../../canvas/useCanvasInteraction";
 import { stagger, tickHoverProgress, easeOutCubic } from "../../canvas/easing";
 import {
   CC,
@@ -24,16 +25,26 @@ const H = 360;
 
 export function WeeklyFlow({
   items: items = [],
+  onItemClick,
   testID,
 }: WeeklyFlowProps) {
   const [containerRef, W] = useContainerWidth(DEFAULT_W);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverMap = useRef(new Map<string, number>());
   const frameRef = useRef(0);
+  const itemsRef = useRef(items);
+  itemsRef.current = items;
+
+  const handleClick = useCallback((id: string, data: TooltipContent | string) => {
+    const label = typeof data === 'object' ? (data.label ?? id) : id;
+    const item = itemsRef.current.find(c => c.id === id);
+    onItemClick?.(id, label, item?.subentity);
+  }, [onItemClick]);
 
   const { hoveredRef, tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, {
     width: W,
     height: H,
+    onClick: onItemClick ? handleClick : undefined,
   });
 
   useEffect(() => {

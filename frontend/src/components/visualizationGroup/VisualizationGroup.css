@@ -1,0 +1,58 @@
+.viz-group {
+  width: 100%;
+}
+
+.viz-group__bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 28px;
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+.viz-group__hint {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.03em;
+}
+
+.viz-group__viewing-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.03em;
+}
+
+.viz-group__viewing-label strong {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.viz-group__reset-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 2px 8px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.viz-group__reset-btn:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ── Side-by-side chart row ── */
+.viz-group__charts {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.viz-group__chart {
+  flex: 1 1 0;
+  min-width: 0;
+}

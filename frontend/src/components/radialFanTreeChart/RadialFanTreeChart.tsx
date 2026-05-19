@@ -24,10 +24,13 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
   const selectedIdRef  = useRef(selectedId);
   selectedIdRef.current = selectedId;
 
+  const byContractorRef = useRef<NCEContractorRow[]>([]);
+
   const handleClick = useCallback((id: string, data: TooltipContent | string) => {
     if (id === '__root__') return;
     const label = typeof data === 'object' ? (data.label ?? id) : id;
-    onItemClick?.(id, label);
+    const item = byContractorRef.current.find(c => c.id === id);
+    onItemClick?.(id, label, item?.subentity);
   }, [onItemClick]);
 
   const isDrillMode = !!(selectedId && dataByEntity?.[selectedId]);
@@ -40,6 +43,7 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
     () => (activeRawItems as unknown[]).filter((c): c is NCEContractorRow => c != null && typeof c === 'object'),
     [activeRawItems],
   );
+  byContractorRef.current = byContractor;
 
   const fanH = useMemo(
     () => Math.max(MIN_H, PAD_V + Math.max(0, byContractor.length - 1) * MIN_LEAF_SPACING),
@@ -56,11 +60,11 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
     frameRef.current = 0;
     const DURATION = 72;
 
-    const rootX = 88;
+    const rootX = 60;
     const rootY = fanH / 2;
     const rootR = 32;
     const splitX = rootX + rootR + 60; // single stem ends here, branches fan out from this point
-    const leafX = W - 200;
+    const leafX = W - 140;
     const maxCount = Math.max(...byContractor.map(c => c.count ?? 0), 1);
     const maxLeafR = 22;
     const minLeafR = 8;

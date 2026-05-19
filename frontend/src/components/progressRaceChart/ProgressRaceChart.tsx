@@ -36,9 +36,12 @@ export function ProgressRaceChart({ items: rawItems = [], itemsByEntity, onItemC
   const selectedIdRef  = useRef(selectedId);
   selectedIdRef.current = selectedId;
 
+  const visibleRef = useRef<ContractorRow[]>([]);
+
   const handleClick = useCallback((id: string, data: TooltipContent | string) => {
     const label = typeof data === 'object' ? (data.label ?? id) : id;
-    onItemClick?.(id, label);
+    const item = visibleRef.current.find(c => c.id === id);
+    onItemClick?.(id, label, item?.subentity);
   }, [onItemClick]);
   const [showAll, setShowAll] = useState(false);
 
@@ -61,6 +64,7 @@ export function ProgressRaceChart({ items: rawItems = [], itemsByEntity, onItemC
     () => showAll ? sorted : sorted.slice(0, MAX_ITEMS),
     [sorted, showAll],
   );
+  visibleRef.current = visible;
   const n       = visible.length;
   const H       = PAD_T + PAD_B + n * TRACK_H + Math.max(0, n - 1) * TRACK_GAP;
 
@@ -73,7 +77,7 @@ export function ProgressRaceChart({ items: rawItems = [], itemsByEntity, onItemC
     frameRef.current = 0;
 
     const padL   = 150;
-    const padR   = 100;
+    const padR   = 56;
     const trackW = W - padL - padR;
 
     const color = CHART_PALETTE[colorOffset % CHART_PALETTE.length];
