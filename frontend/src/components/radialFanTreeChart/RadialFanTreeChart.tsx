@@ -154,7 +154,7 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
             value: displayVal,
             sublabel: `${Math.round(((c.count ?? 0) / (activeTotal || 1)) * 100)}% of total`,
             color,
-          });
+          }, W);
 
           // Labels — fixed labelX for consistent left alignment
           ctx.globalAlpha = leafFade * dimFactor;
