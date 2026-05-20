@@ -62,7 +62,7 @@ export function RadialFanTreeChart({ total = 0, totalLabel, items: rawByContract
 
     const rootX = 60;
     const rootY = fanH / 2;
-    const rootR = 32;
+    const rootR = 40;
     const splitX = rootX + rootR + 60; // single stem ends here, branches fan out from this point
     const leafX = W - 140;
     const maxCount = Math.max(...byContractor.map(c => c.count ?? 0), 1);

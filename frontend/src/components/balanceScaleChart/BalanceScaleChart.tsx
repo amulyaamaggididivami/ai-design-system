@@ -21,6 +21,9 @@ export function BalanceScaleChart({ left, right, leftTitle = 'Accepted', rightTi
   const activeSidesRef = useRef({ left: activeLeft, right: activeRight, leftTitle, rightTitle });
   activeSidesRef.current = { left: activeLeft, right: activeRight, leftTitle, rightTitle };
 
+  const selectedIdRef = useRef(selectedId);
+  selectedIdRef.current = selectedId;
+
   const handleClick = useCallback((id: string, data: TooltipContent | string) => {
     const label = typeof data === 'object' ? (data.label ?? id) : id;
     const side = id === 'left' ? activeSidesRef.current.left : activeSidesRef.current.right;
@@ -159,44 +162,41 @@ export function BalanceScaleChart({ left, right, leftTitle = 'Accepted', rightTi
       const leftPanH  = Math.max(20, (absLeft  / maxVal) * 95 * progress);
       const rightPanH = Math.max(20, (absRight / maxVal) * 95 * progress);
 
-      drawPan(CC.green, leftEnd.x,  leftEnd.y,  leftPanH,  progress);
-      drawPan(CC.amber, rightEnd.x, rightEnd.y, rightPanH, progress);
+      const leftDim  = selectedIdRef.current === 'right' ? 0.2 : 1;
+      const rightDim = selectedIdRef.current === 'left'  ? 0.2 : 1;
 
-      // Hit zone: covers pan + labels (subtitle at panBottom+56, font ~12px → bottom ≈ panBottom+68)
-      // sourceYOverride = panBottom+78 → tick starts 10px below the subtitle label, inside the canvas
-      // centerYOverride = sourceY+30   → connector dot 30 canvas-units below the tick
+      drawPan(CC.green, leftEnd.x,  leftEnd.y,  leftPanH,  progress * leftDim);
+      drawPan(CC.amber, rightEnd.x, rightEnd.y, rightPanH, progress * rightDim);
+
       const LABEL_ZONE_H  = 90;
       const leftPanBot    = leftEnd.y  + strLen + leftPanH;
       const rightPanBot   = rightEnd.y + strLen + rightPanH;
-      registerHitRect(hitZonesRef.current, 'left',  leftEnd.x  - panW / 2, leftEnd.y  + strLen, panW, leftPanH  + LABEL_ZONE_H, { label: leftTitle,  value: activeLeft.label,  sublabel: `${activeLeft.count} ${unit}`,  color: CC.green }, leftPanBot  + 112, leftEnd.x,  leftPanBot  + 102);
-      registerHitRect(hitZonesRef.current, 'right', rightEnd.x - panW / 2, rightEnd.y + strLen, panW, rightPanH + LABEL_ZONE_H, { label: rightTitle, value: activeRight.label, sublabel: `${activeRight.count} ${unit}`, color: CC.amber }, rightPanBot + 112, rightEnd.x, rightPanBot + 102);
+      registerHitRect(hitZonesRef.current, 'left',  leftEnd.x  - panW / 2, leftEnd.y  + strLen, panW, leftPanH  + LABEL_ZONE_H, { label: leftTitle,  value: activeLeft.label,  sublabel: `${activeLeft.count} ${unit}`,  color: CC.green }, H, leftEnd.x,  leftPanBot  + 102);
+      registerHitRect(hitZonesRef.current, 'right', rightEnd.x - panW / 2, rightEnd.y + strLen, panW, rightPanH + LABEL_ZONE_H, { label: rightTitle, value: activeRight.label, sublabel: `${activeRight.count} ${unit}`, color: CC.amber }, H, rightEnd.x, rightPanBot + 102);
 
       // Labels
       if (progress > 0.5) {
         const fade  = Math.min(1, (progress - 0.5) / 0.5);
-        ctx.globalAlpha  = fade;
         ctx.textAlign    = 'center';
         ctx.textBaseline = 'top';
 
         const leftPanBottom  = leftEnd.y  + strLen + leftPanH  + 14;
         const rightPanBottom = rightEnd.y + strLen + rightPanH + 14;
 
-        // Left value
+        // Left value + sub-label
+        ctx.globalAlpha = fade * leftDim;
         ctx.font      = `700 34px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle = CC.t1;
         ctx.fillText(activeLeft.label, leftEnd.x, leftPanBottom);
-
-        // Left sub-label
         ctx.font      = AXIS_LABEL.font;
         ctx.fillStyle = AXIS_LABEL.color;
         ctx.fillText(`${leftTitle} ${activeLeft.count} ${unit}`, leftEnd.x, leftPanBottom + 42);
 
-        // Right value
+        // Right value + sub-label
+        ctx.globalAlpha = fade * rightDim;
         ctx.font      = `700 34px 'Satoshi Variable', 'DM Sans', sans-serif`;
         ctx.fillStyle = CC.t1;
         ctx.fillText(activeRight.label, rightEnd.x, rightPanBottom);
-
-        // Right sub-label
         ctx.font      = AXIS_LABEL.font;
         ctx.fillStyle = AXIS_LABEL.color;
         ctx.fillText(`${rightTitle} ${activeRight.count} ${unit}`, rightEnd.x, rightPanBottom + 42);
