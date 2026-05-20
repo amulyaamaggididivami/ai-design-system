@@ -8,9 +8,11 @@ import { ProgressRaceChart } from '../../components/progressRaceChart/ProgressRa
 import { Trend } from '../../components/trend';
 import { SemiCircularGaugeChart } from '../../components/semiCircularGaugeChart/SemiCircularGaugeChart';
 import { RadialFanTreeChart } from '../../components/radialFanTreeChart/RadialFanTreeChart';
+import { VisualizationGroup } from '../../components/visualizationGroup/VisualizationGroup';
 import type { GaugeEntityData } from '../../components/semiCircularGaugeChart/types';
 import type { RadialFanEntityData } from '../../components/radialFanTreeChart/types';
-import type { VariationRow, ContractorRow } from '../../types';
+import type { VariationRow, ContractorRow, QuotationSummary, SubentityItem } from '../../types';
+import { CHART_TYPE } from '../../constants';
 
 // ─── Contractor IDs ───────────────────────────────────────────────────────────
 // All datasets MUST use these exact keys so cross-chart selection works.
@@ -166,9 +168,6 @@ const RACE_BY_ENTITY: Record<string, ContractorRow[]> = {
   ],
   [IDS.bath]: [
     { id: 'bat-m1', name: 'Planning',        abbreviation: 'Pln', base: 100, total: 100, percentage: 100 },
-    { id: 'bat-m2', name: 'Deconstruction',  abbreviation: 'Dec', base: 100, total: 85,  percentage: 85  },
-    { id: 'bat-m3', name: 'Clearance',       abbreviation: 'Clr', base: 100, total: 54,  percentage: 54  },
-    { id: 'bat-m4', name: 'Reinstatement',   abbreviation: 'Rst', base: 100, total: 22,  percentage: 22  },
   ],
   [IDS.ska]: [
     { id: 'ska-m1', name: 'Design',        abbreviation: 'Des', base: 100, total: 100, percentage: 100 },
@@ -184,6 +183,9 @@ const RACE_BY_ENTITY: Record<string, ContractorRow[]> = {
     { id: 'kn-m4', name: 'Finishes',       abbreviation: 'Fin', base: 100, total: 38,  percentage: 38  },
   ],
 };
+
+// ─── NCE items with milestone subentity (for radial→race group) ──────────────
+// Populated after RACE_BY_ENTITY so the reference is valid.
 
 // ─── Drill-down: RadialFanTreeChart — per-contractor NCE by type ──────────────
 const NCE_BY_ENTITY: Record<string, RadialFanEntityData> = {
@@ -232,6 +234,28 @@ const NCE_BY_ENTITY: Record<string, RadialFanEntityData> = {
   },
 };
 
+const NCE_ITEMS_WITH_RACE = NCE_ITEMS.map(item => ({
+  ...item,
+  subentity: RACE_BY_ENTITY[item.id] as unknown as SubentityItem[],
+}));
+
+const VARIATION_ITEMS_WITH_RACE = VARIATION_ITEMS.map(item => ({
+  ...item,
+  subentity: (RACE_BY_ENTITY[item.id] ?? []) as unknown as SubentityItem[],
+}));
+
+// ─── Balance scale — accepted vs submitted quotation value ───────────────────
+const QUOTATION_LEFT  = { value: 36_900_000, count: 63, label: '£36.9M', subentity: NCE_ITEMS as unknown as SubentityItem[] };
+const QUOTATION_RIGHT = { value: 46_900_000, count: 81, label: '£46.9M', subentity: NCE_ITEMS as unknown as SubentityItem[] };
+
+const QUOTATION_BY_ENTITY: Record<string, QuotationSummary> = {
+  [IDS.srm]:     { left: { value: 8_500_000,  count: 18, label: '£8.5M'  }, right: { value: 9_700_000,  count: 25, label: '£9.7M'  } },
+  [IDS.cisdi]:   { left: { value: 12_300_000, count: 22, label: '£12.3M' }, right: { value: 16_400_000, count: 30, label: '£16.4M' } },
+  [IDS.bath]:    { left: { value: 3_200_000,  count: 7,  label: '£3.2M'  }, right: { value: 4_100_000,  count: 12, label: '£4.1M'  } },
+  [IDS.ska]:     { left: { value: 5_800_000,  count: 11, label: '£5.8M'  }, right: { value: 7_300_000,  count: 14, label: '£7.3M'  } },
+  [IDS.knights]: { left: { value: 7_100_000,  count: 13, label: '£7.1M'  }, right: { value: 9_400_000,  count: 18, label: '£9.4M'  } },
+};
+
 // ─── Gauge — per-contractor + aggregate ──────────────────────────────────────
 const GAUGE_BY_ENTITY: Record<string, GaugeEntityData> = {
   [IDS.srm]:     { confirmed: 14, total: 18 },
@@ -241,6 +265,11 @@ const GAUGE_BY_ENTITY: Record<string, GaugeEntityData> = {
   [IDS.knights]: { confirmed: 9,  total: 13 },
 };
 const GAUGE_AGGREGATE: GaugeEntityData = { confirmed: 63, total: 81 };
+
+const RACE_ITEMS_WITH_GAUGE = RACE_ITEMS.map(item => ({
+  ...item,
+  subentity: (GAUGE_BY_ENTITY[item.id] ? [GAUGE_BY_ENTITY[item.id]] : []) as unknown as SubentityItem[],
+}));
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -364,6 +393,83 @@ export function InteractiveDemoPage() {
         </div>
 
       </div>
+
+      <VisualizationGroup
+        items={[
+          {
+            type: CHART_TYPE.BALANCE_SCALE,
+            left: QUOTATION_LEFT,
+            right: QUOTATION_RIGHT,
+            leftTitle: 'Accepted',
+            rightTitle: 'Submitted',
+            unit: 'quotations',
+            dataByEntity: QUOTATION_BY_ENTITY,
+          },
+          {
+            type: CHART_TYPE.RADIAL_FAN_TREE,
+            total: NCE_TOTAL,
+            totalLabel: `${NCE_TOTAL} total NCEs`,
+            items: NCE_ITEMS,
+            dataByEntity: NCE_BY_ENTITY,
+          },
+        ]}
+        data-testid="demo-balance-radial-group"
+      />
+
+      <VisualizationGroup
+        items={[
+          {
+            type: CHART_TYPE.RADIAL_FAN_TREE,
+            total: NCE_TOTAL,
+            totalLabel: `${NCE_TOTAL} total NCEs`,
+            items: NCE_ITEMS_WITH_RACE,
+            dataByEntity: NCE_BY_ENTITY,
+          },
+          {
+            type: CHART_TYPE.PROGRESS_RACE,
+            items: RACE_ITEMS,
+            itemsByEntity: RACE_BY_ENTITY,
+          },
+        ]}
+        data-testid="demo-radial-race-group"
+      />
+
+      <VisualizationGroup
+        items={[
+          {
+            type: CHART_TYPE.PROGRESS_RACE,
+            items: RACE_ITEMS_WITH_GAUGE,
+            itemsByEntity: RACE_BY_ENTITY,
+          },
+          {
+            type: CHART_TYPE.SEMI_CIRCULAR_GAUGE,
+            confirmed: GAUGE_AGGREGATE.confirmed,
+            total: GAUGE_AGGREGATE.total,
+            label: 'NCEs confirmed as compensation events',
+            gaugeByEntity: GAUGE_BY_ENTITY,
+          },
+        ]}
+        data-testid="demo-race-gauge-group"
+      />
+
+      <VisualizationGroup
+        items={[
+          {
+            type: CHART_TYPE.SEGMENTED_SPLIT_BAR,
+            items: VARIATION_ITEMS_WITH_RACE,
+            labelA: 'Implemented',
+            labelB: 'Unimplemented',
+            unit: 'variations',
+            itemsByEntity: VARIATION_BY_ENTITY,
+          },
+          {
+            type: CHART_TYPE.PROGRESS_RACE,
+            items: RACE_ITEMS,
+            itemsByEntity: RACE_BY_ENTITY,
+          },
+        ]}
+        data-testid="demo-split-race-group"
+      />
 
       {/* ── Trend listener ── */}
       <div style={styles.panel}>

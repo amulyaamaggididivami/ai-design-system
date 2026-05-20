@@ -1,5 +1,7 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 
+import { CanvasTooltip } from '../../canvas/CanvasTooltip';
+import { useCanvasInteraction, registerHitRect } from '../../canvas/useCanvasInteraction';
 import { setupCanvas, CHART_PALETTE } from '../../canvas/canvasUtils';
 import { CC, AXIS_LABEL, LEGEND_LABEL, rgb, drawGlow } from '../../canvas/canvasUtils';
 import { easeOutBack, easeOutCubic } from '../../canvas/easing';
@@ -30,13 +32,22 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
   return lines;
 }
 
-export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 0, selectedId, selectedLabel, gaugeByEntity, testID }: SemiCircularGaugeChartProps) {
+export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 0, selectedId, selectedLabel, gaugeByEntity, onItemClick, subentity, testID }: SemiCircularGaugeChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
 
   const activeData      = selectedId && gaugeByEntity?.[selectedId] ? gaugeByEntity[selectedId] : { confirmed, total };
   const activeConfirmed = activeData.confirmed;
   const activeTotal     = activeData.total;
+
+  const handleClick = useCallback(() => {
+    onItemClick?.('confirmed', label ?? 'confirmed', subentity);
+  }, [onItemClick, label, subentity]);
+
+  const { tooltip, hitZonesRef } = useCanvasInteraction(canvasRef, {
+    width: W, height: H,
+    onClick: onItemClick ? handleClick : undefined,
+  });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -66,6 +77,15 @@ export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 
       const T = frameRef.current;
       ctx.clearRect(0, 0, W, H);
       ctx.letterSpacing = AXIS_LABEL.letterSpacing;
+      hitZonesRef.current = [];
+
+      // Register the semicircle bounding box as the single click target
+      registerHitRect(hitZonesRef.current, 'confirmed', cx - TRACK_R, cy - TRACK_R, TRACK_R * 2, TRACK_R, {
+        label: label ?? 'Confirmed',
+        value: `${formatNumber(activeConfirmed ?? 0)} / ${formatNumber(activeTotal ?? 0)}`,
+        sublabel: `${Math.round(((activeConfirmed ?? 0) / (activeTotal || 1)) * 100)}%`,
+        color,
+      });
 
       const rawP    = Math.min(T / DURATION, 1);
       const progress = easeOutCubic(rawP);
@@ -191,13 +211,14 @@ export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 
   }, [activeConfirmed, activeTotal, label, colorOffset, selectedId, selectedLabel]);
 
   return (
-    <div data-testid={testID} style={{ position: 'relative', width: W, height: H }}>
+    <div data-testid={testID} style={{ position: 'relative', width: '100%', maxWidth: W, margin: '0 auto' }}>
       <canvas
         ref={canvasRef}
         role="img"
         aria-label={`Compensation event gauge — ${Math.round(((activeConfirmed ?? 0) / (activeTotal || 1)) * 100)}% of NCEs confirmed as compensation events`}
-        style={{ width: W, height: H, display: 'block' }}
+        style={{ width: '100%', aspectRatio: `${W} / ${H}`, display: 'block' }}
       />
+      <CanvasTooltip {...tooltip} parentW={W} parentH={H} />
     </div>
   );
 }
