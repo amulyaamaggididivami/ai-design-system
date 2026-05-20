@@ -20,7 +20,7 @@ import { TrendChart } from '../trendChart/TrendChart';
 import { SegmentedSplitBarChart } from '../segmentedSplitBarChart';
 import { WeeklyFlow } from '../weeklyFlow';
 import { HorizontalBarChart } from '../horizontalBarChart';
-import type { VisualizationRendererProps, ContractorRow, NCEContractorRow, VariationRow, HorizontalBarRow, EWOpenContractorRow, EWSeverityRow } from '../../types';
+import type { VisualizationRendererProps, ContractorRow, NCEContractorRow, VariationRow, HorizontalBarRow, EWOpenContractorRow, EWSeverityRow, QuotationTrendPoint } from '../../types';
 import { CHART_TYPE } from '../../constants';
 
 export function VisualizationRenderer({ config, className, colorOffset = 0, onItemClick, selectedId, listenerItems }: VisualizationRendererProps) {
@@ -76,7 +76,12 @@ export function VisualizationRenderer({ config, className, colorOffset = 0, onIt
   }
   if (config.type === CHART_TYPE.BALANCE_SCALE) return <BalanceScaleChart left={config.left} right={config.right} leftTitle={config.leftTitle} rightTitle={config.rightTitle} unit={config.unit} dataByEntity={config.dataByEntity} onItemClick={onItemClick} selectedId={effectiveSelectedId} />;
   if (config.type === CHART_TYPE.AREA_LINE) return <AreaLineChart points={config.points} />;
-  if (config.type === CHART_TYPE.TREND_VIEW) return <Trend points={config.points} colorOffset={colorOffset} seriesByEntity={config.pointsByEntity} selectedId={effectiveSelectedId} />;
+  if (config.type === CHART_TYPE.TREND_VIEW) {
+    const listenerPoints = listenerItems && !Array.isArray(listenerItems)
+      ? (listenerItems as { points?: QuotationTrendPoint[] }).points ?? []
+      : undefined;
+    return <Trend points={listenerPoints ?? config.points} colorOffset={colorOffset} />;
+  }
   if (config.type === CHART_TYPE.WEEKLY_FLOW) {
     const items = listenerItems ? listenerItems as ContractorRow[] : config.items;
     return <WeeklyFlow items={items} onItemClick={onItemClick} />;

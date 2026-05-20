@@ -85,9 +85,7 @@ export function Trend({ points: rawPoints = [], selectedId, seriesByEntity, colo
     const countRange = maxCount - minCount || 1; // Avoid division by zero
 
     const n = points.length;
-    // When the canvas is capped, stepX may be smaller than minStep — that is intentional.
-    // Enforcing minStep would require a wider canvas and re-introduce the GPU stall.
-    const stepX = n > 1 ? (chartW - padLC) / (n - 1) : chartW - padLC;
+    const stepX = n > 1 ? (chartW - padLC) / (n - 1) : 0;
     // Show a label only every labelStride-th point so text never overlaps when compressed.
     const labelStride = Math.max(1, Math.ceil(minStep / stepX));
 
@@ -95,8 +93,9 @@ export function Trend({ points: rawPoints = [], selectedId, seriesByEntity, colo
     const hasNegativeValues = minCount < 0;
     const zeroY = hasNegativeValues ? padT + chartH - (-minCount / countRange) * chartH : padT + chartH;
 
+    const singlePointX = padLC + (chartW - padLC) / 2;
     const pts = points.map((p, i) => ({
-      x: padLC + i * stepX,
+      x: n === 1 ? singlePointX : padLC + i * stepX,
       y: padT + chartH - (hasNegativeValues
         ? (p.count - minCount) / countRange
         : p.count / (maxCount || 1)) * chartH,
@@ -262,7 +261,7 @@ export function Trend({ points: rawPoints = [], selectedId, seriesByEntity, colo
     return () => cancelAnimationFrame(raf);
   }, [points, chartCanvasW, minStep, hitZonesRef, colorOffset]);
 
-  const isEmpty = points.length < 2;
+  const isEmpty = points.length === 0;
   if (isEmpty) return <ChartEmptyState width={MIN_W} height={H} testID={testID} />;
 
   return (

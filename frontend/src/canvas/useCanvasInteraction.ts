@@ -19,6 +19,7 @@ interface HitZone {
   data: TooltipContent | string;
   centerY: number;
   centerX: number;
+  sourceY?: number;
   test: (x: number, y: number) => boolean;
 }
 
@@ -128,9 +129,12 @@ export function useCanvasInteraction(
           const rect = canvas.getBoundingClientRect();
           const centerClientY = rect.top  + zone.centerY * (rect.height / height);
           const centerClientX = rect.left + zone.centerX * (rect.width  / width);
+          const sourceClientY = zone.sourceY != null
+            ? rect.top + zone.sourceY * (rect.height / height)
+            : undefined;
           canvas.dispatchEvent(new CustomEvent('viz-item-click', {
             bubbles: true,
-            detail: { centerClientY, centerClientX },
+            detail: { centerClientY, centerClientX, sourceClientY },
           }));
           onClick(zone.id, zone.data);
         }
@@ -181,12 +185,14 @@ export function registerHitRect(
   data: TooltipContent | string,
   centerYOverride?: number,
   centerXOverride?: number,
+  sourceYOverride?: number,
 ): void {
   zones.push({
     id,
     data,
     centerY: centerYOverride ?? y + h / 2,
     centerX: centerXOverride ?? x + w / 2,
+    sourceY: sourceYOverride,
     test: (mx, my) => mx >= x && mx <= x + w && my >= y && my <= y + h,
   });
 }

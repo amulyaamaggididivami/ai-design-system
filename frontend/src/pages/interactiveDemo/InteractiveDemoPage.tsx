@@ -245,8 +245,8 @@ const VARIATION_ITEMS_WITH_RACE = VARIATION_ITEMS.map(item => ({
 }));
 
 // ─── Balance scale — accepted vs submitted quotation value ───────────────────
-const QUOTATION_LEFT  = { value: 36_900_000, count: 63, label: '£36.9M' };
-const QUOTATION_RIGHT = { value: 46_900_000, count: 81, label: '£46.9M' };
+const QUOTATION_LEFT  = { value: 36_900_000, count: 63, label: '£36.9M', subentity: NCE_ITEMS as unknown as SubentityItem[] };
+const QUOTATION_RIGHT = { value: 46_900_000, count: 81, label: '£46.9M', subentity: NCE_ITEMS as unknown as SubentityItem[] };
 
 const QUOTATION_BY_ENTITY: Record<string, QuotationSummary> = {
   [IDS.srm]:     { left: { value: 8_500_000,  count: 18, label: '£8.5M'  }, right: { value: 9_700_000,  count: 25, label: '£9.7M'  } },

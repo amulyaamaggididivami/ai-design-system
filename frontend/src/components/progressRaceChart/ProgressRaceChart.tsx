@@ -15,8 +15,8 @@ import type { ProgressRaceChartProps } from './types';
 const DEFAULT_W  = 660;
 const TRACK_H    = 6;
 const TRACK_GAP  = 30;
-const PAD_T      = 24;
-const PAD_B      = 24;
+const PAD_T      = TRACK_GAP / 2;
+const PAD_B      = TRACK_GAP / 2;
 const MAX_ITEMS  = 8;
 
 
@@ -76,8 +76,13 @@ export function ProgressRaceChart({ items: rawItems = [], itemsByEntity, onItemC
     const ctx = setupCanvas(canvas, W, H);
     frameRef.current = 0;
 
-    const padL   = 150;
-    const padR   = 56;
+    ctx.font = AXIS_LABEL.font;
+    ctx.letterSpacing = AXIS_LABEL.letterSpacing;
+    const maxLabelW = visible.reduce((acc, c) => Math.max(acc, ctx.measureText(c.name ?? c.abbreviation ?? '').width), 0);
+    ctx.font = CHART_VALUE.font;
+    const maxValW = visible.reduce((acc, c) => Math.max(acc, ctx.measureText(formatNumber(c.total ?? 0)).width), 0);
+    const padL   = Math.max(Math.min(maxLabelW + 20, W * 0.3), 40);
+    const padR   = Math.max(maxValW + 20, 28);
     const trackW = W - padL - padR;
 
     const color = CHART_PALETTE[colorOffset % CHART_PALETTE.length];

@@ -211,7 +211,7 @@ export function SemiCircularGaugeChart({ confirmed, total, label, colorOffset = 
   }, [activeConfirmed, activeTotal, label, colorOffset, selectedId, selectedLabel]);
 
   return (
-    <div data-testid={testID} style={{ position: 'relative', width: '100%', maxWidth: W }}>
+    <div data-testid={testID} style={{ position: 'relative', width: '100%', maxWidth: W, margin: '0 auto' }}>
       <canvas
         ref={canvasRef}
         role="img"

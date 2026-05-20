@@ -25,7 +25,7 @@ const BAR_H      = 6;
 const INNER_GAP  = 8;
 const PAIR_H     = BAR_H * 2 + INNER_GAP;
 const PAIR_GAP   = 36;
-const PAD_T      = 16;
+const PAD_T      = PAIR_GAP / 2;
 const PAD_B      = 48;
 
 export function SegmentedSplitBarChart({ items: rawItems = [], itemsByEntity, onItemClick, selectedId, labelA = 'Implemented', labelB = 'Unimplemented', unit = 'variations', testID }: SegmentedSplitBarChartProps) {
@@ -75,8 +75,15 @@ export function SegmentedSplitBarChart({ items: rawItems = [], itemsByEntity, on
     frameRef.current = 0;
     const DURATION = 60;
 
-    const padL   = 110;
-    const padR   = 80;
+    ctx.font = AXIS_LABEL.font;
+    const maxLabelW = visible.reduce((acc, c) => Math.max(acc, ctx.measureText(c.abbreviation ?? c.name ?? '').width), 0);
+    ctx.font = CHART_VALUE.font;
+    const maxValW = visible.reduce((acc, c) => Math.max(acc,
+      ctx.measureText(formatNumber(c.implemented ?? 0)).width,
+      ctx.measureText(formatNumber(c.unimplemented ?? 0)).width,
+    ), 0);
+    const padL   = Math.max(Math.min(maxLabelW + 20, W * 0.3), 40);
+    const padR   = Math.max(maxValW + 24, 32);
     const trackW = W - padL - padR;
     const maxVal = Math.max(
       ...visible.map(c => c.implemented   ?? 0),

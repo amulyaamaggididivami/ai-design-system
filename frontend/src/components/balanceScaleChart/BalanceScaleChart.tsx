@@ -162,12 +162,14 @@ export function BalanceScaleChart({ left, right, leftTitle = 'Accepted', rightTi
       drawPan(CC.green, leftEnd.x,  leftEnd.y,  leftPanH,  progress);
       drawPan(CC.amber, rightEnd.x, rightEnd.y, rightPanH, progress);
 
-      // Hit zone: covers pan + labels (subtitle bottom at panH+72, +18 = 90)
-      // Connector anchor: well below the subtitle in the empty canvas space (+140 from pan)
-      const LABEL_ZONE_H    = 90;
-      const CONNECTOR_BELOW = 140;
-      registerHitRect(hitZonesRef.current, 'left',  leftEnd.x  - panW / 2, leftEnd.y  + strLen, panW, leftPanH  + LABEL_ZONE_H, { label: leftTitle,  value: activeLeft.label,  sublabel: `${activeLeft.count} ${unit}`,  color: CC.green }, leftEnd.y  + strLen + leftPanH  + CONNECTOR_BELOW, leftEnd.x);
-      registerHitRect(hitZonesRef.current, 'right', rightEnd.x - panW / 2, rightEnd.y + strLen, panW, rightPanH + LABEL_ZONE_H, { label: rightTitle, value: activeRight.label, sublabel: `${activeRight.count} ${unit}`, color: CC.amber }, rightEnd.y + strLen + rightPanH + CONNECTOR_BELOW, rightEnd.x);
+      // Hit zone: covers pan + labels (subtitle at panBottom+56, font ~12px → bottom ≈ panBottom+68)
+      // sourceYOverride = panBottom+78 → tick starts 10px below the subtitle label, inside the canvas
+      // centerYOverride = sourceY+30   → connector dot 30 canvas-units below the tick
+      const LABEL_ZONE_H  = 90;
+      const leftPanBot    = leftEnd.y  + strLen + leftPanH;
+      const rightPanBot   = rightEnd.y + strLen + rightPanH;
+      registerHitRect(hitZonesRef.current, 'left',  leftEnd.x  - panW / 2, leftEnd.y  + strLen, panW, leftPanH  + LABEL_ZONE_H, { label: leftTitle,  value: activeLeft.label,  sublabel: `${activeLeft.count} ${unit}`,  color: CC.green }, leftPanBot  + 112, leftEnd.x,  leftPanBot  + 102);
+      registerHitRect(hitZonesRef.current, 'right', rightEnd.x - panW / 2, rightEnd.y + strLen, panW, rightPanH + LABEL_ZONE_H, { label: rightTitle, value: activeRight.label, sublabel: `${activeRight.count} ${unit}`, color: CC.amber }, rightPanBot + 112, rightEnd.x, rightPanBot + 102);
 
       // Labels
       if (progress > 0.5) {
